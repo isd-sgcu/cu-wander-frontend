@@ -1,0 +1,7 @@
+{
+  "name": "cu-wander",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "react"
+}
