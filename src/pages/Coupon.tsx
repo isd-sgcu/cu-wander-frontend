@@ -10,7 +10,7 @@ export const CouponContext = createContext({
   setShowModal: (showModal: boolean) => {},
 });
 
-const Tab3: React.FC = () => {
+const Coupon: React.FC = () => {
   useIonViewWillEnter(() => {
     showTabBar();
   });
@@ -43,4 +43,4 @@ const Tab3: React.FC = () => {
   );
 };
 
-export default Tab3;
+export default Coupon;

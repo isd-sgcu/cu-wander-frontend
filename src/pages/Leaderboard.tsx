@@ -2,7 +2,7 @@ import { IonContent, IonPage, useIonViewWillEnter } from "@ionic/react";
 import Header from "../components/Header";
 import { showTabBar } from "../utils/tab";
 
-const Tab2: React.FC = () => {
+const Leaderboard: React.FC = () => {
   useIonViewWillEnter(() => {
     showTabBar();
   });
@@ -17,4 +17,4 @@ const Tab2: React.FC = () => {
   );
 };
 
-export default Tab2;
+export default Leaderboard;

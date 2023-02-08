@@ -75,7 +75,7 @@ const App: React.FC = () => (
           </Route>
           <Route path="/profile"></Route>
           <Route exact path="/">
-            <Redirect to="/tab1" />
+            <Redirect to="/onboarding" />
           </Route>
         </IonRouterOutlet>
 

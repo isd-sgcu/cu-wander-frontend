@@ -2,7 +2,7 @@ import { IonContent, IonPage, useIonViewWillEnter } from "@ionic/react";
 import Header from "../components/Header";
 import { showTabBar } from "../utils/tab";
 
-const Tab1: React.FC = () => {
+const Step: React.FC = () => {
   useIonViewWillEnter(() => {
     showTabBar();
   });
@@ -38,4 +38,4 @@ const Stat: React.FC<{ value: string | number; label: string }> = ({
   );
 };
 
-export default Tab1;
+export default Step;
