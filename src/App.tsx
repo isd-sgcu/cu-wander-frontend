@@ -1,7 +1,6 @@
 import { Redirect, Route } from "react-router-dom";
 import {
   IonApp,
-  IonIcon,
   IonLabel,
   IonRouterOutlet,
   IonTabBar,
@@ -10,7 +9,6 @@ import {
   setupIonicReact,
 } from "@ionic/react";
 import { IonReactRouter } from "@ionic/react-router";
-import { ellipse, square, triangle } from "ionicons/icons";
 import Step from "./pages/Step";
 import Leaderboard from "./pages/Leaderboard";
 import Coupon from "./pages/Coupon";
@@ -86,7 +84,7 @@ const App: React.FC = () => (
           className="bg-green-50 h-[72px] font-noto"
         >
           <IonTabButton className="bg-green-50" tab="step" href="/step">
-            <img src="assets/icon/shoe.svg" />
+            <img src="assets/icon/shoe.svg" alt="นับเก้า" />
             <IonLabel className="text-black">นับก้าว</IonLabel>
           </IonTabButton>
           <IonTabButton
@@ -94,11 +92,11 @@ const App: React.FC = () => (
             tab="leaderboard"
             href="/leaderboard"
           >
-            <img src="assets/icon/star.svg" />
+            <img src="assets/icon/star.svg" alt="ลีดเดอร์บอร์ด" />
             <IonLabel className="text-black">ลีดเดอร์บอร์ด</IonLabel>
           </IonTabButton>
           <IonTabButton className="bg-green-50" tab="coupon" href="/coupon">
-            <img src="assets/icon/ticket.svg" />
+            <img src="assets/icon/ticket.svg" alt="คูปอง" />
             <IonLabel className="text-black">คูปอง</IonLabel>
           </IonTabButton>
           <IonTabButton
@@ -106,7 +104,7 @@ const App: React.FC = () => (
             tab="profile"
             href="/onboarding"
           >
-            <img src="assets/icon/user.svg" />
+            <img src="assets/icon/user.svg" alt="ผู้ใช้งาน" />
             <IonLabel className="text-black">ผู้ใช้งาน</IonLabel>
           </IonTabButton>
         </IonTabBar>

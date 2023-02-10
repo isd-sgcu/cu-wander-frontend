@@ -2,8 +2,6 @@ import {
   IonContent,
   IonHeader,
   IonPage,
-  IonTitle,
-  IonToolbar,
   useIonViewWillEnter,
 } from "@ionic/react";
 import React from "react";
@@ -29,15 +27,15 @@ const Signup: React.FC = () => {
           <div className="flex flex-col w-full px-5">
             {/* header */}
             <div className="flex items-end h-20 pb-4 w-full">
-              <a className="" onClick={() => history.goBack()}>
-                <img src="assets/icon/chevron_left.svg" />
-              </a>
+              <div className="" onClick={() => history.goBack()}>
+                <img src="assets/icon/chevron_left.svg" alt="back" />
+              </div>
             </div>
             {/* form */}
             <div className="flex flex-col items-center text-green-700 px-5 w-full space-y-4">
               <h1 className="font-bold text-xl">สร้างบัญชี</h1>
               <div className="grid place-content-center bg-white rounded-full p-3 aspect-square h-24">
-                <img src="assets/icon/add_image.svg" />
+                <img src="assets/icon/add_image.svg" alt="upload profile pic" />
               </div>
               <form onSubmit={submitHandler} className="w-full space-y-8 py-4">
                 <input

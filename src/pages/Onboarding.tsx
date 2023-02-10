@@ -2,8 +2,6 @@ import {
   IonContent,
   IonHeader,
   IonPage,
-  IonTitle,
-  IonToolbar,
   useIonViewWillEnter,
 } from "@ionic/react";
 import { Link } from "react-router-dom";

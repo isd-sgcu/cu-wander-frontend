@@ -23,7 +23,11 @@ const CouponItem: React.FC<CouponItemInterface> = ({
             <p className="text-sm text-gray-400">{merchant}</p>
           </div>
           <div className="flex items-center space-x-1 text-sm text-green-500">
-            <img src="assets/icon/shoe.svg" width={18} />
+            <img
+              src="assets/icon/shoe.svg"
+              width={18}
+              alt="step tracking icon"
+            />
             <p className="font-semibold">
               {steps.toLocaleString("en-US")} ก้าว
             </p>

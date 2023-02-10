@@ -26,13 +26,21 @@ const Header: React.FC<HeaderInterface> = ({
       {/* coupon search box */}
       {location.pathname === "/coupon" && (
         <div className="absolute left-10 right-10 top-[60px] h-12 z-50 flex items-center bg-white rounded-lg border-[1.5px] border-black font-noto text-black">
-          <img src="assets/icon/search.svg" className="px-2.5" />
+          <img
+            src="assets/icon/search.svg"
+            className="px-2.5"
+            alt="search icon"
+          />
           <input
             type="text"
             placeholder="ค้นหาชื่อร้านค้า"
             className="bg-transparent outline-none w-full h-full"
           />
-          <img src="assets/icon/sort.svg" className="px-2.5" />
+          <img
+            src="assets/icon/sort.svg"
+            className="px-2.5"
+            alt="filter icon"
+          />
         </div>
       )}
 
@@ -43,14 +51,14 @@ const Header: React.FC<HeaderInterface> = ({
         {showBack && (
           <IonButtons slot="start" onClick={() => history.goBack()}>
             <IonButton fill="solid">
-              <img src="assets/icon/chevron_left_white.svg" />
+              <img src="assets/icon/chevron_left_white.svg" alt="back button" />
             </IonButton>
           </IonButtons>
         )}
         {showSettings && (
           <IonButtons slot="primary" className="mr-2">
             <IonButton fill="solid">
-              <img src="assets/icon/settings.svg" />
+              <img src="assets/icon/settings.svg" alt="settings" />
             </IonButton>
           </IonButtons>
         )}
