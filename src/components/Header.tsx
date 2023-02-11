@@ -11,12 +11,18 @@ interface HeaderInterface {
   title: string;
   showSettings?: boolean;
   showBack?: boolean;
+  leaderboardPage?: "university" | "faculty";
+  setLeaderboardPage?: React.Dispatch<
+    React.SetStateAction<"university" | "faculty">
+  >;
 }
 
 const Header: React.FC<HeaderInterface> = ({
   title,
   showSettings = false,
   showBack = false,
+  leaderboardPage,
+  setLeaderboardPage,
 }) => {
   const history = useHistory();
   const location = useLocation();
@@ -63,6 +69,27 @@ const Header: React.FC<HeaderInterface> = ({
           </IonButtons>
         )}
       </IonToolbar>
+
+      {title === "ลีดเดอร์บอร์ด" && setLeaderboardPage && leaderboardPage ? (
+        <div className="absolute top-20 left-0 right-0 z-50 flex w-full bg-green-500 text-black font-noto">
+          <div
+            onClick={() => setLeaderboardPage("university")}
+            className={`grid place-content-center w-full py-2 rounded-t-2xl font-bold ${
+              leaderboardPage === "university" ? "bg-white" : "bg-green-50"
+            }`}
+          >
+            มหาวิทยาลัย
+          </div>
+          <div
+            onClick={() => setLeaderboardPage("faculty")}
+            className={`grid place-content-center w-full py-2 rounded-t-2xl font-bold ${
+              leaderboardPage === "faculty" ? "bg-white" : "bg-green-50"
+            }`}
+          >
+            คณะ
+          </div>
+        </div>
+      ) : null}
     </IonHeader>
   );
 };
