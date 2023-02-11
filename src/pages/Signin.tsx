@@ -5,6 +5,7 @@ import {
   useIonViewWillEnter,
 } from "@ionic/react";
 import { Link, useHistory } from "react-router-dom";
+import Input from "../components/Input";
 import { hideTabBar } from "../utils/tab";
 
 const Signin: React.FC = () => {
@@ -34,21 +35,9 @@ const Signin: React.FC = () => {
             <div className="flex flex-col items-center text-green-700 px-5 w-full space-y-4">
               <h1 className="font-bold text-xl">เข้าสู่ระบบ</h1>
               <form onSubmit={submitHandler} className="w-full space-y-8 py-4">
-                <input
-                  type="text"
-                  placeholder="ชื่อผู้ใช้งาน"
-                  className="placeholder:text-green-700 placeholder:font-normal font-semibold outline-none bg-white rounded-lg w-full px-5 py-2.5"
-                />
-                <input
-                  type="email"
-                  placeholder="อีเมล"
-                  className="placeholder:text-green-700 placeholder:font-normal font-semibold outline-none bg-white rounded-lg w-full px-5 py-2.5"
-                />
-                <input
-                  type="password"
-                  placeholder="รหัสผ่าน"
-                  className="placeholder:text-green-700 placeholder:font-normal font-semibold outline-none bg-white rounded-lg w-full px-5 py-2.5"
-                />
+                <Input type="text" placeholder="ชื่อผู้ใช้งาน" />
+                <Input type="email" placeholder="อีเมล" />
+                <Input type="password" placeholder="รหัสผ่าน" />
               </form>
               <div className="flex w-full justify-end">
                 <span className="underline">ลืมรหัสผ่าน?</span>

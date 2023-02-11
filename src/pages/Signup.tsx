@@ -6,6 +6,7 @@ import {
 } from "@ionic/react";
 import React from "react";
 import { Link, useHistory } from "react-router-dom";
+import Input from "../components/Input";
 import { hideTabBar } from "../utils/tab";
 
 const Signup: React.FC = () => {
@@ -38,31 +39,11 @@ const Signup: React.FC = () => {
                 <img src="assets/icon/add_image.svg" alt="upload profile pic" />
               </div>
               <form onSubmit={submitHandler} className="w-full space-y-8 py-4">
-                <input
-                  type="text"
-                  placeholder="ชื่อผู้ใช้งาน"
-                  className="placeholder:text-green-700 placeholder:font-normal font-semibold outline-none bg-white rounded-lg w-full px-5 py-2.5"
-                />
-                <input
-                  type="email"
-                  placeholder="อีเมล"
-                  className="placeholder:text-green-700 placeholder:font-normal font-semibold outline-none bg-white rounded-lg w-full px-5 py-2.5"
-                />
-                <input
-                  type="tel"
-                  placeholder="เบอร์โทรศัพท์"
-                  className="placeholder:text-green-700 placeholder:font-normal font-semibold outline-none bg-white rounded-lg w-full px-5 py-2.5"
-                />
-                <input
-                  type="password"
-                  placeholder="รหัสผ่าน"
-                  className="placeholder:text-green-700 placeholder:font-normal font-semibold outline-none bg-white rounded-lg w-full px-5 py-2.5"
-                />
-                <input
-                  type="password"
-                  placeholder="ยืนยันรหัสผ่าน"
-                  className="placeholder:text-green-700 placeholder:font-normal font-semibold outline-none bg-white rounded-lg w-full px-5 py-2.5"
-                />
+                <Input type="text" placeholder="ชื่อผู้ใช้งาน" />
+                <Input type="email" placeholder="อีเมล" />
+                <Input type="tel" placeholder="เบอร์โทรศัพท์" />
+                <Input type="password" placeholder="รหัสผ่าน" />
+                <Input type="password" placeholder="ยืนยันรหัสผ่าน" />
               </form>
             </div>
           </div>
