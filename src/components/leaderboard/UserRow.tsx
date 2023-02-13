@@ -19,7 +19,7 @@ const UserRow: React.FC<UserRowProps> = ({
         currentUser
           ? "border-y-[1.5px] border-green-500"
           : "border-b-[1px] border-[#C7C7C7]"
-      }`}
+      } ${rank === 1 || rank === 2 || rank === 3 ? "font-semibold" : null}`}
     >
       <div className="flex justify-end items-center w-[15%] text-right">
         <p>{rank.toLocaleString("en-US")}</p>
