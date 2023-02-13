@@ -57,6 +57,17 @@ const Leaderboard: React.FC = () => {
             </>
           )}
         </div>
+
+        {/* current user data */}
+        <div className="fixed bottom-0 left-0 right-0">
+          <UserRow
+            rank={1000}
+            name={"fasdf"}
+            coupon={2}
+            steps={10}
+            currentUser
+          />
+        </div>
       </IonContent>
     </IonPage>
   );
