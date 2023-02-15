@@ -4,6 +4,7 @@ import {
   IonPage,
   useIonViewWillEnter,
 } from "@ionic/react";
+import { useState } from "react";
 import { Link, useHistory } from "react-router-dom";
 import Input from "../components/Input";
 import { hideTabBar } from "../utils/tab";
@@ -15,8 +16,35 @@ const Signin: React.FC = () => {
 
   const history = useHistory();
 
+  const [submitState, setSubmitState] = useState<
+    | ""
+    | "failed"
+    | "submitting"
+    | "submitted"
+    | "passwordNotMatch"
+    | "formNotComplete"
+    | "invalidStudentId"
+  >("");
+
   const submitHandler = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    const target = e.target as typeof e.target & {
+      studentid: { value: string };
+      password: { value: string };
+    };
+
+    setSubmitState("submitting");
+
+    // check if form is complete
+    if (!target.studentid.value || !target.password.value) {
+      setSubmitState("formNotComplete");
+      return;
+    }
+
+    // call api and redirect to home
+    setSubmitState("submitted");
+    history.push("/step");
   };
 
   return (
@@ -40,12 +68,14 @@ const Signin: React.FC = () => {
                   label="เลขประจำตัวนิสิต"
                   placeholder="Ex. 6538068821"
                   required
+                  submitState={submitState}
                 />
                 <Input
                   type="password"
                   label="รหัสผ่าน"
                   placeholder="รหัสผ่าน"
                   required
+                  submitState={submitState}
                 />
               </form>
               <div className="flex w-full justify-end">
