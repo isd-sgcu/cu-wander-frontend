@@ -20,7 +20,6 @@ const Signup: React.FC = () => {
 
   const [submitState, setSubmitState] = useState<
     | ""
-    | "failed"
     | "submitting"
     | "submitted"
     | "passwordNotMatch"
@@ -43,8 +42,6 @@ const Signup: React.FC = () => {
       password: { value: string };
       confirmPassword: { value: string };
     };
-
-    setSubmitState("submitting");
 
     // check if form is complete
     if (
@@ -221,19 +218,14 @@ const Signup: React.FC = () => {
               </div>
             </div>
           </div>
-          {submitState === "formNotComplete" && (
-            <p className="text-red-500 pt-2">กรุณากรอกข้อมูลให้ครบ</p>
-          )}
-          {submitState === "passwordNotMatch" && (
-            <p className="text-red-500 pt-2">รหัสผ่านไม่ตรงกัน</p>
-          )}
-          <div className="flex w-full px-10 pt-4 pb-14">
-            {/* <Link
-              to="/step"
-              className="bg-green-500 text-white w-full rounded-xl grid place-content-center font-medium py-2.5"
-            >
-              ต่อไป
-            </Link> */}
+
+          <div className="relative flex justify-center w-full px-10 pt-10 pb-14">
+            <div className="absolute top-0 text-red-500">
+              <p>
+                {submitState === "formNotComplete" && "กรุณากรอกข้อมูลให้ครบ"}
+                {submitState === "passwordNotMatch" && "รหัสผ่านไม่ตรงกัน"}
+              </p>
+            </div>
             <button
               onClick={() => setSubmitState("submitting")}
               type="submit"

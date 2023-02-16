@@ -5,7 +5,7 @@ import {
   useIonViewWillEnter,
 } from "@ionic/react";
 import { useState } from "react";
-import { Link, useHistory } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 import Input from "../components/Input";
 import { hideTabBar } from "../utils/tab";
 
@@ -18,12 +18,11 @@ const Signin: React.FC = () => {
 
   const [submitState, setSubmitState] = useState<
     | ""
-    | "failed"
     | "submitting"
     | "submitted"
-    | "passwordNotMatch"
     | "formNotComplete"
     | "invalidStudentId"
+    | "passwordIncorrect"
   >("");
 
   const submitHandler = (e: React.FormEvent<HTMLFormElement>) => {
@@ -34,13 +33,13 @@ const Signin: React.FC = () => {
       password: { value: string };
     };
 
-    setSubmitState("submitting");
-
     // check if form is complete
     if (!target.studentid.value || !target.password.value) {
       setSubmitState("formNotComplete");
       return;
     }
+
+    // check if student id is valid (regex)
 
     // call api and redirect to home
     setSubmitState("submitted");
@@ -51,7 +50,10 @@ const Signin: React.FC = () => {
     <IonPage>
       <IonHeader></IonHeader>
       <IonContent fullscreen>
-        <div className="h-screen flex flex-col justify-between items-center bg-green-50 font-noto">
+        <form
+          onSubmit={submitHandler}
+          className="h-screen flex flex-col justify-between items-center bg-green-50 font-noto"
+        >
           <div className="flex flex-col w-full px-5">
             {/* header */}
             <div className="flex items-end h-20 pb-4 w-full">
@@ -62,8 +64,9 @@ const Signin: React.FC = () => {
             {/* form */}
             <div className="flex flex-col items-center text-green-700 px-2 w-full space-y-4">
               <h1 className="font-bold text-xl">เข้าสู่ระบบ</h1>
-              <form onSubmit={submitHandler} className="w-full space-y-5 py-4">
+              <div className="w-full space-y-5 py-4">
                 <Input
+                  name="studentid"
                   type="text"
                   label="เลขประจำตัวนิสิต"
                   placeholder="Ex. 6538068821"
@@ -71,27 +74,35 @@ const Signin: React.FC = () => {
                   submitState={submitState}
                 />
                 <Input
+                  name="password"
                   type="password"
                   label="รหัสผ่าน"
                   placeholder="รหัสผ่าน"
                   required
                   submitState={submitState}
                 />
-              </form>
+              </div>
               <div className="flex w-full justify-end">
                 <span className="underline">ลืมรหัสผ่าน?</span>
               </div>
             </div>
           </div>
-          <div className="flex w-full px-10 pt-8 pb-14">
-            <Link
-              to="/step"
+          <div className="relative flex justify-center w-full px-10 pt-10 pb-14">
+            <div className="absolute top-0 text-red-500">
+              <p>
+                {submitState === "formNotComplete" && "กรุณากรอกข้อมูลให้ครบ"}
+                {submitState === "passwordIncorrect" && "รหัสผ่านไม่ถูกต้อง"}
+              </p>
+            </div>
+            <button
+              onClick={() => setSubmitState("submitting")}
+              type="submit"
               className="bg-green-500 text-white w-full rounded-xl grid place-content-center font-medium py-2.5"
             >
               ต่อไป
-            </Link>
+            </button>
           </div>
-        </div>
+        </form>
       </IonContent>
     </IonPage>
   );

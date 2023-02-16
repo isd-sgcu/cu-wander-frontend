@@ -13,7 +13,8 @@ interface InputProps {
     | "submitted"
     | "passwordNotMatch"
     | "formNotComplete"
-    | "invalidStudentId";
+    | "invalidStudentId"
+    | "passwordIncorrect";
   children?: React.ReactNode;
 }
 
