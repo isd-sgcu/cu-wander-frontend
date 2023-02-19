@@ -4,7 +4,9 @@ import {
   IonPage,
   useIonViewWillEnter,
 } from "@ionic/react";
-import { Link, useHistory } from "react-router-dom";
+import { useState } from "react";
+import { useHistory } from "react-router-dom";
+import Input from "../components/Input";
 import { hideTabBar } from "../utils/tab";
 
 const Signin: React.FC = () => {
@@ -14,15 +16,44 @@ const Signin: React.FC = () => {
 
   const history = useHistory();
 
+  const [submitState, setSubmitState] = useState<
+    | ""
+    | "submitting"
+    | "submitted"
+    | "formNotComplete"
+    | "invalidStudentId"
+    | "passwordIncorrect"
+  >("");
+
   const submitHandler = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    const target = e.target as typeof e.target & {
+      studentid: { value: string };
+      password: { value: string };
+    };
+
+    // check if form is complete
+    if (!target.studentid.value || !target.password.value) {
+      setSubmitState("formNotComplete");
+      return;
+    }
+
+    // check if student id is valid (regex)
+
+    // call api and redirect to home
+    setSubmitState("submitted");
+    history.push("/step");
   };
 
   return (
     <IonPage>
       <IonHeader></IonHeader>
       <IonContent fullscreen>
-        <div className="h-screen flex flex-col justify-between items-center bg-green-50 font-noto">
+        <form
+          onSubmit={submitHandler}
+          className="h-screen flex flex-col justify-between items-center bg-green-50 font-noto"
+        >
           <div className="flex flex-col w-full px-5">
             {/* header */}
             <div className="flex items-end h-20 pb-4 w-full">
@@ -31,36 +62,47 @@ const Signin: React.FC = () => {
               </div>
             </div>
             {/* form */}
-            <div className="flex flex-col items-center text-green-700 px-5 w-full space-y-4">
+            <div className="flex flex-col items-center text-green-700 px-2 w-full space-y-4">
               <h1 className="font-bold text-xl">เข้าสู่ระบบ</h1>
-              <form onSubmit={submitHandler} className="w-full space-y-8 py-4">
-                <input
+              <div className="w-full space-y-5 py-4">
+                <Input
+                  name="studentid"
                   type="text"
-                  placeholder="ชื่อผู้ใช้งาน"
-                  className="placeholder:text-green-700 placeholder:font-normal font-semibold outline-none bg-white rounded-lg w-full px-5 py-2.5"
+                  label="เลขประจำตัวนิสิต"
+                  placeholder="Ex. 6538068821"
+                  required
+                  submitState={submitState}
                 />
-                <input
-                  type="email"
-                  placeholder="อีเมล"
-                  className="placeholder:text-green-700 placeholder:font-normal font-semibold outline-none bg-white rounded-lg w-full px-5 py-2.5"
-                />
-                <input
+                <Input
+                  name="password"
                   type="password"
+                  label="รหัสผ่าน"
                   placeholder="รหัสผ่าน"
-                  className="placeholder:text-green-700 placeholder:font-normal font-semibold outline-none bg-white rounded-lg w-full px-5 py-2.5"
+                  required
+                  submitState={submitState}
                 />
-              </form>
+              </div>
               <div className="flex w-full justify-end">
                 <span className="underline">ลืมรหัสผ่าน?</span>
               </div>
             </div>
           </div>
-          <Link to="/step" className="flex w-full px-10 pb-20">
-            <div className="bg-green-500 text-white w-full rounded-full grid place-content-center font-medium py-3 text-lg">
-              ต่อไป
+          <div className="relative flex justify-center w-full px-10 pt-10 pb-14">
+            <div className="absolute top-0 text-red-500">
+              <p>
+                {submitState === "formNotComplete" && "กรุณากรอกข้อมูลให้ครบ"}
+                {submitState === "passwordIncorrect" && "รหัสผ่านไม่ถูกต้อง"}
+              </p>
             </div>
-          </Link>
-        </div>
+            <button
+              onClick={() => setSubmitState("submitting")}
+              type="submit"
+              className="bg-green-500 text-white w-full rounded-xl grid place-content-center font-medium py-2.5"
+            >
+              ต่อไป
+            </button>
+          </div>
+        </form>
       </IonContent>
     </IonPage>
   );
