@@ -30,6 +30,7 @@ const Leaderboard: React.FC = () => {
                 })
                 .map((item, idx) => (
                   <UserRow
+                    key={idx}
                     rank={idx + 1}
                     name={item.name}
                     coupon={item.coupon}
@@ -48,6 +49,7 @@ const Leaderboard: React.FC = () => {
                 })
                 .map((item, idx) => (
                   <UserRow
+                    key={idx}
                     rank={idx + 1}
                     name={item.name}
                     coupon={item.coupon}
