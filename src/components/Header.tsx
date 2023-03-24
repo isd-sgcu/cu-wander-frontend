@@ -5,7 +5,9 @@ import {
   IonTitle,
   IonToolbar,
 } from "@ionic/react";
+import { useContext } from "react";
 import { useHistory, useLocation } from "react-router";
+import { CouponContext } from "../pages/Coupon";
 
 interface HeaderInterface {
   title: string;
@@ -32,11 +34,18 @@ const Header: React.FC<HeaderInterface> = ({
   const history = useHistory();
   const location = useLocation();
 
+  const { setShowModal } = useContext(CouponContext);
+
   return (
     <IonHeader class="ion-no-border" className="relative">
       {/* coupon search box */}
       {location.pathname === "/coupon" && setSearchPhrase ? (
-        <div className="absolute left-10 right-10 top-[64px] h-12 z-50 flex items-center bg-white rounded-full font-noto text-black px-2 shadow-lg">
+        <div
+          className="absolute left-10 right-10 top-[64px] h-12 z-50 flex items-center bg-white rounded-full font-noto text-black px-2 shadow-lg"
+          onClick={() => {
+            setShowModal(false);
+          }}
+        >
           <img
             src="assets/icon/search.svg"
             className="px-2.5"

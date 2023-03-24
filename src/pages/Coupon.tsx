@@ -23,14 +23,14 @@ const Coupon: React.FC = () => {
   const mockData = mockCouponData;
 
   return (
-    <IonPage>
-      <Header
-        title="คูปอง"
-        searchPhrase={searchPhrase}
-        setSearchPhrase={setSearchPhrase}
-      />
-      <IonContent fullscreen>
-        <CouponContext.Provider value={{ showModal, setShowModal }}>
+    <CouponContext.Provider value={{ showModal, setShowModal }}>
+      <IonPage>
+        <Header
+          title="คูปอง"
+          searchPhrase={searchPhrase}
+          setSearchPhrase={setSearchPhrase}
+        />
+        <IonContent fullscreen>
           {/* modal */}
           <CouponModal />
 
@@ -56,9 +56,9 @@ const Coupon: React.FC = () => {
               );
             })}
           </div>
-        </CouponContext.Provider>
-      </IonContent>
-    </IonPage>
+        </IonContent>
+      </IonPage>
+    </CouponContext.Provider>
   );
 };
 
