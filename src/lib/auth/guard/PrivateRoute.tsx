@@ -1,21 +1,19 @@
-export {};
-// import React, { useContext } from "react";
-// import { Route, Redirect } from "react-router-dom";
-// // import { EnrolleeContext } from "../providers/context/EnrolleeContext";
+import { Route, Redirect } from "react-router-dom";
+import { useAuth } from "../providers/auth";
 
-// const PrivateRoute = ({ component: Component, ...rest }: any) => {
-//   // const { loggedIn } = useContext(EnrolleeContext);
+const PrivateRoute = ({ component: Component, ...rest }: any) => {
+  const { loggedIn } = useAuth();
 
-//   return (
-//     // Show the component only when the user is logged in
-//     // Otherwise, redirect the user to /signin page
-//     <Route
-//       {...rest}
-//       render={(props) =>
-//         loggedIn ? <Component {...props} /> : <Redirect to="/" />
-//       }
-//     />
-//   );
-// };
+  return (
+    // Show the component only when the user is logged in
+    // Otherwise, redirect the user to /signin page
+    <Route
+      {...rest}
+      render={(props) =>
+        loggedIn ? <Component {...props} /> : <Redirect to="/Onboarding" />
+      }
+    />
+  );
+};
 
-// export default PrivateRoute;
+export default PrivateRoute;
