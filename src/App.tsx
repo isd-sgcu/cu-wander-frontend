@@ -87,6 +87,10 @@ const App: React.FC = () => (
             <img src="assets/icon/shoe.svg" alt="นับเก้า" />
             <IonLabel className="text-black">นับก้าว</IonLabel>
           </IonTabButton>
+          <IonTabButton className="bg-green-50" tab="coupon" href="/coupon">
+            <img src="assets/icon/ticket.svg" alt="คูปอง" />
+            <IonLabel className="text-black">คูปอง</IonLabel>
+          </IonTabButton>
           <IonTabButton
             className="bg-green-50"
             tab="leaderboard"
@@ -94,10 +98,6 @@ const App: React.FC = () => (
           >
             <img src="assets/icon/star.svg" alt="ลีดเดอร์บอร์ด" />
             <IonLabel className="text-black">ลีดเดอร์บอร์ด</IonLabel>
-          </IonTabButton>
-          <IonTabButton className="bg-green-50" tab="coupon" href="/coupon">
-            <img src="assets/icon/ticket.svg" alt="คูปอง" />
-            <IonLabel className="text-black">คูปอง</IonLabel>
           </IonTabButton>
           <IonTabButton
             className="bg-green-50"
