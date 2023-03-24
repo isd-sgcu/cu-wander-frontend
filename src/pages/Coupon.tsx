@@ -29,13 +29,16 @@ const Coupon: React.FC = () => {
           <div className="flex flex-col items-center bg-white font-noto pt-12 pb-6 space-y-2">
             {Array(20)
               .fill("")
-              .map(() => (
-                <CouponItem
-                  name="THB 50 e-Coupon"
-                  merchant="BBQ Plaza"
-                  steps={12500}
-                />
-              ))}
+              .map((x, idx) => {
+                return (
+                  <CouponItem
+                    key={idx}
+                    name="THB 50 e-Coupon"
+                    merchant="BBQ Plaza"
+                    steps={12500}
+                  />
+                );
+              })}
           </div>
         </CouponContext.Provider>
       </IonContent>

@@ -26,14 +26,14 @@ const CouponModal: React.FC = () => {
               <p className="text-xs font-medium text-gray-400">
                 เงื่อนไขในการแลกเปลี่ยน
               </p>
-              <p className="flex items-center text-green-500 space-x-1">
+              <div className="flex items-center text-green-500 space-x-1">
                 <img
                   src="assets/icon/shoe.svg"
                   width={24}
                   alt="step tracking icon"
                 />
                 <p className="font-semibold">12,500 ก้าว</p>
-              </p>
+              </div>
             </div>
             <div>
               <p className="text-xs font-medium text-gray-400">
