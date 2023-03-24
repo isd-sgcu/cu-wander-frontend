@@ -5,9 +5,7 @@ import {
   IonTitle,
   IonToolbar,
 } from "@ionic/react";
-import { useContext } from "react";
-import { useHistory, useLocation } from "react-router";
-import { CouponContext } from "../pages/Coupon";
+import { useHistory } from "react-router";
 
 interface HeaderInterface {
   title: string;
@@ -27,38 +25,9 @@ const Header: React.FC<HeaderInterface> = ({
   setLeaderboardPage,
 }) => {
   const history = useHistory();
-  const location = useLocation();
-
-  const { setShowModal, searchPhrase, setSearchPhrase } =
-    useContext(CouponContext);
 
   return (
     <IonHeader class="ion-no-border" className="relative">
-      {/* coupon search box */}
-      {location.pathname === "/coupon" && setSearchPhrase ? (
-        <div
-          className="absolute left-10 right-10 top-[64px] h-12 z-50 flex items-center bg-white rounded-full font-noto text-black px-2 shadow-lg"
-          onClick={() => {
-            setShowModal(false);
-          }}
-        >
-          <img
-            src="assets/icon/search.svg"
-            className="px-2.5"
-            alt="search icon"
-          />
-          <input
-            type="text"
-            value={searchPhrase}
-            onChange={(e) => {
-              setSearchPhrase(e.target.value.toLowerCase());
-            }}
-            placeholder="ค้นหาชื่อร้านค้า"
-            className="bg-transparent outline-none w-full h-full"
-          />
-        </div>
-      ) : null}
-
       <IonToolbar mode="ios" className="font-noto relative">
         <IonTitle className="bg-white font-bold text-xl text-white">
           <div className="h-full absolute left-0 right-0 bottom-0 top-0 z-40 backdrop-blur-[75px]"></div>
