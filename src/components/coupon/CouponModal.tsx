@@ -1,8 +1,8 @@
 import { useContext } from "react";
-import { CouponContext } from "../../pages/Coupon";
+import { CouponState } from "../../contexts/CouponContext";
 
 const CouponModal: React.FC = () => {
-  const { showModal, setShowModal, selectedCoupon } = useContext(CouponContext);
+  const { showModal, setShowModal, selectedCoupon } = useContext(CouponState);
 
   return (
     <>
