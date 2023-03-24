@@ -1,15 +1,24 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
+import axios, { AxiosRequestConfig } from "axios";
 
-function useFetch(url: string) {
+type RequestMethod = "GET" | "POST" | "PATCH" | "DELETE";
+
+function useFetch(
+  url: string,
+  method: RequestMethod = "GET",
+  config?: AxiosRequestConfig
+) {
   const [data, setData] = useState<unknown>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
   useEffect(() => {
     setLoading(true); // set loading to true
-    axios
-      .get(url)
+    axios({
+      method,
+      url,
+      ...config,
+    })
       .then((response) => {
         setData(response.data);
       })
@@ -19,13 +28,16 @@ function useFetch(url: string) {
       .finally(() => {
         setLoading(false);
       });
-  }, [url]);
+  }, [url, method, config]);
 
   // Function to call when button is clicked
   const refetch = () => {
     setLoading(true); // set loading to true
-    axios
-      .get(url)
+    axios({
+      method,
+      url,
+      ...config,
+    })
       .then((response) => {
         setData(response.data);
       })
