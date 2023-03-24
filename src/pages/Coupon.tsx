@@ -9,6 +9,8 @@ import mockCouponData from "../data/mockCouponData.json";
 export const CouponContext = createContext({
   showModal: false,
   setShowModal: (showModal: boolean) => {},
+  searchPhrase: "",
+  setSearchPhrase: (searchPhrase: string) => {},
 });
 
 const Coupon: React.FC = () => {
@@ -23,13 +25,11 @@ const Coupon: React.FC = () => {
   const mockData = mockCouponData;
 
   return (
-    <CouponContext.Provider value={{ showModal, setShowModal }}>
+    <CouponContext.Provider
+      value={{ showModal, setShowModal, searchPhrase, setSearchPhrase }}
+    >
       <IonPage>
-        <Header
-          title="คูปอง"
-          searchPhrase={searchPhrase}
-          setSearchPhrase={setSearchPhrase}
-        />
+        <Header title="คูปอง" />
         <IonContent fullscreen>
           {/* modal */}
           <CouponModal />

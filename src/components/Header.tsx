@@ -17,9 +17,6 @@ interface HeaderInterface {
   setLeaderboardPage?: React.Dispatch<
     React.SetStateAction<"university" | "faculty">
   >;
-
-  searchPhrase?: string;
-  setSearchPhrase?: React.Dispatch<React.SetStateAction<string>>;
 }
 
 const Header: React.FC<HeaderInterface> = ({
@@ -28,13 +25,12 @@ const Header: React.FC<HeaderInterface> = ({
   showBack = false,
   leaderboardPage,
   setLeaderboardPage,
-  searchPhrase,
-  setSearchPhrase,
 }) => {
   const history = useHistory();
   const location = useLocation();
 
-  const { setShowModal } = useContext(CouponContext);
+  const { setShowModal, searchPhrase, setSearchPhrase } =
+    useContext(CouponContext);
 
   return (
     <IonHeader class="ion-no-border" className="relative">
