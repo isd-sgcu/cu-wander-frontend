@@ -15,6 +15,9 @@ interface HeaderInterface {
   setLeaderboardPage?: React.Dispatch<
     React.SetStateAction<"university" | "faculty">
   >;
+
+  searchPhrase?: string;
+  setSearchPhrase?: React.Dispatch<React.SetStateAction<string>>;
 }
 
 const Header: React.FC<HeaderInterface> = ({
@@ -23,6 +26,8 @@ const Header: React.FC<HeaderInterface> = ({
   showBack = false,
   leaderboardPage,
   setLeaderboardPage,
+  searchPhrase,
+  setSearchPhrase,
 }) => {
   const history = useHistory();
   const location = useLocation();
@@ -30,7 +35,7 @@ const Header: React.FC<HeaderInterface> = ({
   return (
     <IonHeader className="relative">
       {/* coupon search box */}
-      {location.pathname === "/coupon" && (
+      {location.pathname === "/coupon" && setSearchPhrase ? (
         <div className="absolute left-10 right-10 top-[60px] h-12 z-50 flex items-center bg-white rounded-lg border-[1.5px] border-black font-noto text-black">
           <img
             src="assets/icon/search.svg"
@@ -39,6 +44,10 @@ const Header: React.FC<HeaderInterface> = ({
           />
           <input
             type="text"
+            value={searchPhrase}
+            onChange={(e) => {
+              setSearchPhrase(e.target.value.toLowerCase());
+            }}
             placeholder="ค้นหาชื่อร้านค้า"
             className="bg-transparent outline-none w-full h-full"
           />
@@ -48,7 +57,7 @@ const Header: React.FC<HeaderInterface> = ({
             alt="filter icon"
           />
         </div>
-      )}
+      ) : null}
 
       <IonToolbar mode="ios" className="bg-green-500 font-noto">
         <IonTitle className="bg-green-500 font-bold text-xl text-white">

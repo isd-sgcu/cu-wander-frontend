@@ -1,0 +1,102 @@
+[
+  {
+    "name": "THB 50 e-Coupon",
+    "merchant": "BBQ Plaza",
+    "steps": 12500
+  },
+  {
+    "name": "20% off on all items",
+    "merchant": "Pizza Company",
+    "steps": 8000
+  },
+  {
+    "name": "Free Shipping",
+    "merchant": "Shopee",
+    "steps": 15000
+  },
+  {
+    "name": "THB 100 cashback",
+    "merchant": "Tesco Lotus",
+    "steps": 20000
+  },
+  {
+    "name": "10% off on selected items",
+    "merchant": "Central",
+    "steps": 10000
+  },
+  {
+    "name": "THB 200 e-Voucher",
+    "merchant": "The Mall Group",
+    "steps": 25000
+  },
+  {
+    "name": "Buy 1 Get 1 Free",
+    "merchant": "KFC",
+    "steps": 12000
+  },
+  {
+    "name": "THB 50 discount",
+    "merchant": "McDonald's",
+    "steps": 7500
+  },
+  {
+    "name": "20% off on beauty products",
+    "merchant": "Watsons",
+    "steps": 9000
+  },
+  {
+    "name": "THB 150 e-Coupon",
+    "merchant": "Big C",
+    "steps": 18000
+  },
+  {
+    "name": "Free Coffee",
+    "merchant": "Starbucks",
+    "steps": 10000
+  },
+  {
+    "name": "THB 50 cashback",
+    "merchant": "7-Eleven",
+    "steps": 6000
+  },
+  {
+    "name": "15% off on fashion items",
+    "merchant": "Zara",
+    "steps": 12000
+  },
+  {
+    "name": "THB 75 e-Voucher",
+    "merchant": "Robinson",
+    "steps": 15000
+  },
+  {
+    "name": "Free Delivery",
+    "merchant": "Foodpanda",
+    "steps": 10000
+  },
+  {
+    "name": "THB 30 discount",
+    "merchant": "FamilyMart",
+    "steps": 5000
+  },
+  {
+    "name": "Buy 2 Get 1 Free",
+    "merchant": "The Pizza Company",
+    "steps": 15000
+  },
+  {
+    "name": "THB 100 e-Coupon",
+    "merchant": "Makro",
+    "steps": 20000
+  },
+  {
+    "name": "10% off on electronics",
+    "merchant": "Power Buy",
+    "steps": 8000
+  },
+  {
+    "name": "THB 200 e-Voucher",
+    "merchant": "Central Online",
+    "steps": 25000
+  }
+]
