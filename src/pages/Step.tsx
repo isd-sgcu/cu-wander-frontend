@@ -1,5 +1,4 @@
 import { IonContent, IonPage, useIonViewWillEnter } from "@ionic/react";
-import Header from "../components/Header";
 import { showTabBar } from "../utils/tab";
 
 const Step: React.FC = () => {
@@ -7,34 +6,62 @@ const Step: React.FC = () => {
     showTabBar();
   });
 
+  const totalSteps = 10500; // count of steps
+  const stepsGoal = 20000;
+  const totalDistances = 8000; // count of distances in meters
+  const totalTime = 2400; // count of time in seconds
+  const totalCalories = 500; // count of calories
+
   return (
     <IonPage>
-      <Header title="นับก้าว" showSettings />
       <IonContent fullscreen>
-        <div className="flex flex-col justify-between items-center bg-white h-full font-noto p-8">
-          <div className="relative flex flex-grow border-[5px] border-green-700 bg-gray-100 rounded-2xl w-full ovreflow-hidden">
-            <div className="absolute bottom-4 left-4 right-4 h-20 bg-green-500 rounded-xl flex justify-between text-white text-center p-2.5 space-x-1.5">
-              <Stat value={1500} label="ก้าว" />
-              <Stat value={3.5} label="กิโลเมตร" />
-              <Stat value={90} label="นาที" />
-              <Stat value={290} label="แคลอรี่" />
+        <div className="h-full bg-black relative font-noto">
+          <div className="absolute bottom-0 left-0 right-0 h-[9.5rem] bg-white rounded-t-2xl flex flex-col justify-between p-5">
+            <div className="pt-2">
+              <div className="flex justify-between items-end">
+                <div className="flex items-center space-x-1.5">
+                  <span className="text-4xl font-bold">
+                    {totalSteps.toLocaleString("en-US")}
+                  </span>
+                  <span className="opacity-90">ก้าว</span>
+                </div>
+                <span className="text-[#bababa] text-xs">
+                  {stepsGoal.toLocaleString("en-US")}
+                </span>
+              </div>
+              <div className="w-full h-1.5 bg-[#D9D9D9] rounded-full">
+                <div
+                  className="h-full bg-green-500 rounded-full"
+                  style={{
+                    width: `${(totalSteps / stepsGoal) * 100}%`,
+                  }}
+                ></div>
+              </div>
+            </div>
+            <div className="flex justify-between text-center space-x-3">
+              <div className="rounded-full w-full border-[2px] space-x-1.5 py-0.5">
+                <span className="font-semibold text-lg">
+                  {(totalDistances / 1000).toLocaleString("en-US")}
+                </span>
+                <span>กิโลเมตร</span>
+              </div>
+              <div className="rounded-full w-full border-[2px] space-x-1.5 py-0.5">
+                <span className="font-semibold text-lg">
+                  {(totalTime / 60).toLocaleString("en-US")}
+                </span>
+                <span>นาที</span>
+              </div>
+              <div className="rounded-full w-full border-[2px] space-x-1.5 py-0.5">
+                <span className="font-semibold text-lg">
+                  {totalCalories.toLocaleString("en-US")}
+                </span>
+                <span>แคลอรี่</span>
+              </div>
             </div>
           </div>
         </div>
       </IonContent>
     </IonPage>
-  );
-};
-
-const Stat: React.FC<{ value: string | number; label: string }> = ({
-  value,
-  label,
-}) => {
-  return (
-    <div className="bg-green-700 rounded-lg flex flex-grow flex-col justify-center items-center -space-y-1">
-      <span className="text-2xl">{value}</span>
-      <span className="text-xs">{label}</span>
-    </div>
   );
 };
 
