@@ -78,7 +78,9 @@ const App: React.FC = () => (
               <Route exact path="/leaderboard">
                 <Leaderboard />
               </Route>
-              <Route path="/profile"></Route>
+              <Route path="/profile">
+                <Profile />
+              </Route>
 
               {/* redirect */}
               <Route exact path="/">
