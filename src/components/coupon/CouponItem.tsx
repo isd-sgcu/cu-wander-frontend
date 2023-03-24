@@ -12,9 +12,19 @@ const CouponItem: React.FC<CouponItemInterface> = ({
   merchant,
   steps,
 }) => {
-  const { setShowModal } = useContext(CouponContext);
+  const { setShowModal, setSelectedCoupon } = useContext(CouponContext);
   return (
-    <div className="flex justify-between items-center px-5 py-3 h-24 w-full">
+    <div
+      className="flex justify-between items-center px-5 py-3 h-24 w-full"
+      onClick={() => {
+        setSelectedCoupon({
+          name: name,
+          merchant: merchant,
+          steps: parseInt(steps.toString()),
+        });
+        setShowModal(true);
+      }}
+    >
       <div className="flex items-center h-full w-full space-x-4">
         <div className="h-full aspect-square bg-gray-300 rounded-lg"></div>
         <div className="flex flex-col justify-between h-full">
@@ -34,14 +44,14 @@ const CouponItem: React.FC<CouponItemInterface> = ({
           </div>
         </div>
       </div>
-      <div className="flex items-center">
+      {/* <div className="flex items-center">
         <button
           onClick={() => setShowModal(true)}
           className="bg-green-500 rounded-md grid place-content-center text-center text-white whitespace-nowrap px-5 py-2.5 font-semibold text-sm"
         >
           แลกคูปอง
         </button>
-      </div>
+      </div> */}
     </div>
   );
 };
