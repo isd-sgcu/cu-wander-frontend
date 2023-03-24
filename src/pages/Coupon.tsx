@@ -11,6 +11,16 @@ export const CouponContext = createContext({
   setShowModal: (showModal: boolean) => {},
   searchPhrase: "",
   setSearchPhrase: (searchPhrase: string) => {},
+  selectedCoupon: {
+    name: "",
+    merchant: "",
+    steps: 0,
+  },
+  setSelectedCoupon: (selectedCoupon: {
+    name: string;
+    merchant: string;
+    steps: number;
+  }) => {},
 });
 
 const Coupon: React.FC = () => {
@@ -22,11 +32,28 @@ const Coupon: React.FC = () => {
 
   const [searchPhrase, setSearchPhrase] = useState<string>("");
 
+  const [selectedCoupon, setSelectedCoupon] = useState<{
+    name: string;
+    merchant: string;
+    steps: number;
+  }>({
+    name: "",
+    merchant: "",
+    steps: 0,
+  });
+
   const mockData = mockCouponData;
 
   return (
     <CouponContext.Provider
-      value={{ showModal, setShowModal, searchPhrase, setSearchPhrase }}
+      value={{
+        showModal,
+        setShowModal,
+        searchPhrase,
+        setSearchPhrase,
+        selectedCoupon,
+        setSelectedCoupon,
+      }}
     >
       <IonPage>
         <Header title="คูปอง" />

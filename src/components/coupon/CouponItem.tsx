@@ -12,11 +12,18 @@ const CouponItem: React.FC<CouponItemInterface> = ({
   merchant,
   steps,
 }) => {
-  const { setShowModal } = useContext(CouponContext);
+  const { setShowModal, setSelectedCoupon } = useContext(CouponContext);
   return (
     <div
       className="flex justify-between items-center px-5 py-3 h-24 w-full"
-      onClick={() => setShowModal(true)}
+      onClick={() => {
+        setSelectedCoupon({
+          name: name,
+          merchant: merchant,
+          steps: parseInt(steps.toString()),
+        });
+        setShowModal(true);
+      }}
     >
       <div className="flex items-center h-full w-full space-x-4">
         <div className="h-full aspect-square bg-gray-300 rounded-lg"></div>
