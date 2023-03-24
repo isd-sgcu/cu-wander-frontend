@@ -13,6 +13,13 @@ const CouponModal: React.FC = () => {
         onClick={() => setShowModal(false)}
       ></div>
       <div
+        className={`fixed right-5 bg-white h-12 w-12 rounded-full duration-300 ease-in-out grid place-content-center overflow-hidden pr-1 pt-0.5 ${
+          showModal ? "bottom-[440px]" : "-bottom-12"
+        }`}
+      >
+        <img src="assets/icon/location.svg" alt="view location" />
+      </div>
+      <div
         className={`fixed flex flex-col justify-between duration-300 ease-in-out bottom-0 left-0 right-0 h-[420px] bg-white rounded-t-3xl px-6 font-noto py-6 ${
           showModal ? "translate-y-0" : "translate-y-[460px]"
         }`}
