@@ -29,8 +29,9 @@ const Coupon: React.FC = () => {
           <div className="flex flex-col items-center bg-white font-noto pt-12 pb-6 space-y-2">
             {Array(20)
               .fill("")
-              .map(() => (
+              .map((_, idx) => (
                 <CouponItem
+                  key={idx}
                   name="THB 50 e-Coupon"
                   merchant="BBQ Plaza"
                   steps={12500}

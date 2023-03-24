@@ -1,5 +1,6 @@
 import { IonContent, IonPage, useIonViewWillEnter } from "@ionic/react";
 import { showTabBar } from "../utils/tab";
+import useFetch from "../utils/useFetch";
 
 const Step: React.FC = () => {
   useIonViewWillEnter(() => {
