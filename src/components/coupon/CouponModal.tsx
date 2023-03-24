@@ -2,7 +2,7 @@ import { useContext } from "react";
 import { CouponContext } from "../../pages/Coupon";
 
 const CouponModal: React.FC = () => {
-  const { showModal, setShowModal } = useContext(CouponContext);
+  const { showModal, setShowModal, selectedCoupon } = useContext(CouponContext);
 
   return (
     <>
@@ -13,13 +13,20 @@ const CouponModal: React.FC = () => {
         onClick={() => setShowModal(false)}
       ></div>
       <div
+        className={`fixed right-5 bg-white h-12 w-12 rounded-full duration-300 ease-in-out grid place-content-center overflow-hidden pr-1 pt-0.5 ${
+          showModal ? "bottom-[440px]" : "-bottom-12"
+        }`}
+      >
+        <img src="assets/icon/location.svg" alt="view location" />
+      </div>
+      <div
         className={`fixed flex flex-col justify-between duration-300 ease-in-out bottom-0 left-0 right-0 h-[420px] bg-white rounded-t-3xl px-6 font-noto py-6 ${
           showModal ? "translate-y-0" : "translate-y-[460px]"
         }`}
       >
         <div className="space-y-4">
           <div className="w-full text-center">
-            <h3 className="font-bold">THB 50 e-Coupon</h3>
+            <h3 className="font-bold">{selectedCoupon.name}</h3>
           </div>
           <div className="grid grid-cols-2">
             <div>
@@ -32,7 +39,7 @@ const CouponModal: React.FC = () => {
                   width={24}
                   alt="step tracking icon"
                 />
-                <p className="font-semibold">12,500 ก้าว</p>
+                <p className="font-semibold">{selectedCoupon.steps} ก้าว</p>
               </div>
             </div>
             <div>
@@ -43,7 +50,7 @@ const CouponModal: React.FC = () => {
             </div>
           </div>
           <div className="py-2 space-y-2">
-            <h4 className="font-bold">BBQ Plaza</h4>
+            <h4 className="font-bold">{selectedCoupon.merchant}</h4>
             <div className="text-sm text-gray-400 space-y-px">
               <p className="pb-4">
                 Buzzing, down-to-earth eatery specializing in street food
