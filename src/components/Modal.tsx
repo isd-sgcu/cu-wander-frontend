@@ -1,7 +1,13 @@
+import { useIonViewWillEnter } from "@ionic/react";
 import { useContext } from "react";
 import { ModalState } from "../contexts/ModalContext";
+import { showTabBar } from "../utils/tab";
 
 const Modal: React.FC = () => {
+  useIonViewWillEnter(() => {
+    showTabBar();
+  });
+
   const {
     showModal,
     setPromptModal,
@@ -50,9 +56,13 @@ const Modal: React.FC = () => {
             >
               {content.choices!.map((choice, idx) => {
                 return (
-                  <>
+                  <div
+                    key={idx}
+                    className={`w-full flex items-center justify-center ${
+                      content.type === "single" ? "h-10 mb-4" : "h-12"
+                    }`}
+                  >
                     <div
-                      key={idx}
                       className={`h-full ${
                         content.type === "multiple"
                           ? "w-full border-t-[2px]"
@@ -71,13 +81,10 @@ const Modal: React.FC = () => {
                       {choice.title}
                     </div>
                     {content.type !== "single" && idx % 2 === 0 ? (
-                      <div
-                        key={idx + 1}
-                        className="w-[2.5px] h-full bg-gray-200"
-                      ></div>
+                      <div className="w-[2.5px] h-full bg-gray-200"></div>
                     ) : null}
                     {}
-                  </>
+                  </div>
                 );
               })}
             </div>
