@@ -17,7 +17,7 @@ const Step: React.FC = () => {
     <IonPage>
       <IonContent fullscreen>
         <div className="h-full bg-black relative font-noto">
-          <div className="absolute bottom-0 left-0 right-0 h-[9.5rem] bg-white rounded-t-2xl flex flex-col justify-between p-5">
+          <div className="absolute -bottom-1 left-0 right-0 h-[9.5rem] bg-white rounded-t-2xl flex flex-col justify-between p-5">
             <div className="pt-2">
               <div className="flex justify-between items-end">
                 <div className="flex items-center space-x-1.5">

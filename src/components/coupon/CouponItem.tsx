@@ -1,5 +1,5 @@
 import { useContext } from "react";
-import { CouponContext } from "../../pages/Coupon";
+import { CouponState } from "../../contexts/CouponContext";
 
 interface CouponItemInterface {
   name: string;
@@ -12,7 +12,7 @@ const CouponItem: React.FC<CouponItemInterface> = ({
   merchant,
   steps,
 }) => {
-  const { setShowModal, setSelectedCoupon } = useContext(CouponContext);
+  const { setShowModal, setSelectedCoupon } = useContext(CouponState);
   return (
     <div
       className="flex justify-between items-center px-5 py-3 h-24 w-full"
