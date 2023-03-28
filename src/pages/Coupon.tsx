@@ -8,6 +8,13 @@ import mockCouponData from "../data/mockCouponData.json";
 import useFetch from "../utils/useFetch";
 import { CouponState } from "../contexts/CouponContext";
 
+interface CouponType {
+  name: string;
+  merchant: string;
+  steps: number;
+}
+
+
 const Coupon: React.FC = () => {
   useIonViewWillEnter(() => {
     showTabBar();
@@ -16,10 +23,9 @@ const Coupon: React.FC = () => {
   const { setShowModal, searchPhrase, setSearchPhrase } =
     useContext(CouponState);
 
-  const { data, error } = useFetch("/coupon");
-  const mockData = mockCouponData;
+    const { data: coupons, error } = useFetch<CouponType[]>("/coupon");
 
-  console.log(data);
+    console.log(coupons);
 
   return (
     <IonPage>
@@ -51,7 +57,7 @@ const Coupon: React.FC = () => {
 
         {/* page content */}
         <div className="flex flex-col items-center bg-white font-noto pt-12 pb-6 space-y-2">
-          {mockData.map((coupon, idx) => {
+          {coupons?.map((coupon, idx) => {
             if (searchPhrase !== "") {
               if (
                 !coupon.name.toLowerCase().includes(searchPhrase) &&

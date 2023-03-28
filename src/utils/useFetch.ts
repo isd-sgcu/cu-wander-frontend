@@ -16,8 +16,8 @@ function useFetch<DataType>(
   const [data, setData] = useState<DataType | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<null | string>(null);
-
-  const url = `${process.env.REACT_APP_BACKEND_URL}${path}`;
+  const REACT_APP_BACKEND_URL="https://pbeta.cuwander.app/v1"
+  const url = `${REACT_APP_BACKEND_URL}${path}`;
 
   useEffect(() => {
     setLoading(true); // set loading to true
