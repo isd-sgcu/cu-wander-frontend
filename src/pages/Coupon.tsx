@@ -5,28 +5,8 @@ import CouponModal from "../components/coupon/CouponModal";
 import Header from "../components/Header";
 import { showTabBar } from "../utils/tab";
 import mockCouponData from "../data/mockCouponData.json";
-<<<<<<< HEAD
 import useFetch from "../utils/useFetch";
-
-export const CouponContext = createContext({
-  showModal: false,
-  setShowModal: (showModal: boolean) => {},
-  searchPhrase: "",
-  setSearchPhrase: (searchPhrase: string) => {},
-  selectedCoupon: {
-    name: "",
-    merchant: "",
-    steps: 0,
-  },
-  setSelectedCoupon: (selectedCoupon: {
-    name: string;
-    merchant: string;
-    steps: number;
-  }) => {},
-});
-=======
 import { CouponState } from "../contexts/CouponContext";
->>>>>>> e6f344c5d3f18ebd8efa5b96158268464893d723
 
 const Coupon: React.FC = () => {
   useIonViewWillEnter(() => {
