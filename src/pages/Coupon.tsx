@@ -23,8 +23,8 @@ const Coupon: React.FC = () => {
   const { setShowModal, searchPhrase, setSearchPhrase } =
     useContext(CouponState);
 
-    const { data: coupons, error } = useFetch<CouponType[]>("/coupon");
-
+    const { data: coupons1, error } = useFetch<CouponType[]>("/coupon");
+    const coupons = mockCouponData;
     console.log(coupons);
 
   return (
