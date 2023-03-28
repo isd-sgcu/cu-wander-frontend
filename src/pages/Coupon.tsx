@@ -5,6 +5,7 @@ import CouponModal from "../components/coupon/CouponModal";
 import Header from "../components/Header";
 import { showTabBar } from "../utils/tab";
 import mockCouponData from "../data/mockCouponData.json";
+import useFetch from "../utils/useFetch";
 
 export const CouponContext = createContext({
   showModal: false,
@@ -42,7 +43,10 @@ const Coupon: React.FC = () => {
     steps: 0,
   });
 
+  const { data, error } = useFetch("/coupon");
   const mockData = mockCouponData;
+
+  console.log(data);
 
   return (
     <CouponContext.Provider
