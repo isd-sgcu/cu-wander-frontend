@@ -7,6 +7,7 @@ import {
 import { useState } from "react";
 import { useHistory } from "react-router-dom";
 import Input from "../components/Input";
+import { axiosFetch } from "../utils/fetch";
 import { hideTabBar } from "../utils/tab";
 
 const Signin: React.FC = () => {
@@ -17,33 +18,47 @@ const Signin: React.FC = () => {
   const history = useHistory();
 
   const [submitState, setSubmitState] = useState<
-    | ""
-    | "submitting"
-    | "submitted"
-    | "formNotComplete"
-    | "invalidStudentId"
-    | "passwordIncorrect"
+    "" | "submitting" | "submitted" | "formNotComplete" | "passwordIncorrect"
   >("");
 
-  const submitHandler = (e: React.FormEvent<HTMLFormElement>) => {
+  const submitHandler = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     const target = e.target as typeof e.target & {
-      studentid: { value: string };
+      username: { value: string };
       password: { value: string };
     };
 
     // check if form is complete
-    if (!target.studentid.value || !target.password.value) {
+    if (!target.username.value || !target.password.value) {
       setSubmitState("formNotComplete");
       return;
     }
 
-    // check if student id is valid (regex)
-
     // call api and redirect to home
-    setSubmitState("submitted");
-    history.push("/step");
+    const [data, err] = await axiosFetch("/auth/login", "POST", {
+      data: {
+        username: target.username.value,
+        password: target.password.value,
+      },
+    });
+
+    if (err) {
+      setSubmitState("passwordIncorrect");
+      return;
+    } else if (data) {
+      /*
+      {
+        "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJodHRwczovL3BiZXRhLmN1d2FuZGVyLmFwcCIsImV4cCI6MTY4MDAwMjgwOCwiaWF0IjoxNjc5OTk5MjA4LCJ1c2VyX2lkIjoiM2RmMjk1NGQtNWE1OS00ODY4LWE5NzQtMWNhZTdiYzUzNzdmIiwiYXV0aF9zZXNzaW9uX2lkIjoiMGViOTg1MTctYThhOS00Mjc1LWE5MDktNzhmNzk3YTM0YWViIn0.S1MZnZAtfuWlHv7tJzrx2FWjx8RxvUUy0xE3CGiU_zA",
+        "refresh_token": "aNwY1XPYMAzmXybBjp0RtFXbZrh/ZxB0UW/IE39Cvu6tpngdyyaRF0zJKlVrjXNWaHOPD6hHUDaM7eS9Nlnqyw==",
+        "expires_in": 3600,
+        "refresh_token_expires_in": 7776000
+      }
+      */
+      localStorage.setItem("access_token", data.access_token);
+      localStorage.setItem("refresh_token", data.refresh_token);
+      history.replace("/step");
+    }
   };
 
   return (
@@ -66,10 +81,10 @@ const Signin: React.FC = () => {
               <h1 className="font-bold text-xl">เข้าสู่ระบบ</h1>
               <div className="w-full space-y-5 py-4">
                 <Input
-                  name="studentid"
+                  name="username"
                   type="text"
-                  label="เลขประจำตัวนิสิต"
-                  placeholder="Ex. 6538068821"
+                  label="ชื่อผู้ใช้งาน"
+                  placeholder="Ex. username"
                   required
                   submitState={submitState}
                 />

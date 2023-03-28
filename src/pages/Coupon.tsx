@@ -19,8 +19,6 @@ const Coupon: React.FC = () => {
   const { data, error } = useFetch("/coupon");
   const mockData = mockCouponData;
 
-  console.log(data);
-
   return (
     <IonPage>
       <div
