@@ -3,14 +3,21 @@ import axios, { AxiosRequestConfig } from "axios";
 
 type RequestMethod = "GET" | "POST" | "PATCH" | "DELETE";
 
-function useFetch(
-  url: string,
+function useFetch<DataType>(
+  path: string,
   method: RequestMethod = "GET",
   config?: AxiosRequestConfig
-) {
-  const [data, setData] = useState<unknown>(null);
+): {
+  data: DataType | null;
+  loading: boolean;
+  error: null | string;
+  refetch: () => void;
+} {
+  const [data, setData] = useState<DataType | null>(null);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<null | string>(null);
+
+  const url = `${process.env.REACT_APP_BACKEND_URL}${path}`;
 
   useEffect(() => {
     setLoading(true); // set loading to true
@@ -19,10 +26,10 @@ function useFetch(
       url,
       ...config,
     })
-      .then((response) => {
+      .then((response: any) => {
         setData(response.data);
       })
-      .catch((err) => {
+      .catch((err: any) => {
         setError(err);
       })
       .finally(() => {
