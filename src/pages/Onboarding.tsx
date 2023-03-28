@@ -16,13 +16,15 @@ const Onboarding: React.FC = () => {
     <IonPage>
       <IonHeader></IonHeader>
       <IonContent fullscreen>
-        <div className="h-screen flex flex-col justify-center items-center bg-[#EEFBF6] space-y-32 font-noto">
+        <div className="h-screen flex flex-col justify-center items-center bg-[#ffffff] space-y-32 font-noto">
           <div className="flex flex-col items-center space-y-6">
-            <div className="bg-green-500 rounded-full h-52 w-52 overflow-hidden grid place-content-center text-white">
-              LOGO
-            </div>
+            <img src="assets/icon/sgcu_logo.svg" alt="sgcu" />
             <div>
-              <h1 className="text-black font-bold text-lg">ชื่อแอพ</h1>
+              <h1 className="text-[#808080] font-semibold text-sm text-center">
+                ฝ่ายพัฒนาระบบสารสนเทศ
+                <br />
+                องค์การบริหารสโมสรนิสิตจุฬาลงกรณ์มหาวิทยาลัย
+              </h1>
             </div>
           </div>
           <div className="flex flex-col items-center space-y-4">

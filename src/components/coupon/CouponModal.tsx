@@ -1,8 +1,11 @@
 import { useContext } from "react";
-import { CouponContext } from "../../pages/Coupon";
+import { CouponState } from "../../contexts/CouponContext";
+import { ModalState } from "../../contexts/ModalContext";
 
 const CouponModal: React.FC = () => {
-  const { showModal, setShowModal, selectedCoupon } = useContext(CouponContext);
+  const { showModal, setShowModal, selectedCoupon } = useContext(CouponState);
+
+  const { showModalHandler, setPromptModal } = useContext(ModalState);
 
   return (
     <>
@@ -14,7 +17,7 @@ const CouponModal: React.FC = () => {
       ></div>
       <div
         className={`fixed right-5 bg-white h-12 w-12 rounded-full duration-300 ease-in-out grid place-content-center overflow-hidden pr-1 pt-0.5 ${
-          showModal ? "bottom-[440px]" : "-bottom-12"
+          showModal ? "bottom-[440px]" : "-bottom-16"
         }`}
       >
         <img src="assets/icon/location.svg" alt="view location" />
@@ -39,7 +42,9 @@ const CouponModal: React.FC = () => {
                   width={24}
                   alt="step tracking icon"
                 />
-                <p className="font-semibold">{selectedCoupon.steps} ก้าว</p>
+                <p className="font-semibold">
+                  {selectedCoupon.steps.toLocaleString("en-US")} ก้าว
+                </p>
               </div>
             </div>
             <div>
@@ -72,7 +77,56 @@ const CouponModal: React.FC = () => {
           </div>
         </div>
         <div className="flex justify-center">
-          <div className="px-12 py-2.5 bg-green-500 text-white font-semibold rounded-lg">
+          <div
+            className="px-12 py-2.5 bg-green-500 text-white font-semibold rounded-lg"
+            onClick={() => {
+              showModalHandler(
+                // {
+                //   title: "โปรดยืนยันการแลกคูปอง",
+                //   subtitle: "เมื่อยืนยันแล้วคูปองของคุณจะมีอายุการใช้งาน",
+                //   type: "multiple",
+                //   choices: [
+                //     {
+                //       title: "ยกเลิก",
+                //       primary: false,
+                //       action() {
+                //         setPromptModal(false);
+                //       },
+                //     },
+                //     {
+                //       title: "ยืนยัน",
+                //       primary: true,
+                //       action() {
+                //         setPromptModal(false);
+                //       },
+                //     },
+                //   ],
+                // }
+
+                // {
+                //   title: "โปรดยืนยันการแลกคูปอง",
+                //   subtitle: "เมื่อยืนยันแล้วคูปองของคุณจะมีอายุการใช้งาน",
+                //   type: "default",
+                //   body: <div>fasd</div>,
+                // }
+
+                {
+                  title: "คะแนนไม่พอ",
+                  subtitle: "แต้มนับก้าวของคุณไม่เพียงพอในการแลกคูปองนี้",
+                  type: "single",
+                  choices: [
+                    {
+                      title: "เสร็จสิ้น",
+                      primary: false,
+                      action() {
+                        setPromptModal(false);
+                      },
+                    },
+                  ],
+                }
+              );
+            }}
+          >
             แลกคูปอง
           </div>
         </div>
