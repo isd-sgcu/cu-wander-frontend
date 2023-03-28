@@ -1,25 +1,30 @@
 import React, { createContext, ReactNode, useContext, useState } from "react";
+import { useHistory } from "react-router";
+import { axiosFetch } from "../../../utils/fetch";
 
 // Define the interface for the authentication credentials
 interface AuthCredentials {
-  email: string;
+  username: string;
   password: string;
 }
 
 // Define the interface for the user data
-interface UserData {
-  id: string;
+export interface UserData {
   email: string;
-  firstName: string;
-  lastName: string;
+  firstname: string;
+  lastname: string;
+  password: string;
+  phone: string;
+  title: string;
+  username: string;
 }
 
 // Define the interface for the authentication context
 interface AuthContextValue {
   loggedIn: boolean;
   user?: UserData;
-  logIn: (authCred: AuthCredentials) => Promise<void>;
-  signUp: (authCred: AuthCredentials) => Promise<void>;
+  logIn: (authCred: AuthCredentials, redirect: string) => Promise<void>;
+  signUp: (authCred: AuthCredentials, redirect: string) => Promise<void>;
   refetch?: () => Promise<void>;
 }
 
@@ -35,62 +40,80 @@ const AuthProvider = ({ children }: { children: ReactNode | ReactNode[] }) => {
   // Define the state variables
   const [loggedIn, setLoggedIn] = useState(false);
   const [user, setUser] = useState<UserData>();
+  const history = useHistory();
 
-  // Define the mock API functions
-  const mockApiCall = (authCred: AuthCredentials): Promise<UserData> => {
-    return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        // Check the email and password
-        if (
-          authCred.email === "test@example.com" &&
-          authCred.password === "password"
-        ) {
-          // Return the user data
-          resolve({
-            id: "1",
-            email: "test@example.com",
-            firstName: "John",
-            lastName: "Doe",
-          });
-        } else {
-          // Reject the promise
-          reject(new Error("Invalid email or password"));
-        }
-      }, 1000);
-    });
+  const getUserData = async (): Promise<UserData | null> => {
+    const [data, err] = await axiosFetch("/auth/me", "GET");
+
+    if (err) {
+      console.error(err);
+      localStorage.setItem("access_token", "");
+      localStorage.setItem("refresh_token", "");
+      history.replace("/signin");
+      return null;
+    } else {
+      return data;
+    }
   };
 
   // Define the logIn function
-  const logIn = async (authCred: AuthCredentials): Promise<void> => {
-    // Call the mock API function
-    const userData = await mockApiCall(authCred);
+  const logIn = async (
+    authCred: AuthCredentials,
+    redirect: string
+  ): Promise<void> => {
+    // Call the API function
 
-    // Update the state variables
-    setLoggedIn(true);
-    setUser(userData);
+    const [credData, err] = await axiosFetch("/auth/login", "POST", {
+      data: {
+        username: authCred.username,
+        password: authCred.password,
+      },
+    });
+
+    if (err) {
+      console.error(err);
+      return;
+    } else {
+      localStorage.setItem("access_token", credData.access_token);
+      localStorage.setItem("refresh_token", credData.refresh_token);
+
+      const userData = await getUserData();
+
+      if (!userData) {
+        return;
+      }
+
+      // Update the state variables
+      setLoggedIn(true);
+
+      setUser(userData);
+      history.push(redirect);
+    }
   };
 
   // Define the signUp function
-  const signUp = async (authCred: AuthCredentials): Promise<void> => {
+  const signUp = async (
+    authCred: AuthCredentials,
+    redirect: string
+  ): Promise<void> => {
     // Call the mock API function
-    const userData = await mockApiCall(authCred);
 
     // Update the state variables
     setLoggedIn(true);
-    setUser(userData);
+    // setUser(userData);
   };
 
   // Define the refetch function
   const refetch = async (): Promise<void> => {
     // Call the mock API function
-    const userData = await mockApiCall({
-      email: user?.email || "",
-      password: "",
-    });
+    // const userData = await mockApiCall({
+    //   username: user?.username || "",
+    //   password: "",
+    // });
 
     // Update the state variables
     setLoggedIn(true);
-    setUser(userData);
+    // setUser(userData);
   };
 
   // Return the authentication provider with the authentication context value

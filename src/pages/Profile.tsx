@@ -1,12 +1,12 @@
 import { IonContent, IonPage } from "@ionic/react";
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import { useHistory } from "react-router";
 import Header from "../components/Header";
 import { ModalState } from "../contexts/ModalContext";
+import useFetch from "../utils/useFetch";
 
 const Profile: React.FC = () => {
   const { showModalHandler, setPromptModal } = useContext(ModalState);
-
   const history = useHistory();
 
   return (
@@ -14,6 +14,7 @@ const Profile: React.FC = () => {
       <Header title="ผู้ใช้งาน" />
       <IonContent fullscreen>
         <div className="h-full font-noto p-5 flex flex-col justify-between">
+          {/* <div>{userData?.firstname}</div> */}
           <div></div>
           <div className="flex justify-between space-x-5">
             <div
@@ -46,6 +47,9 @@ const Profile: React.FC = () => {
                       title: "ยืนยัน",
                       primary: true,
                       action() {
+                        // log out
+                        localStorage.setItem("refresh_token", "");
+                        localStorage.setItem("access_token", "");
                         history.push("/onboarding");
                         setPromptModal(false);
                       },
