@@ -7,6 +7,7 @@ import {
 import React, { useRef, useState } from "react";
 import { useHistory } from "react-router-dom";
 import Input from "../components/Input";
+import { useAuth } from "../contexts/AuthContext";
 import { hideTabBar } from "../utils/tab";
 
 const Signup: React.FC = () => {
@@ -27,7 +28,9 @@ const Signup: React.FC = () => {
     | "invalidStudentId"
   >("");
 
-  const submitHandler = (e: React.FormEvent<HTMLFormElement>) => {
+  const { signUp } = useAuth();
+
+  const submitHandler = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     const target = e.target as typeof e.target & {
@@ -35,12 +38,14 @@ const Signup: React.FC = () => {
       lastname: { value: string };
       studentid: { value: string };
       faculty: { value: string };
-      year: { value: string };
+      year: { value: number };
       personalDisease: { value: string };
       heartRate: { value: string };
       averageStep: { value: string };
       password: { value: string };
       confirmPassword: { value: string };
+      email: { value: string };
+      title: { value: string };
     };
 
     // check if form is complete
@@ -66,6 +71,23 @@ const Signup: React.FC = () => {
     }
 
     // call api and redirect to home
+    try {
+      await signUp(
+        {
+          firstname: target.firstname.value,
+          lastname: target.lastname.value,
+          faculty: target.faculty.value, // Add this input
+          email: target.email.value, // Add this input
+          password: target.password.value,
+          year: target.year.value,
+          title: target.title.value, // Add this input (this is display name)
+        },
+        "/step"
+      );
+    } catch (e: unknown) {
+      setSubmitState("invalidStudentId");
+      return;
+    }
     setSubmitState("submitted");
     history.push("/step");
   };
