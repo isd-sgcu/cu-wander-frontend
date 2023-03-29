@@ -24,7 +24,7 @@ interface AuthContextValue {
   loggedIn: boolean;
   user?: UserData;
   logIn: (authCred: AuthCredentials, redirect: string) => Promise<void>;
-  signUp: (authCred: AuthCredentials, redirect: string) => Promise<void>;
+  signUp: (authCred: UserData, redirect: string) => Promise<void>;
   refetch?: () => Promise<void>;
 }
 
@@ -93,14 +93,24 @@ const AuthProvider = ({ children }: { children: ReactNode | ReactNode[] }) => {
 
   // Define the signUp function
   const signUp = async (
-    authCred: AuthCredentials,
+    userData: UserData,
     redirect: string
   ): Promise<void> => {
     // Call the mock API function
+    const [credData, err] = await axiosFetch("/auth/register", "POST", {
+      data: userData,
+    });
+    if (err) {
+      console.log(err);
+      return;
+    }
+    localStorage.setItem("access_token", credData.access_token);
+    localStorage.setItem("refresh_token", credData.refresh_token);
 
     // Update the state variables
     setLoggedIn(true);
-    // setUser(userData);
+    setUser(userData);
+    history.push(redirect);
   };
 
   // Define the refetch function
@@ -111,9 +121,14 @@ const AuthProvider = ({ children }: { children: ReactNode | ReactNode[] }) => {
     //   password: "",
     // });
 
+    const [userData, err] = await axiosFetch("/auth/me", "GET");
+    if (err) {
+      console.log(err);
+      return;
+    }
     // Update the state variables
     setLoggedIn(true);
-    // setUser(userData);
+    setUser(userData);
   };
 
   // Return the authentication provider with the authentication context value
@@ -127,4 +142,5 @@ const AuthProvider = ({ children }: { children: ReactNode | ReactNode[] }) => {
 // Define a custom hook to use the authentication context
 const useAuth = (): AuthContextValue => useContext(AuthContext);
 
-export { AuthProvider, useAuth };
+export { useAuth };
+export default AuthProvider;
