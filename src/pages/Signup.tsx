@@ -36,16 +36,16 @@ const Signup: React.FC = () => {
     const target = e.target as typeof e.target & {
       firstname: { value: string };
       lastname: { value: string };
-      studentid: { value: string };
+      studentid: { value: number };
       faculty: { value: string };
       year: { value: number };
       personalDisease: { value: string };
-      heartRate: { value: string };
-      averageStep: { value: string };
+      heartRate: { value: number };
+      averageStep: { value: number };
       password: { value: string };
       confirmPassword: { value: string };
       email: { value: string };
-      title: { value: string };
+      displayName: { value: string };
     };
 
     // check if form is complete
@@ -80,7 +80,11 @@ const Signup: React.FC = () => {
           email: target.email.value, // Add this input
           password: target.password.value,
           year: target.year.value,
-          title: target.title.value, // Add this input (this is display name)
+          displayName: target.displayName.value, // Add this input (this is display name)
+          averageStep: target.averageStep.value,
+          studentId: target.studentid.value,
+          personalDisease: target.personalDisease.value,
+          heartRate: target.heartRate.value,
         },
         "/step"
       );
