@@ -1,6 +1,7 @@
 import { IonContent, IonPage, useIonViewWillEnter } from "@ionic/react";
 import { showTabBar } from "../utils/tab";
 import useFetch from "../utils/useFetch";
+import { PedometerService } from 'background-pedometer'
 
 const Step: React.FC = () => {
   useIonViewWillEnter(() => {
@@ -12,6 +13,17 @@ const Step: React.FC = () => {
   const totalDistances = 8000; // count of distances in meters
   const totalTime = 2400; // count of time in seconds
   const totalCalories = 500; // count of calories
+
+  PedometerService.requestPermission().then(res => {
+    if(res.value) {
+      PedometerService.enable({
+        // TODO: Get token from localstorage / cookie / etc.
+        token: "token",
+        // TODO: Read from env, etc.
+        wsAddress: "localhost:3003",
+      });
+    }
+  })
 
   return (
     <IonPage>
