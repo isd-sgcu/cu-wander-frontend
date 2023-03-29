@@ -14,9 +14,9 @@ export interface UserData {
   firstname: string;
   lastname: string;
   password: string;
-  phone: string;
   title: string;
-  username: string;
+  faculty: string;
+  year: number;
 }
 
 // Define the interface for the authentication context
