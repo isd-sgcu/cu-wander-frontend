@@ -1,11 +1,9 @@
 import { useEffect, useState } from "react";
-import axios, { AxiosRequestConfig } from "axios";
-
-type RequestMethod = "GET" | "POST" | "PATCH" | "DELETE";
+import { AxiosRequestConfig } from "axios";
+import { httpGet } from "./fetch";
 
 function useFetch<DataType>(
   path: string,
-  method: RequestMethod = "GET",
   config?: AxiosRequestConfig
 ): {
   data: DataType | null;
@@ -17,15 +15,9 @@ function useFetch<DataType>(
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<null | string>(null);
 
-  const url = `${process.env.REACT_APP_BACKEND_URL}${path}`;
-
   useEffect(() => {
     setLoading(true); // set loading to true
-    axios({
-      method,
-      url,
-      ...config,
-    })
+    httpGet(path, { ...config })
       .then((response: any) => {
         setData(response.data);
       })
@@ -35,16 +27,12 @@ function useFetch<DataType>(
       .finally(() => {
         setLoading(false);
       });
-  }, [url, method, config]);
+  }, [path, config]);
 
   // Function to call when button is clicked
   const refetch = () => {
     setLoading(true); // set loading to true
-    axios({
-      method,
-      url,
-      ...config,
-    })
+    httpGet(path, { ...config })
       .then((response) => {
         setData(response.data);
       })

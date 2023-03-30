@@ -10,3 +10,11 @@ ion-toolbar {
 ion-button {
   --background: transparent;
 }
+
+ion-content {
+  --background: transparent;
+}
+
+body {
+  background: transparent;
+}
