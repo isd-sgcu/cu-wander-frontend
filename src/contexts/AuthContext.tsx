@@ -160,6 +160,24 @@ const authClient = axios.create({
   timeout: 10000,
 });
 
+authClient.interceptors.response.use(
+  (response) => {
+    return response;
+  },
+  async (error) => {
+    const originalRequest = error.config;
+    if (error.response.status === 401 && !originalRequest._retry) {
+      originalRequest._retry = true;
+      const access_token = await getAccessToken();
+      if (access_token) {
+        originalRequest.headers["Authorization"] = "Bearer " + access_token;
+        return authClient(originalRequest);
+      }
+    }
+    return Promise.reject(error);
+  }
+);
+
 const renewAccessToken = async (refreshToken: string) => {
   let res: AxiosResponse;
   try {
