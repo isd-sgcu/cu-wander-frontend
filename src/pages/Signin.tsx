@@ -8,7 +8,6 @@ import { useState } from "react";
 import { useHistory } from "react-router-dom";
 import Input from "../components/Input";
 import { useAuth } from "../contexts/AuthContext";
-import { axiosFetch } from "../utils/fetch";
 import { hideTabBar } from "../utils/tab";
 
 const Signin: React.FC = () => {

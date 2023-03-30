@@ -1,6 +1,7 @@
+import axios, { AxiosResponse } from "axios";
 import React, { createContext, ReactNode, useContext, useState } from "react";
 import { useHistory } from "react-router";
-import { axiosFetch } from "../utils/fetch";
+import { httpGet, httpPost } from "../utils/fetch";
 
 // Define the interface for the authentication credentials
 interface AuthCredentials {
@@ -29,7 +30,6 @@ interface AuthContextValue {
   user?: UserData;
   logIn: (authCred: AuthCredentials, redirect: string) => Promise<void>;
   signUp: (authCred: UserData, redirect: string) => Promise<void>;
-  refetch?: () => Promise<void>;
 }
 
 // Create the authentication context
@@ -47,16 +47,15 @@ const AuthProvider = ({ children }: { children: ReactNode | ReactNode[] }) => {
   const history = useHistory();
 
   const getUserData = async (): Promise<UserData | null> => {
-    const [data, err] = await axiosFetch("/auth/me", "GET");
+    try {
+      const { data: userData } = await httpGet("/auth/me");
 
-    if (err) {
+      return userData;
+    } catch (err) {
       console.error(err);
-      localStorage.setItem("access_token", "");
-      localStorage.setItem("refresh_token", "");
       history.replace("/signin");
+
       return null;
-    } else {
-      return data;
     }
   };
 
@@ -65,21 +64,20 @@ const AuthProvider = ({ children }: { children: ReactNode | ReactNode[] }) => {
     authCred: AuthCredentials,
     redirect: string
   ): Promise<void> => {
-    // Call the API function
-
-    const [credData, err] = await axiosFetch("/auth/login", "POST", {
-      data: {
+    try {
+      const { data: credData } = await httpPost("/auth/login", {
         username: authCred.username,
         password: authCred.password,
-      },
-    });
+      });
 
-    if (err) {
-      console.error(err);
-      return;
-    } else {
-      localStorage.setItem("access_token", credData.access_token);
-      localStorage.setItem("refresh_token", credData.refresh_token);
+      localStorage.setItem(
+        "token",
+        JSON.stringify({
+          access_token: credData.access_token,
+          refresh_token: credData.refresh_token,
+          expries_in: credData.expires_in,
+        })
+      );
 
       const userData = await getUserData();
 
@@ -92,6 +90,14 @@ const AuthProvider = ({ children }: { children: ReactNode | ReactNode[] }) => {
 
       setUser(userData);
       history.push(redirect);
+
+      // Update the state variables
+      setLoggedIn(true);
+      setUser(userData);
+      history.push(redirect);
+    } catch (err) {
+      console.log(err);
+      return;
     }
   };
 
@@ -100,44 +106,31 @@ const AuthProvider = ({ children }: { children: ReactNode | ReactNode[] }) => {
     userData: UserData,
     redirect: string
   ): Promise<void> => {
-    // Call the mock API function
-    const [credData, err] = await axiosFetch("/auth/register", "POST", {
-      data: userData,
-    });
-    if (err) {
+    try {
+      const { data: credData } = await httpPost("/auth/register", userData);
+
+      localStorage.setItem(
+        "token",
+        JSON.stringify({
+          access_token: credData.access_token,
+          refresh_token: credData.refresh_token,
+          expries_in: credData.expires_in,
+        })
+      );
+
+      // Update the state variables
+      setLoggedIn(true);
+      setUser(userData);
+      history.push(redirect);
+    } catch (err) {
       console.log(err);
       return;
     }
-    localStorage.setItem("access_token", credData.access_token);
-    localStorage.setItem("refresh_token", credData.refresh_token);
-
-    // Update the state variables
-    setLoggedIn(true);
-    setUser(userData);
-    history.push(redirect);
-  };
-
-  // Define the refetch function
-  const refetch = async (): Promise<void> => {
-    // Call the mock API function
-    // const userData = await mockApiCall({
-    //   username: user?.username || "",
-    //   password: "",
-    // });
-
-    const [userData, err] = await axiosFetch("/auth/me", "GET");
-    if (err) {
-      console.log(err);
-      return;
-    }
-    // Update the state variables
-    setLoggedIn(true);
-    setUser(userData);
   };
 
   // Return the authentication provider with the authentication context value
   return (
-    <AuthContext.Provider value={{ loggedIn, user, logIn, signUp, refetch }}>
+    <AuthContext.Provider value={{ loggedIn, user, logIn, signUp }}>
       {children}
     </AuthContext.Provider>
   );
@@ -145,6 +138,55 @@ const AuthProvider = ({ children }: { children: ReactNode | ReactNode[] }) => {
 
 // Define a custom hook to use the authentication context
 const useAuth = (): AuthContextValue => useContext(AuthContext);
+
+const authClient = axios.create({
+  baseURL: process.env.REACT_APP_BACKEND_URL,
+  timeout: 10000,
+});
+
+const renewAccessToken = async (refreshToken: string) => {
+  let res: AxiosResponse;
+  try {
+    res = await authClient.post("/auth/refreshToken", {
+      refresh_token: refreshToken,
+    });
+  } catch (err) {
+    return null;
+  }
+
+  const expries_in = new Date();
+  expries_in.setSeconds(expries_in.getSeconds() + res.data.expries_in);
+  localStorage.setItem(
+    "token",
+    JSON.stringify({
+      access_token: res.data.access_token,
+      refresh_token: res.data.refresh_token,
+      expries_in,
+    })
+  );
+  return res.data.accessToken;
+};
+
+export const getAccessToken = async () => {
+  const token = localStorage.getItem("token");
+  if (!token) {
+    return null;
+  }
+
+  const { access_token, refresh_token, expries_in } = JSON.parse(token);
+
+  // Renew access token if expired
+  const now = new Date();
+  const expiry = new Date(expries_in);
+  if (now > expiry) {
+    const newAccessToken = await renewAccessToken(refresh_token);
+    if (!newAccessToken) {
+      return null;
+    }
+    return newAccessToken;
+  }
+  return access_token;
+};
 
 export { useAuth };
 export default AuthProvider;
