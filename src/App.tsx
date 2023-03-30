@@ -110,14 +110,14 @@ const App: React.FC = () => (
                   <img src="assets/icon/ticket.svg" alt="คูปอง" />
                   <IonLabel className="text-black">คูปอง</IonLabel>
                 </IonTabButton>
-                <IonTabButton
+                {/* <IonTabButton
                   className="bg-green-50"
                   tab="leaderboard"
                   href="/leaderboard"
                 >
                   <img src="assets/icon/star.svg" alt="ลีดเดอร์บอร์ด" />
                   <IonLabel className="text-black">ลีดเดอร์บอร์ด</IonLabel>
-                </IonTabButton>
+                </IonTabButton> */}
                 <IonTabButton
                   className="bg-green-50"
                   tab="profile"
