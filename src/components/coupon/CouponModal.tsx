@@ -1,11 +1,24 @@
 import { useContext } from "react";
 import { CouponState } from "../../contexts/CouponContext";
 import { ModalState } from "../../contexts/ModalContext";
+import useFetch from "../../utils/useFetch";
+
+interface ShopType {
+  address: string;
+  description: string;
+  name: string;
+  office_hour: string;
+  phone_number: string;
+}
 
 const CouponModal: React.FC = () => {
   const { showModal, setShowModal, selectedCoupon } = useContext(CouponState);
 
   const { showModalHandler, setPromptModal } = useContext(ModalState);
+
+  const steps = 10;
+
+  const { data:shops , error } = useFetch<ShopType>("/shop")
 
   return (
     <>
@@ -58,20 +71,19 @@ const CouponModal: React.FC = () => {
             <h4 className="font-bold">{selectedCoupon.merchant}</h4>
             <div className="text-sm text-gray-400 space-y-px">
               <p className="pb-4">
-                Buzzing, down-to-earth eatery specializing in street food
-                snacks, tom yam & seafood dishes.
+                {shops?.description}
               </p>
               <p>
-                <span className="font-bold text-black">ที่อยู่: </span>113 ซอย
-                จรัสเมือง Rong Muang, Pathum Wan, Bangkok 10330
+                <span className="font-bold text-black">ที่อยู่: </span>
+                {shops?.address}
               </p>
               <p>
                 <span className="font-bold text-black">เวลาทำการ: </span>
-                Opens soon ⋅ 4:30 PM
+                {shops?.office_hour}
               </p>
               <p>
                 <span className="font-bold text-black">โทรศัพท์: </span>
-                064 118 5888
+                {shops?.phone_number}
               </p>
             </div>
           </div>
@@ -80,28 +92,48 @@ const CouponModal: React.FC = () => {
           <div
             className="px-12 py-2.5 bg-green-500 text-white font-semibold rounded-lg"
             onClick={() => {
-              showModalHandler(
-                // {
-                //   title: "โปรดยืนยันการแลกคูปอง",
-                //   subtitle: "เมื่อยืนยันแล้วคูปองของคุณจะมีอายุการใช้งาน",
-                //   type: "multiple",
-                //   choices: [
-                //     {
-                //       title: "ยกเลิก",
-                //       primary: false,
-                //       action() {
-                //         setPromptModal(false);
-                //       },
-                //     },
-                //     {
-                //       title: "ยืนยัน",
-                //       primary: true,
-                //       action() {
-                //         setPromptModal(false);
-                //       },
-                //     },
-                //   ],
-                // }
+              if(steps>=selectedCoupon.steps){
+                showModalHandler(
+                  {
+                    title: "โปรดยืนยันการแลกคูปอง",
+                    subtitle: "เมื่อยืนยันแล้วคูปองของคุณจะมีอายุการใช้งาน",
+                    type: "multiple",
+                    choices: [
+                      {
+                        title: "ยกเลิก",
+                        primary: false,
+                        action() {
+                          setPromptModal(false);
+                        },
+                      },
+                      {
+                        title: "ยืนยัน",
+                        primary: true,
+                        action() {
+                          setPromptModal(false);
+                        },
+                      },
+                    ],
+                  }
+                )
+              } else {
+                showModalHandler(
+                  {
+                    title: "คะแนนไม่พอ",
+                    subtitle: "แต้มนับก้าวของคุณไม่เพียงพอในการแลกคูปองนี้",
+                    type: "single",
+                    choices: [
+                      {
+                        title: "เสร็จสิ้น",
+                        primary: false,
+                        action() {
+                          setPromptModal(false);
+                        },
+                      },
+                    ],
+                  }
+                );
+              }
 
                 // {
                 //   title: "โปรดยืนยันการแลกคูปอง",
@@ -110,21 +142,7 @@ const CouponModal: React.FC = () => {
                 //   body: <div>fasd</div>,
                 // }
 
-                {
-                  title: "คะแนนไม่พอ",
-                  subtitle: "แต้มนับก้าวของคุณไม่เพียงพอในการแลกคูปองนี้",
-                  type: "single",
-                  choices: [
-                    {
-                      title: "เสร็จสิ้น",
-                      primary: false,
-                      action() {
-                        setPromptModal(false);
-                      },
-                    },
-                  ],
-                }
-              );
+                
             }}
           >
             แลกคูปอง
