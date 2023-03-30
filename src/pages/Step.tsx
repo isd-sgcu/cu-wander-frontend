@@ -1,9 +1,9 @@
+import { GoogleMap } from "@capacitor/google-maps";
+import { Geolocation } from "@capacitor/geolocation";
+import { useRef, useState } from "react";
 import { IonContent, IonPage, useIonViewWillEnter } from "@ionic/react";
 import { showTabBar } from "../utils/tab";
 import useFetch from "../utils/useFetch";
-
-import { GoogleMap } from "@capacitor/google-maps";
-import { useRef, useState } from "react";
 
 const Step: React.FC = () => {
   // data scheme
@@ -40,10 +40,19 @@ const Step: React.FC = () => {
     });
   };
 
+  // geoloaction
+  const printCurrentPosition = async () => {
+    const coordinates = await Geolocation.getCurrentPosition();
+
+    console.log("Current position:", coordinates);
+  };
+
   useIonViewWillEnter(() => {
     showTabBar();
     createMap();
   });
+
+  printCurrentPosition();
 
   return (
     <IonPage>

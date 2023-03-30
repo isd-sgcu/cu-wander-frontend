@@ -18,7 +18,3 @@ ion-content {
 body {
   background: transparent;
 }
-
-#map {
-  z-index: 40;
-}
