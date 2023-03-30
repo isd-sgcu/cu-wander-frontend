@@ -12,7 +12,7 @@ const Profile: React.FC = () => {
   return (
     <IonPage>
       <Header title="ผู้ใช้งาน" />
-      <IonContent fullscreen>
+      <IonContent fullscreen className="bg-white">
         <div className="h-full font-noto p-5 flex flex-col justify-between">
           <div className="flex flex-col gap-4">
             <p className="font-bold text-2xl">
