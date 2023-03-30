@@ -53,11 +53,11 @@ setupIonicReact();
 const App: React.FC = () => (
   <IonApp>
     {/* provide Context to the app */}
-    <AuthProvider>
-      <CouponContext>
-        <ModalContext>
-          {/* router */}
-          <IonReactRouter>
+    <CouponContext>
+      <ModalContext>
+        {/* router */}
+        <IonReactRouter>
+          <AuthProvider>
             <IonTabs>
               {/* page's router */}
               <IonRouterOutlet>
@@ -128,10 +128,10 @@ const App: React.FC = () => (
                 </IonTabButton>
               </IonTabBar>
             </IonTabs>
-          </IonReactRouter>
-        </ModalContext>
-      </CouponContext>
-    </AuthProvider>
+          </AuthProvider>
+        </IonReactRouter>
+      </ModalContext>
+    </CouponContext>
   </IonApp>
 );
 
