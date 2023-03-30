@@ -26,23 +26,24 @@ export interface UserData {
 
 // Define the interface for the authentication context
 interface AuthContextValue {
-  loggedIn: boolean;
   user?: UserData;
   logIn: (authCred: AuthCredentials, redirect: string) => Promise<void>;
   signUp: (authCred: UserData, redirect: string) => Promise<void>;
+  signOut: () => Promise<void>;
+  isLoggedIn: () => Promise<boolean>;
 }
 
 // Create the authentication context
 const AuthContext = createContext<AuthContextValue>({
-  loggedIn: false,
   logIn: async () => {},
   signUp: async () => {},
+  signOut: async () => {},
+  isLoggedIn: async () => false,
 });
 
 // Define the authentication provider
 const AuthProvider = ({ children }: { children: ReactNode | ReactNode[] }) => {
   // Define the state variables
-  const [loggedIn, setLoggedIn] = useState(false);
   const [user, setUser] = useState<UserData>();
   const history = useHistory();
 
@@ -85,14 +86,9 @@ const AuthProvider = ({ children }: { children: ReactNode | ReactNode[] }) => {
         return;
       }
 
-      // Update the state variables
-      setLoggedIn(true);
-
       setUser(userData);
       history.push(redirect);
 
-      // Update the state variables
-      setLoggedIn(true);
       setUser(userData);
       history.push(redirect);
     } catch (err) {
@@ -118,8 +114,6 @@ const AuthProvider = ({ children }: { children: ReactNode | ReactNode[] }) => {
         })
       );
 
-      // Update the state variables
-      setLoggedIn(true);
       setUser(userData);
       history.push(redirect);
     } catch (err) {
@@ -128,9 +122,32 @@ const AuthProvider = ({ children }: { children: ReactNode | ReactNode[] }) => {
     }
   };
 
+  const signOut = async () => {
+    localStorage.removeItem("token");
+    setUser(undefined);
+    history.push("/onboarding");
+  };
+
+  const isLoggedIn = async () => {
+    const { access_token } = JSON.parse(localStorage.getItem("token") || "{}");
+
+    if (access_token) {
+      try {
+        const userData = await getUserData();
+
+        if (userData) {
+          return true;
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    }
+    return false;
+  };
+
   // Return the authentication provider with the authentication context value
   return (
-    <AuthContext.Provider value={{ loggedIn, user, logIn, signUp }}>
+    <AuthContext.Provider value={{ user, logIn, signUp, signOut, isLoggedIn }}>
       {children}
     </AuthContext.Provider>
   );

@@ -85,9 +85,9 @@ const Signin: React.FC = () => {
                   submitState={submitState}
                 />
               </div>
-              <div className="flex w-full justify-end">
+              {/* <div className="flex w-full justify-end">
                 <span className="underline">ลืมรหัสผ่าน?</span>
-              </div>
+              </div> */}
             </div>
           </div>
           <div className="relative flex justify-center w-full px-10 pt-10 pb-14">

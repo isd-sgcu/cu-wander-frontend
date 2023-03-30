@@ -45,6 +45,8 @@ import Profile from "./pages/Profile";
 import CouponContext from "./contexts/CouponContext";
 import ModalContext from "./contexts/ModalContext";
 import AuthProvider from "./contexts/AuthContext";
+import PublicRoute from "./lib/auth/guard/PublicRoute";
+import PrivateRoute from "./lib/auth/guard/PrivateRoute";
 
 setupIonicReact();
 
@@ -60,29 +62,29 @@ const App: React.FC = () => (
               {/* page's router */}
               <IonRouterOutlet>
                 {/* onboarding */}
-                <Route exact path="/onboarding">
+                <PublicRoute exact path="/onboarding">
                   <Onboarding />
-                </Route>
-                <Route exact path="/signup">
+                </PublicRoute>
+                <PublicRoute exact path="/signup">
                   <Signup />
-                </Route>
-                <Route exact path="/signin">
+                </PublicRoute>
+                <PublicRoute exact path="/signin">
                   <Signin />
-                </Route>
+                </PublicRoute>
 
                 {/* app */}
-                <Route exact path="/step">
+                <PrivateRoute exact path="/step">
                   <Step />
-                </Route>
-                <Route path="/coupon">
+                </PrivateRoute>
+                <PrivateRoute path="/coupon">
                   <Coupon />
-                </Route>
-                <Route exact path="/leaderboard">
+                </PrivateRoute>
+                <PrivateRoute exact path="/leaderboard">
                   <Leaderboard />
-                </Route>
-                <Route path="/profile">
+                </PrivateRoute>
+                <PrivateRoute path="/profile">
                   <Profile />
-                </Route>
+                </PrivateRoute>
 
                 {/* redirect */}
                 <Route exact path="/">
