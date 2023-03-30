@@ -170,15 +170,12 @@ const renewAccessToken = async (refreshToken: string) => {
     return null;
   }
 
-  const expries_in = new Date();
-  expries_in.setSeconds(expries_in.getSeconds() + res.data.expries_in);
-
   localStorage.setItem(
     "token",
     JSON.stringify({
       access_token: res.data.access_token,
       refresh_token: res.data.refresh_token,
-      expries_in: expries_in,
+      expries_in: +new Date() + res.data.expries_in,
     })
   );
   return res.data.accessToken;
