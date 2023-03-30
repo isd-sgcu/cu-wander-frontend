@@ -37,7 +37,7 @@ const Signup: React.FC = () => {
     const target = e.target as typeof e.target & {
       firstname: { value: string };
       lastname: { value: string };
-      studentid: { value: number };
+      // studentid: { value: number };
       faculty: { value: string };
       year: { value: number };
       personalDisease: { value: string };
@@ -53,7 +53,7 @@ const Signup: React.FC = () => {
     if (
       !target.firstname.value ||
       !target.lastname.value ||
-      !target.studentid.value ||
+      // !target.studentid.value ||
       !target.faculty.value ||
       !target.year.value ||
       !target.password.value ||
@@ -88,10 +88,10 @@ const Signup: React.FC = () => {
           password: target.password.value,
           year: target.year.value,
           username: target.username.value, // Add this input (this is display name)
-          averageStep: target.averageStep.value,
-          studentId: target.studentid.value,
-          personalDisease: target.personalDisease.value,
-          heartRate: target.heartRate.value,
+          step_avg: target.averageStep.value,
+          // studentId: target.studentid.value,
+          medical_problem: target.personalDisease.value,
+          heartbeat_avg: target.heartRate.value,
         },
         "/step"
       );
@@ -168,19 +168,19 @@ const Signup: React.FC = () => {
                   />
                 </div>
 
-                <Input
+                {/* <Input
                   name="studentid"
                   type="text"
                   label="เลขประจำตัวนิสิต"
                   placeholder="Ex. 6538068821"
                   required
                   submitState={submitState}
-                />
+                /> */}
                 <Input
                   name="email"
                   type="text"
-                  label="อีเมล"
-                  placeholder="john@doe.com"
+                  label="อีเมลนิสิต"
+                  placeholder="653xxxxx21@student.chula.ac.th"
                   required
                   submitState={submitState}
                 />

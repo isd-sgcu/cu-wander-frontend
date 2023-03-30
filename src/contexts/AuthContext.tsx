@@ -18,10 +18,10 @@ export interface UserData {
   username: string;
   faculty: string;
   year: number;
-  studentId: number;
-  averageStep: number;
-  personalDisease?: string;
-  heartRate?: number;
+  // studentId: number;
+  step_avg: number;
+  medical_problem?: string;
+  heartbeat_avg?: number;
 }
 
 // Define the interface for the authentication context
