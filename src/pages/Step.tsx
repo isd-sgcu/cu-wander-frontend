@@ -5,6 +5,7 @@ import { useRef, useState } from "react";
 // import { Pedometer, SensorEvent } from "pedometer-plugin";
 import { showTabBar } from "../utils/tab";
 import useFetch from "../utils/useFetch";
+import { PedometerService } from 'background-pedometer'
 
 const Step: React.FC = () => {
   // data scheme
@@ -14,6 +15,17 @@ const Step: React.FC = () => {
   const totalTime = 2400; // count of time in seconds
   const totalCalories = 500; // count of calories
 
+  PedometerService.requestPermission().then(res => {
+    if(res.value) {
+      PedometerService.enable({
+        // TODO: Get token from localstorage / cookie / etc.
+        token: "token",
+        // TODO: Read from env, etc.
+        wsAddress: "localhost:3003",
+      });
+    }
+  })
+  
   // google map
   let newMap;
   const mapRef = useRef(null);
