@@ -37,6 +37,7 @@ const Step: React.FC = () => {
         streetViewControl: false,
         fullscreenControl: false,
         mapTypeControl: false,
+        devicePixelRatio: window.devicePixelRatio,
       },
     });
   };

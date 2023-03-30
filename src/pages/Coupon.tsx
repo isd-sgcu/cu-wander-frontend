@@ -45,7 +45,7 @@ const Coupon: React.FC = () => {
         />
       </div>
       <Header title="คูปอง" />
-      <IonContent fullscreen>
+      <IonContent fullscreen className="bg-white">
         {/* modal */}
         <CouponModal />
 
