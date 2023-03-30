@@ -13,6 +13,9 @@ const CouponItem: React.FC<CouponItemInterface> = ({
   steps,
 }) => {
   const { setShowModal, setSelectedCoupon } = useContext(CouponState);
+
+  const stepsString = steps ? steps.toLocaleString("en-US") : "N/A";
+
   return (
     <div
       className="flex justify-between items-center px-5 py-3 h-24 w-full"
@@ -39,7 +42,7 @@ const CouponItem: React.FC<CouponItemInterface> = ({
               alt="step tracking icon"
             />
             <p className="font-semibold">
-              {steps.toLocaleString("en-US")} ก้าว
+              {stepsString} ก้าว
             </p>
           </div>
         </div>

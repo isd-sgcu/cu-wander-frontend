@@ -23,9 +23,9 @@ const Coupon: React.FC = () => {
   const { setShowModal, searchPhrase, setSearchPhrase } =
     useContext(CouponState);
 
-    const { data: coupons1, error } = useFetch<CouponType[]>("/coupon");
-    const coupons = mockCouponData;
-    console.log(coupons);
+    const { data: coupons, error } = useFetch<CouponType[]>("/coupon");
+    // const coupons = mockCouponData;
+    console.log(error);
 
   return (
     <IonPage>
