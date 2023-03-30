@@ -44,6 +44,9 @@ import "./theme/variables.css";
 import Profile from "./pages/Profile";
 import CouponContext from "./contexts/CouponContext";
 import ModalContext from "./contexts/ModalContext";
+import AuthProvider from "./contexts/AuthContext";
+import PublicRoute from "./lib/auth/guard/PublicRoute";
+import PrivateRoute from "./lib/auth/guard/PrivateRoute";
 
 setupIonicReact();
 
@@ -54,72 +57,78 @@ const App: React.FC = () => (
       <ModalContext>
         {/* router */}
         <IonReactRouter>
-          <IonTabs>
-            {/* page's router */}
-            <IonRouterOutlet>
-              {/* onboarding */}
-              <Route exact path="/onboarding">
-                <Onboarding />
-              </Route>
-              <Route exact path="/signup">
-                <Signup />
-              </Route>
-              <Route exact path="/signin">
-                <Signin />
-              </Route>
+          <AuthProvider>
+            <IonTabs>
+              {/* page's router */}
+              <IonRouterOutlet>
+                {/* onboarding */}
+                <PublicRoute exact path="/onboarding">
+                  <Onboarding />
+                </PublicRoute>
+                <PublicRoute exact path="/signup">
+                  <Signup />
+                </PublicRoute>
+                <PublicRoute exact path="/signin">
+                  <Signin />
+                </PublicRoute>
 
-              {/* app */}
-              <Route exact path="/step">
-                <Step />
-              </Route>
-              <Route path="/coupon">
-                <Coupon />
-              </Route>
-              <Route exact path="/leaderboard">
-                <Leaderboard />
-              </Route>
-              <Route path="/profile">
-                <Profile />
-              </Route>
+                {/* app */}
+                <PrivateRoute exact path="/step">
+                  <Step />
+                </PrivateRoute>
+                <PrivateRoute path="/coupon">
+                  <Coupon />
+                </PrivateRoute>
+                <PrivateRoute exact path="/leaderboard">
+                  <Leaderboard />
+                </PrivateRoute>
+                <PrivateRoute path="/profile">
+                  <Profile />
+                </PrivateRoute>
 
-              {/* redirect */}
-              <Route exact path="/">
-                <Redirect to="/onboarding" />
-              </Route>
-            </IonRouterOutlet>
+                {/* redirect */}
+                <Route exact path="/">
+                  <Redirect to="/onboarding" />
+                </Route>
+              </IonRouterOutlet>
 
-            {/* tab bar */}
-            <IonTabBar
-              slot="bottom"
-              id="app-tab-bar"
-              className="bg-green-50 h-[72px] font-noto"
-            >
-              <IonTabButton className="bg-green-50" tab="step" href="/step">
-                <img src="assets/icon/shoe.svg" alt="นับเก้า" />
-                <IonLabel className="text-black">นับก้าว</IonLabel>
-              </IonTabButton>
-              <IonTabButton className="bg-green-50" tab="coupon" href="/coupon">
-                <img src="assets/icon/ticket.svg" alt="คูปอง" />
-                <IonLabel className="text-black">คูปอง</IonLabel>
-              </IonTabButton>
-              <IonTabButton
-                className="bg-green-50"
-                tab="leaderboard"
-                href="/leaderboard"
+              {/* tab bar */}
+              <IonTabBar
+                slot="bottom"
+                id="app-tab-bar"
+                className="bg-green-50 h-[72px] font-noto"
               >
-                <img src="assets/icon/star.svg" alt="ลีดเดอร์บอร์ด" />
-                <IonLabel className="text-black">ลีดเดอร์บอร์ด</IonLabel>
-              </IonTabButton>
-              <IonTabButton
-                className="bg-green-50"
-                tab="profile"
-                href="/Profile"
-              >
-                <img src="assets/icon/user.svg" alt="ผู้ใช้งาน" />
-                <IonLabel className="text-black">ผู้ใช้งาน</IonLabel>
-              </IonTabButton>
-            </IonTabBar>
-          </IonTabs>
+                <IonTabButton className="bg-green-50" tab="step" href="/step">
+                  <img src="assets/icon/shoe.svg" alt="นับเก้า" />
+                  <IonLabel className="text-black">นับก้าว</IonLabel>
+                </IonTabButton>
+                <IonTabButton
+                  className="bg-green-50"
+                  tab="coupon"
+                  href="/coupon"
+                >
+                  <img src="assets/icon/ticket.svg" alt="คูปอง" />
+                  <IonLabel className="text-black">คูปอง</IonLabel>
+                </IonTabButton>
+                {/* <IonTabButton
+                  className="bg-green-50"
+                  tab="leaderboard"
+                  href="/leaderboard"
+                >
+                  <img src="assets/icon/star.svg" alt="ลีดเดอร์บอร์ด" />
+                  <IonLabel className="text-black">ลีดเดอร์บอร์ด</IonLabel>
+                </IonTabButton> */}
+                <IonTabButton
+                  className="bg-green-50"
+                  tab="profile"
+                  href="/Profile"
+                >
+                  <img src="assets/icon/user.svg" alt="ผู้ใช้งาน" />
+                  <IonLabel className="text-black">ผู้ใช้งาน</IonLabel>
+                </IonTabButton>
+              </IonTabBar>
+            </IonTabs>
+          </AuthProvider>
         </IonReactRouter>
       </ModalContext>
     </CouponContext>
