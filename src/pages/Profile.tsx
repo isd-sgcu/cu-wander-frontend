@@ -13,7 +13,7 @@ const Profile: React.FC = () => {
     <IonPage>
       <Header title="ผู้ใช้งาน" />
       <IonContent fullscreen>
-        <div className="h-full font-noto p-5 flex flex-col justify-between">
+        <div className="h-full font-noto p-5 flex flex-col justify-between bg-white">
           <div></div>
           <div className="flex justify-between space-x-5">
             <div

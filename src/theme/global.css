@@ -10,3 +10,15 @@ ion-toolbar {
 ion-button {
   --background: transparent;
 }
+
+ion-content {
+  --background: transparent;
+}
+
+body {
+  background: transparent;
+}
+
+#map {
+  z-index: 40;
+}

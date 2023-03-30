@@ -2,22 +2,68 @@ import { IonContent, IonPage, useIonViewWillEnter } from "@ionic/react";
 import { showTabBar } from "../utils/tab";
 import useFetch from "../utils/useFetch";
 
-const Step: React.FC = () => {
-  useIonViewWillEnter(() => {
-    showTabBar();
-  });
+import { GoogleMap } from "@capacitor/google-maps";
+import { useRef, useState } from "react";
 
+const Step: React.FC = () => {
+  // data scheme
   const totalSteps = 10500; // count of steps
   const stepsGoal = 20000;
   const totalDistances = 8000; // count of distances in meters
   const totalTime = 2400; // count of time in seconds
   const totalCalories = 500; // count of calories
 
+  // google map
+  let newMap;
+  const mapRef = useRef(null);
+
+  const createMap = async () => {
+    if (!mapRef.current) return;
+
+    console.log("creating map");
+
+    newMap = await GoogleMap.create({
+      id: "google-map",
+      element: mapRef.current,
+      apiKey: process.env.REACT_APP_GOOGLE_MAP_API_KEY!,
+      config: {
+        center: {
+          lat: 13.738376987355455,
+          lng: 100.532426882705,
+        },
+        zoom: 17,
+        zoomControl: false,
+        streetViewControl: false,
+        fullscreenControl: false,
+        mapTypeControl: false,
+      },
+    });
+  };
+
+  useIonViewWillEnter(() => {
+    showTabBar();
+    createMap();
+  });
+
   return (
     <IonPage>
       <IonContent fullscreen>
-        <div className="h-full bg-black relative font-noto">
-          <div className="absolute -bottom-1 left-0 right-0 h-[9.5rem] bg-white rounded-t-2xl flex flex-col justify-between p-5">
+        <div className="h-full w-full relative font-noto">
+          {/* google map */}
+          <div className="w-full h-full pb-28">
+            <capacitor-google-map
+              ref={mapRef}
+              id="map"
+              style={{
+                display: "inline-block",
+                width: "100%",
+                height: "100%",
+              }}
+            ></capacitor-google-map>
+          </div>
+
+          {/* widget */}
+          <div className="absolute -bottom-1 left-0 right-0 h-[9.5rem] bg-white rounded-t-2xl flex flex-col justify-between p-5 z-50 shadow-xl">
             <div className="pt-2">
               <div className="flex justify-between items-end">
                 <div className="flex items-center space-x-1.5">
