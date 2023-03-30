@@ -7,6 +7,7 @@ import {
 import { useState } from "react";
 import { useHistory } from "react-router-dom";
 import Input from "../components/Input";
+import { useAuth } from "../contexts/AuthContext";
 import { hideTabBar } from "../utils/tab";
 
 const Signin: React.FC = () => {
@@ -16,34 +17,36 @@ const Signin: React.FC = () => {
 
   const history = useHistory();
 
+  const { logIn } = useAuth();
+
   const [submitState, setSubmitState] = useState<
-    | ""
-    | "submitting"
-    | "submitted"
-    | "formNotComplete"
-    | "invalidStudentId"
-    | "passwordIncorrect"
+    "" | "submitting" | "submitted" | "formNotComplete" | "passwordIncorrect"
   >("");
 
-  const submitHandler = (e: React.FormEvent<HTMLFormElement>) => {
+  const submitHandler = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     const target = e.target as typeof e.target & {
-      studentid: { value: string };
+      username: { value: string };
       password: { value: string };
     };
 
     // check if form is complete
-    if (!target.studentid.value || !target.password.value) {
+    if (!target.username.value || !target.password.value) {
       setSubmitState("formNotComplete");
       return;
     }
 
-    // check if student id is valid (regex)
-
     // call api and redirect to home
-    setSubmitState("submitted");
-    history.push("/step");
+    try {
+      await logIn(
+        { username: target.username.value, password: target.password.value },
+        "/step"
+      );
+    } catch (e: unknown) {
+      setSubmitState("passwordIncorrect");
+      return;
+    }
   };
 
   return (
@@ -66,10 +69,10 @@ const Signin: React.FC = () => {
               <h1 className="font-bold text-xl">เข้าสู่ระบบ</h1>
               <div className="w-full space-y-5 py-4">
                 <Input
-                  name="studentid"
+                  name="username"
                   type="text"
-                  label="เลขประจำตัวนิสิต"
-                  placeholder="Ex. 6538068821"
+                  label="ชื่อผู้ใช้งาน"
+                  placeholder="Ex. username"
                   required
                   submitState={submitState}
                 />
@@ -82,9 +85,9 @@ const Signin: React.FC = () => {
                   submitState={submitState}
                 />
               </div>
-              <div className="flex w-full justify-end">
+              {/* <div className="flex w-full justify-end">
                 <span className="underline">ลืมรหัสผ่าน?</span>
-              </div>
+              </div> */}
             </div>
           </div>
           <div className="relative flex justify-center w-full px-10 pt-10 pb-14">
