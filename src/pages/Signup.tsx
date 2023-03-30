@@ -7,6 +7,7 @@ import {
 import React, { useRef, useState } from "react";
 import { useHistory } from "react-router-dom";
 import Input from "../components/Input";
+import { useAuth } from "../contexts/AuthContext";
 import { hideTabBar } from "../utils/tab";
 
 const Signup: React.FC = () => {
@@ -24,23 +25,28 @@ const Signup: React.FC = () => {
     | "submitted"
     | "passwordNotMatch"
     | "formNotComplete"
+    | "invalidEmail"
     | "invalidStudentId"
   >("");
 
-  const submitHandler = (e: React.FormEvent<HTMLFormElement>) => {
+  const { signUp } = useAuth();
+
+  const submitHandler = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     const target = e.target as typeof e.target & {
       firstname: { value: string };
       lastname: { value: string };
-      studentid: { value: string };
+      studentid: { value: number };
       faculty: { value: string };
-      year: { value: string };
+      year: { value: number };
       personalDisease: { value: string };
-      heartRate: { value: string };
-      averageStep: { value: string };
+      heartRate: { value: number };
+      averageStep: { value: number };
       password: { value: string };
       confirmPassword: { value: string };
+      email: { value: string };
+      username: { value: string };
     };
 
     // check if form is complete
@@ -65,7 +71,34 @@ const Signup: React.FC = () => {
       return;
     }
 
+    // check email
+    if (!target.email.value || !target.email.value.includes("@")) {
+      setSubmitState("invalidEmail");
+      return;
+    }
+
     // call api and redirect to home
+    try {
+      await signUp(
+        {
+          firstname: target.firstname.value,
+          lastname: target.lastname.value,
+          faculty: target.faculty.value, // Add this input
+          email: target.email.value, // Add this input
+          password: target.password.value,
+          year: target.year.value,
+          username: target.username.value, // Add this input (this is display name)
+          averageStep: target.averageStep.value,
+          studentId: target.studentid.value,
+          personalDisease: target.personalDisease.value,
+          heartRate: target.heartRate.value,
+        },
+        "/step"
+      );
+    } catch (e: unknown) {
+      setSubmitState("invalidStudentId");
+      return;
+    }
     setSubmitState("submitted");
     history.push("/step");
   };
@@ -105,7 +138,7 @@ const Signup: React.FC = () => {
           <div className="flex flex-col w-full px-5">
             {/* header */}
             <div className="flex items-end h-20 pb-4 w-full">
-              <div className="" onClick={() => history.goBack()}>
+              <div className="" onClick={() => history.push("/onboarding")}>
                 <img src="assets/icon/chevron_left.svg" alt="back" />
               </div>
             </div>
@@ -140,6 +173,14 @@ const Signup: React.FC = () => {
                   type="text"
                   label="เลขประจำตัวนิสิต"
                   placeholder="Ex. 6538068821"
+                  required
+                  submitState={submitState}
+                />
+                <Input
+                  name="email"
+                  type="text"
+                  label="อีเมล"
+                  placeholder="john@doe.com"
                   required
                   submitState={submitState}
                 />

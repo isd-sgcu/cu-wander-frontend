@@ -1,0 +1,11 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.isd_sgcu.background_pedometer.plugin">
+
+    <uses-permission android:name="android.permission.ACTIVITY_RECOGNITION"/>
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <application>
+        <service android:name=".PedometerService" android:enabled="true"/>
+    </application>
+</manifest>

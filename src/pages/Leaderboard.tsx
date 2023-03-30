@@ -14,8 +14,8 @@ const Leaderboard: React.FC = () => {
   return (
     <IonPage>
       <Header title="ลีดเดอร์บอร์ด" />
-      <IonContent fullscreen>
-        <div className="fixed shadow-md top-20 left-0 right-0 z-50 w-full text-black font-noto">
+      <IonContent fullscreen className="bg-white">
+        <div className="fixed shadow-md top-20 left-0 right-0 z-50 w-full text-black font-noto bg-white">
           <div className="flex w-full font-bold px-4 space-x-4 text-sm py-2.5 bg-white">
             <div className="flex justify-end items-center w-[15%]">
               <p>ลำดับ</p>
