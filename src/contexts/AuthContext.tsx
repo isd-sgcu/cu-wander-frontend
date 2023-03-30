@@ -29,7 +29,7 @@ interface AuthContextValue {
   user?: UserData;
   logIn: (authCred: AuthCredentials, redirect: string) => Promise<void>;
   signUp: (authCred: UserData, redirect: string) => Promise<void>;
-  signOut: () => Promise<void>;
+  signOut: (redirect: string) => Promise<void>;
   isLoggedIn: () => Promise<boolean>;
 }
 
@@ -66,31 +66,30 @@ const AuthProvider = ({ children }: { children: ReactNode | ReactNode[] }) => {
     redirect: string
   ): Promise<void> => {
     try {
-      const { data: credData } = await httpPost("/auth/login", {
+      const userData = await httpPost("/auth/login", {
         username: authCred.username,
         password: authCred.password,
-      });
-
-      localStorage.setItem(
-        "token",
-        JSON.stringify({
-          access_token: credData.access_token,
-          refresh_token: credData.refresh_token,
-          expries_in: credData.expires_in,
+      })
+        .then(({ data: credData }) => {
+          localStorage.setItem(
+            "token",
+            JSON.stringify({
+              access_token: credData.access_token,
+              refresh_token: credData.refresh_token,
+              expries_in: +new Date() + credData.expires_in,
+            })
+          );
         })
-      );
-
-      const userData = await getUserData();
+        .then(async () => {
+          return await getUserData();
+        });
 
       if (!userData) {
         return;
       }
 
       setUser(userData);
-      history.push(redirect);
-
-      setUser(userData);
-      history.push(redirect);
+      history.replace(redirect);
     } catch (err) {
       console.log(err);
       return;
@@ -110,7 +109,7 @@ const AuthProvider = ({ children }: { children: ReactNode | ReactNode[] }) => {
         JSON.stringify({
           access_token: credData.access_token,
           refresh_token: credData.refresh_token,
-          expries_in: credData.expires_in,
+          expries_in: +new Date() + credData.expires_in,
         })
       );
 
@@ -122,10 +121,10 @@ const AuthProvider = ({ children }: { children: ReactNode | ReactNode[] }) => {
     }
   };
 
-  const signOut = async () => {
+  const signOut = async (redirect: string) => {
     localStorage.removeItem("token");
     setUser(undefined);
-    history.push("/onboarding");
+    history.push(redirect);
   };
 
   const isLoggedIn = async () => {
@@ -173,12 +172,13 @@ const renewAccessToken = async (refreshToken: string) => {
 
   const expries_in = new Date();
   expries_in.setSeconds(expries_in.getSeconds() + res.data.expries_in);
+
   localStorage.setItem(
     "token",
     JSON.stringify({
       access_token: res.data.access_token,
       refresh_token: res.data.refresh_token,
-      expries_in,
+      expries_in: expries_in,
     })
   );
   return res.data.accessToken;
@@ -197,9 +197,11 @@ export const getAccessToken = async () => {
   const expiry = new Date(expries_in);
   if (now > expiry) {
     const newAccessToken = await renewAccessToken(refresh_token);
+
     if (!newAccessToken) {
       return null;
     }
+
     return newAccessToken;
   }
   return access_token;

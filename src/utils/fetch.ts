@@ -15,6 +15,7 @@ apiClient.interceptors.request.use(
   // @ts-ignore
   async (config: RawAxiosRequestConfig) => {
     const accessToken = await getAccessToken();
+
     if (!accessToken) {
       // TODO: Handle error
       return config;

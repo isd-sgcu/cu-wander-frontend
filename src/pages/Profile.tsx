@@ -1,13 +1,13 @@
 import { IonContent, IonPage } from "@ionic/react";
-import { useContext, useEffect } from "react";
+import { useContext } from "react";
 import { useHistory } from "react-router";
 import Header from "../components/Header";
+import { useAuth } from "../contexts/AuthContext";
 import { ModalState } from "../contexts/ModalContext";
-import useFetch from "../utils/useFetch";
 
 const Profile: React.FC = () => {
   const { showModalHandler, setPromptModal } = useContext(ModalState);
-  const history = useHistory();
+  const { signOut } = useAuth();
 
   return (
     <IonPage>
@@ -48,9 +48,7 @@ const Profile: React.FC = () => {
                       primary: true,
                       action() {
                         // log out
-                        localStorage.setItem("refresh_token", "");
-                        localStorage.setItem("access_token", "");
-                        history.push("/onboarding");
+                        signOut("/onboarding");
                         setPromptModal(false);
                       },
                     },
