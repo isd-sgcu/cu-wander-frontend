@@ -25,6 +25,7 @@ const Signup: React.FC = () => {
     | "submitted"
     | "passwordNotMatch"
     | "formNotComplete"
+    | "invalidEmail"
     | "invalidStudentId"
   >("");
 
@@ -67,6 +68,12 @@ const Signup: React.FC = () => {
     // check if password is match
     if (target.password.value !== target.confirmPassword.value) {
       setSubmitState("passwordNotMatch");
+      return;
+    }
+
+    // check email
+    if (!target.email.value || !target.email.value.includes("@")) {
+      setSubmitState("invalidEmail");
       return;
     }
 
@@ -166,6 +173,14 @@ const Signup: React.FC = () => {
                   type="text"
                   label="เลขประจำตัวนิสิต"
                   placeholder="Ex. 6538068821"
+                  required
+                  submitState={submitState}
+                />
+                <Input
+                  name="email"
+                  type="text"
+                  label="อีเมล"
+                  placeholder="john@doe.com"
                   required
                   submitState={submitState}
                 />
