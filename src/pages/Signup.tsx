@@ -131,7 +131,7 @@ const Signup: React.FC = () => {
           <div className="flex flex-col w-full px-5">
             {/* header */}
             <div className="flex items-end h-20 pb-4 w-full">
-              <div className="" onClick={() => history.goBack()}>
+              <div className="" onClick={() => history.push("/onboarding")}>
                 <img src="assets/icon/chevron_left.svg" alt="back" />
               </div>
             </div>
