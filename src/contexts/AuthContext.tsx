@@ -15,7 +15,7 @@ export interface UserData {
   firstname: string;
   lastname: string;
   password: string;
-  displayName: string;
+  username: string;
   faculty: string;
   year: number;
   studentId: number;

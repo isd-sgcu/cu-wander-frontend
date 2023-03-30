@@ -45,7 +45,7 @@ const Signup: React.FC = () => {
       password: { value: string };
       confirmPassword: { value: string };
       email: { value: string };
-      displayName: { value: string };
+      username: { value: string };
     };
 
     // check if form is complete
@@ -80,7 +80,7 @@ const Signup: React.FC = () => {
           email: target.email.value, // Add this input
           password: target.password.value,
           year: target.year.value,
-          displayName: target.displayName.value, // Add this input (this is display name)
+          username: target.username.value, // Add this input (this is display name)
           averageStep: target.averageStep.value,
           studentId: target.studentid.value,
           personalDisease: target.personalDisease.value,

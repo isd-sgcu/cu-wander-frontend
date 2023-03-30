@@ -7,15 +7,23 @@ import { ModalState } from "../contexts/ModalContext";
 
 const Profile: React.FC = () => {
   const { showModalHandler, setPromptModal } = useContext(ModalState);
-  const { signOut } = useAuth();
+  const { user, signOut } = useAuth();
 
   return (
     <IonPage>
       <Header title="ผู้ใช้งาน" />
       <IonContent fullscreen>
         <div className="h-full font-noto p-5 flex flex-col justify-between">
-          {/* <div>{userData?.firstname}</div> */}
-          <div></div>
+          <div className="flex flex-col gap-4">
+            <p className="font-bold text-2xl">
+              ชื่อผู้ใช้งาน : {user?.username}
+            </p>
+            <h1 className="font-semibold text-lg">
+              {user?.firstname}
+              <br />
+              {user?.lastname}
+            </h1>
+          </div>
           <div className="flex justify-between space-x-5">
             <div
               onClick={() => {
