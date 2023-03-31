@@ -41,7 +41,11 @@ const CouponItem: React.FC<CouponItemInterface> = ({
     >
       <div className="flex items-center h-full w-full space-x-4">
         <div className="h-full aspect-square bg-gray-300 rounded-lg">
-          <img src={shop_image_url} />
+          <img
+            src={shop_image_url}
+            alt={name}
+            className="h-full object-cover w-full rounded-lg"
+          />
         </div>
         <div className="flex flex-col justify-between h-full">
           <div className="space-y-1">
@@ -54,9 +58,7 @@ const CouponItem: React.FC<CouponItemInterface> = ({
               width={18}
               alt="step tracking icon"
             />
-            <p className="font-semibold">
-              {stepsString} ก้าว
-            </p>
+            <p className="font-semibold">{stepsString} ก้าว</p>
           </div>
         </div>
       </div>
