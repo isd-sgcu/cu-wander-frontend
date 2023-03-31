@@ -3,6 +3,7 @@ import { CouponState } from "../../contexts/CouponContext";
 import { ModalState } from "../../contexts/ModalContext";
 import useFetch from "../../utils/useFetch";
 import { httpGet, httpPost } from "../../utils/fetch";
+import CountDown from "./CountDown";
 
 interface ShopType {
   address: string;
@@ -20,21 +21,21 @@ const CouponModal: React.FC = () => {
   //do not forget to change step
   const steps = 10000;
 
-
-  console.log(selectedCoupon.shop_id)
-  const { data:shops , error } = useFetch<ShopType>(`/shop/${selectedCoupon.shop_id}`)
+  console.log(selectedCoupon.shop_id);
+  const { data: shops, error } = useFetch<ShopType>(
+    `/shop/${selectedCoupon.shop_id}`
+  );
   // console.log(error)
-
 
   const redeemCoupon = async () => {
     try {
       const response = await httpPost("/coupon/redeem", {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          "template_coupon_id": selectedCoupon.id,
+          template_coupon_id: selectedCoupon.id,
           // Add any additional data required by the API
         }),
       });
@@ -43,11 +44,10 @@ const CouponModal: React.FC = () => {
 
       // Handle successful response, e.g. update UI, show a success message, etc.
     } catch (error) {
-      console.error('Error redeeming coupon:', error);
+      console.error("Error redeeming coupon:", error);
       // Handle errors, e.g. show an error message, etc.
     }
   };
-
 
   return (
     <>
@@ -93,15 +93,15 @@ const CouponModal: React.FC = () => {
               <p className="text-xs font-medium text-gray-400">
                 เงื่อนไขในการแลกเปลี่ยน
               </p>
-              <p className="font-semibold text-sm">{selectedCoupon.coupon_condition}</p>
+              <p className="font-semibold text-sm">
+                {selectedCoupon.coupon_condition}
+              </p>
             </div>
           </div>
           <div className="py-2 space-y-2">
             <h4 className="font-bold">{selectedCoupon.merchant}</h4>
             <div className="text-sm text-gray-400 space-y-px">
-              <p className="pb-4">
-                {shops?.description}
-              </p>
+              <p className="pb-4">{shops?.description}</p>
               <p>
                 <span className="font-bold text-black">ที่อยู่: </span>
                 {shops?.address}
@@ -121,59 +121,61 @@ const CouponModal: React.FC = () => {
           <div
             className="px-12 py-2.5 bg-green-500 text-white font-semibold rounded-lg"
             onClick={() => {
-              if(steps>=selectedCoupon.steps){
-                showModalHandler(
-                  {
-                    title: "โปรดยืนยันการแลกคูปอง",
-                    subtitle: "เมื่อยืนยันแล้วคูปองของคุณจะมีอายุการใช้งาน",
-                    body: <p className="text-red-600 ">{selectedCoupon.coupon_condition}</p>,
-                    type: "multiple",
-                    choices: [
-                      {
-                        title: "ยกเลิก",
-                        primary: false,
-                        action() {
-                          setPromptModal(false);
-                        },
+              if (steps >= selectedCoupon.steps) {
+                showModalHandler({
+                  title: "โปรดยืนยันการแลกคูปอง",
+                  subtitle: "เมื่อยืนยันแล้วคูปองของคุณจะมีอายุการใช้งาน",
+                  body: (
+                    <div>
+                      <p className="text-red-600 ">
+                        {selectedCoupon.coupon_condition}
+                      </p>
+
+                      <CountDown until={Date.now() + 5 * 1000 * 60} />
+                    </div>
+                  ),
+                  type: "multiple",
+                  choices: [
+                    {
+                      title: "ยกเลิก",
+                      primary: false,
+                      action() {
+                        setPromptModal(false);
                       },
-                      {
-                        title: "ยืนยัน",
-                        primary: true,
-                        action() {
-                          redeemCoupon();
-                          setPromptModal(false);
-                        },
+                    },
+                    {
+                      title: "ยืนยัน",
+                      primary: true,
+                      action() {
+                        redeemCoupon();
+                        setPromptModal(false);
                       },
-                    ],
-                  }
-                )
+                    },
+                  ],
+                });
               } else {
-                showModalHandler(
-                  {
-                    title: "คะแนนไม่พอ",
-                    subtitle: "แต้มนับก้าวของคุณไม่เพียงพอในการแลกคูปองนี้",
-                    type: "single",
-                    choices: [
-                      {
-                        title: "เสร็จสิ้น",
-                        primary: false,
-                        action() {
-                          setPromptModal(false);
-                        },
+                showModalHandler({
+                  title: "คะแนนไม่พอ",
+                  subtitle: "แต้มนับก้าวของคุณไม่เพียงพอในการแลกคูปองนี้",
+                  type: "single",
+                  choices: [
+                    {
+                      title: "เสร็จสิ้น",
+                      primary: false,
+                      action() {
+                        setPromptModal(false);
                       },
-                    ],
-                  }
-                );
+                    },
+                  ],
+                });
               }
 
-                // {
-                //   title: "โปรดยืนยันการแลกคูปอง",
-                //   subtitle: "เมื่อยืนยันแล้วคูปองของคุณจะมีอายุการใช้งาน",
-                //   type: "default",
-                //   body: <div>fasd</div>,
-                // }
-
-                
+              // {
+              //   title: "โปรดยืนยันการแลกคูปอง",
+              //   subtitle: "เมื่อยืนยันแล้วคูปองของคุณจะมีอายุการใช้งาน",
+              //   type: "default",
+              //   body: <div>fasd</div>,
+              // }
             }}
           >
             แลกคูปอง
