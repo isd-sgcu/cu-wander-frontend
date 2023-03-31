@@ -7,10 +7,12 @@ import { showTabBar } from "../utils/tab";
 import useFetch from "../utils/useFetch";
 // @ts-ignore
 import { PedometerService } from "background-pedometer";
-import { getAccessToken } from "../contexts/AuthContext";
+import { getAccessToken, useAuth } from "../contexts/AuthContext";
 import { httpGet } from "../utils/fetch";
 
 const Step: React.FC = () => {
+  const { user } = useAuth();
+
   // data scheme
   const totalSteps = 10500; // count of steps
   const stepsGoal = 20000;
@@ -46,11 +48,16 @@ const Step: React.FC = () => {
       }
     };
 
-    // interval
-    // setInterval(() => {
-    //   getUserStep();
-    // }, 4000);
     getUserStep();
+
+    // interval
+    setInterval(() => {
+      getUserStep();
+    }, 10000);
+  }, []);
+
+  useEffect(() => {
+    console.log(user);
   }, []);
 
   // mockup map
@@ -98,6 +105,18 @@ const Step: React.FC = () => {
 
   printCurrentPosition();
 
+  function ceilToTen(num: number) {
+    let exponent = Math.floor(Math.log10(num));
+    let base = Math.ceil(num / Math.pow(10, exponent));
+    return base * Math.pow(10, exponent);
+  }
+
+  function nearestPowerOfTen(num: number) {
+    const exponent = Math.floor(Math.log10(num));
+    const nearestPowerOf10 = 10 ** exponent;
+    return nearestPowerOf10;
+  }
+
   return (
     <IonPage>
       <IonContent fullscreen>
@@ -133,14 +152,20 @@ const Step: React.FC = () => {
                   <span className="opacity-90">ก้าว</span>
                 </div>
                 <span className="text-[#bababa] text-xs">
-                  -{/* {stepsGoal.toLocaleString("en-US")} */}
+                  {ceilToTen(steps).toLocaleString("en-US")}
                 </span>
               </div>
               <div className="w-full h-1.5 bg-[#D9D9D9] rounded-full">
                 <div
                   className="h-full bg-green-500 rounded-full"
                   style={{
-                    width: `${(totalSteps / stepsGoal) * 100}%`,
+                    width: `${
+                      ((steps -
+                        (ceilToTen(steps) -
+                          nearestPowerOfTen(ceilToTen(steps)))) /
+                        nearestPowerOfTen(ceilToTen(steps))) *
+                      100
+                    }%`,
                   }}
                 ></div>
               </div>
