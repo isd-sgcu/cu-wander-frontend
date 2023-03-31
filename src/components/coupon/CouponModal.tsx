@@ -18,7 +18,7 @@ const CouponModal: React.FC = () => {
 
   const steps = 10;
 
-  const { data:shops , error } = useFetch<ShopType>("/shop")
+  const { data:shops , error } = useFetch<ShopType>(`/shop/${selectedCoupon.id}`)
 
   return (
     <>
@@ -64,7 +64,7 @@ const CouponModal: React.FC = () => {
               <p className="text-xs font-medium text-gray-400">
                 เงื่อนไขในการแลกเปลี่ยน
               </p>
-              <p className="font-semibold text-sm">24/02/2022 - 31/03/2023</p>
+              <p className="font-semibold text-sm">{selectedCoupon.coupon_condition}</p>
             </div>
           </div>
           <div className="py-2 space-y-2">

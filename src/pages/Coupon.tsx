@@ -12,7 +12,9 @@ interface CouponType {
   title: string;
   id: string
   shop_title: string;
-  steps: number;
+  step_condition: number;
+  coupon_condition: string;
+  shop_image_url: string;
 }
 
 
@@ -27,6 +29,7 @@ const Coupon: React.FC = () => {
     const { data: coupons, error } = useFetch<CouponType[]>("/coupon");
     // const coupons = mockCouponData;
     console.log(error);
+    console.log(coupons);
 
   return (
     <IonPage>
@@ -70,11 +73,13 @@ const Coupon: React.FC = () => {
 
             return (
               <CouponItem
+                shop_image_url={coupon.shop_image_url}
+                coupon_condition={coupon.coupon_condition}
                 id={coupon.id}
                 key={idx}
                 name={coupon.title}
                 merchant={coupon.shop_title}
-                steps={coupon.steps}
+                steps={coupon.step_condition}
               />
             );
           })}
