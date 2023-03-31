@@ -16,7 +16,8 @@ interface ShopType {
 }
 
 const CouponModal: React.FC = () => {
-  const { showModal, setShowModal, selectedCoupon ,setSelectedCoupon } = useContext(CouponState);
+  const { showModal, setShowModal, selectedCoupon, setSelectedCoupon } =
+    useContext(CouponState);
 
   const { showModalHandler, setPromptModal } = useContext(ModalState);
 
@@ -32,17 +33,14 @@ const CouponModal: React.FC = () => {
   const redeemCoupon = async () => {
     try {
       const response = await httpPost("/coupon/redeem", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          template_coupon_id: selectedCoupon.id,
-          // Add any additional data required by the API
-        }),
+        template_coupon_id: selectedCoupon.id,
+        // Add any additional data required by the API
       });
 
-      setSelectedCoupon({ ...selectedCoupon, time: Date.now() + 5 * 1000 * 60 });
+      setSelectedCoupon({
+        ...selectedCoupon,
+        time: Date.now() + 5 * 1000 * 60,
+      });
 
       console.log(response);
 
@@ -53,7 +51,7 @@ const CouponModal: React.FC = () => {
     }
   };
 
-  const [ time , setTime ] = useState(0);
+  const [time, setTime] = useState(0);
   return (
     <>
       <div
@@ -122,9 +120,7 @@ const CouponModal: React.FC = () => {
             </div>
           </div>
         </div>
-        {
-          selectedCoupon.time!=0 && <CountDown until={selectedCoupon.time} />
-        }
+        {selectedCoupon.time != 0 && <CountDown until={selectedCoupon.time} />}
         <div className="flex justify-center">
           <div
             className="px-12 py-2.5 bg-green-500 text-white font-semibold rounded-lg"
@@ -154,7 +150,10 @@ const CouponModal: React.FC = () => {
                       primary: true,
                       action() {
                         redeemCoupon();
-                        setSelectedCoupon({ ...selectedCoupon, time: (Date.now() + 5 * 1000 * 60) });
+                        setSelectedCoupon({
+                          ...selectedCoupon,
+                          time: Date.now() + 5 * 1000 * 60,
+                        });
                         setPromptModal(false);
                       },
                     },
