@@ -5,12 +5,14 @@ interface CouponItemInterface {
   name: string;
   merchant: string;
   steps: string | number;
+  id: string;
 }
 
 const CouponItem: React.FC<CouponItemInterface> = ({
   name,
   merchant,
   steps,
+  id,
 }) => {
   const { setShowModal, setSelectedCoupon } = useContext(CouponState);
 
@@ -24,6 +26,7 @@ const CouponItem: React.FC<CouponItemInterface> = ({
           name: name,
           merchant: merchant,
           steps: parseInt(steps.toString()),
+          id: id
         });
         setShowModal(true);
       }}

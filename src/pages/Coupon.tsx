@@ -9,8 +9,9 @@ import useFetch from "../utils/useFetch";
 import { CouponState } from "../contexts/CouponContext";
 
 interface CouponType {
-  name: string;
-  merchant: string;
+  title: string;
+  id: string
+  shop_title: string;
   steps: number;
 }
 
@@ -60,8 +61,8 @@ const Coupon: React.FC = () => {
           {coupons?.map((coupon, idx) => {
             if (searchPhrase !== "") {
               if (
-                !coupon.name.toLowerCase().includes(searchPhrase) &&
-                !coupon.merchant.toLowerCase().includes(searchPhrase)
+                !coupon.title.toLowerCase().includes(searchPhrase) &&
+                !coupon.shop_title.toLowerCase().includes(searchPhrase)
               ) {
                 return null;
               }
@@ -69,9 +70,10 @@ const Coupon: React.FC = () => {
 
             return (
               <CouponItem
+                id={coupon.id}
                 key={idx}
-                name={coupon.name}
-                merchant={coupon.merchant}
+                name={coupon.title}
+                merchant={coupon.shop_title}
                 steps={coupon.steps}
               />
             );
