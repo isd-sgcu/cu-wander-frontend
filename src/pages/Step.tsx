@@ -1,6 +1,11 @@
 import { GoogleMap } from "@capacitor/google-maps";
 import { Geolocation } from "@capacitor/geolocation";
-import { IonContent, IonPage, useIonViewWillEnter } from "@ionic/react";
+import {
+  IonContent,
+  IonPage,
+  useIonViewDidLeave,
+  useIonViewWillEnter,
+} from "@ionic/react";
 import { useEffect, useRef, useState } from "react";
 // import { Pedometer, SensorEvent } from "pedometer-plugin";
 import { showTabBar } from "../utils/tab";
@@ -32,29 +37,7 @@ const Step: React.FC = () => {
 
   const [steps, setSteps] = useState(0);
 
-  useEffect(() => {
-    const getUserStep = async () => {
-      try {
-        const {
-          data: { steps: s },
-        } = await httpGet("/step");
-
-        setSteps(s);
-        return;
-      } catch (error) {
-        console.error(error);
-
-        throw error;
-      }
-    };
-
-    getUserStep();
-
-    // interval
-    setInterval(() => {
-      getUserStep();
-    }, 10000);
-  }, []);
+  useEffect(() => {}, []);
 
   useEffect(() => {
     console.log(user);
@@ -98,9 +81,37 @@ const Step: React.FC = () => {
     console.log("Current position:", coordinates);
   };
 
+  let fetchStepsInterval: any;
+
   useIonViewWillEnter(() => {
     showTabBar();
     // createMap();
+
+    const getUserStep = async () => {
+      try {
+        const {
+          data: { steps: s },
+        } = await httpGet("/step");
+
+        setSteps(s);
+        return;
+      } catch (error) {
+        console.error(error);
+
+        throw error;
+      }
+    };
+
+    getUserStep();
+
+    // interval
+    fetchStepsInterval = setInterval(() => {
+      getUserStep();
+    }, 10000);
+  });
+
+  useIonViewDidLeave(() => {
+    clearInterval(fetchStepsInterval);
   });
 
   printCurrentPosition();
