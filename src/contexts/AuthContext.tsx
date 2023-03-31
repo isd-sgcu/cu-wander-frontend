@@ -17,7 +17,7 @@ export interface UserData {
   password: string;
   username: string;
   faculty: string;
-  year: number;
+  // year: number;
   // studentId: number;
   step_avg: number;
   medical_problem?: string;
@@ -28,7 +28,10 @@ export interface UserData {
 interface AuthContextValue {
   user?: UserData;
   logIn: (authCred: AuthCredentials, redirect: string) => Promise<void>;
-  signUp: (authCred: UserData, redirect: string) => Promise<void>;
+  signUp: (
+    authCred: { [key: string]: string | number },
+    redirect: string
+  ) => Promise<void>;
   signOut: (redirect: string) => Promise<void>;
   isLoggedIn: () => Promise<boolean>;
 }
@@ -97,7 +100,7 @@ const AuthProvider = ({ children }: { children: ReactNode | ReactNode[] }) => {
 
   // Define the signUp function
   const signUp = async (
-    userData: UserData,
+    userData: { [key: string]: string | number },
     redirect: string
   ): Promise<void> => {
     try {
@@ -116,7 +119,7 @@ const AuthProvider = ({ children }: { children: ReactNode | ReactNode[] }) => {
           })
         );
 
-        setUser(userData);
+        getUserData();
         history.push(redirect);
       });
     } catch (err) {
@@ -162,7 +165,6 @@ const authClient = axios.create({
   baseURL: process.env.REACT_APP_BACKEND_URL,
   timeout: 10000,
 });
-
 
 const renewAccessToken = async (refreshToken: string) => {
   let res: AxiosResponse;
