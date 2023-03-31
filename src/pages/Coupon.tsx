@@ -15,6 +15,7 @@ interface CouponType {
   step_condition: number;
   coupon_condition: string;
   shop_image_url: string;
+  shop_id: string;
 }
 
 
@@ -73,6 +74,7 @@ const Coupon: React.FC = () => {
 
             return (
               <CouponItem
+                shop_id={coupon.shop_id}
                 shop_image_url={coupon.shop_image_url}
                 coupon_condition={coupon.coupon_condition}
                 id={coupon.id}

@@ -8,6 +8,7 @@ interface CouponItemInterface {
   id: string;
   coupon_condition: string;
   shop_image_url: string;
+  shop_id: string;
 }
 
 const CouponItem: React.FC<CouponItemInterface> = ({
@@ -17,6 +18,7 @@ const CouponItem: React.FC<CouponItemInterface> = ({
   id,
   coupon_condition,
   shop_image_url,
+  shop_id,
 }) => {
   const { setShowModal, setSelectedCoupon } = useContext(CouponState);
 
@@ -32,13 +34,19 @@ const CouponItem: React.FC<CouponItemInterface> = ({
           steps: parseInt(steps.toString()),
           id: id,
           coupon_condition: coupon_condition,
+          shop_id: shop_id,
+          time: 0
         });
         setShowModal(true);
       }}
     >
       <div className="flex items-center h-full w-full space-x-4">
         <div className="h-full aspect-square bg-gray-300 rounded-lg">
-          <img src={shop_image_url} />
+          <img
+            src={shop_image_url}
+            alt={name}
+            className="h-full object-cover w-full rounded-lg"
+          />
         </div>
         <div className="flex flex-col justify-between h-full">
           <div className="space-y-1">
@@ -51,9 +59,7 @@ const CouponItem: React.FC<CouponItemInterface> = ({
               width={18}
               alt="step tracking icon"
             />
-            <p className="font-semibold">
-              {stepsString} ก้าว
-            </p>
+            <p className="font-semibold">{stepsString} ก้าว</p>
           </div>
         </div>
       </div>

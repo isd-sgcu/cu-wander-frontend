@@ -41,8 +41,8 @@ const Signup: React.FC = () => {
       firstname: { value: string };
       lastname: { value: string };
       // studentid: { value: number };
-      faculty: { value: string };
-      year: { value: number };
+      // faculty: { value: string };
+      // year: { value: number };
       personalDisease: { value: string };
       heartRate: { value: number };
       averageStep: { value: number };
@@ -57,8 +57,8 @@ const Signup: React.FC = () => {
       !target.firstname.value ||
       !target.lastname.value ||
       // !target.studentid.value ||
-      !target.faculty.value ||
-      !target.year.value ||
+      // !target.faculty.value ||
+      // !target.year.value ||
       !target.password.value ||
       !target.confirmPassword.value ||
       // !target.heartRate.value ||
@@ -98,10 +98,10 @@ const Signup: React.FC = () => {
         {
           firstname: target.firstname.value,
           lastname: target.lastname.value,
-          faculty: target.faculty.value, // Add this input
+          // faculty: target.faculty.value, // Add this input
           email: target.email.value, // Add this input
           password: target.password.value,
-          year: target.year.value,
+          // year: target.year.value,
           username: target.username.value, // Add this input (this is display name)
           step_avg: +target.averageStep.value,
           // studentId: target.studentid.value,
@@ -209,7 +209,7 @@ const Signup: React.FC = () => {
                   required
                   submitState={submitState}
                 />
-                <div className="flex space-x-3">
+                {/* <div className="flex space-x-3">
                   <Input
                     name="faculty"
                     type="select"
@@ -240,7 +240,7 @@ const Signup: React.FC = () => {
                         </option>
                       ))}
                   </Input>
-                </div>
+                </div> */}
                 <Input
                   name="personalDisease"
                   type="text"
