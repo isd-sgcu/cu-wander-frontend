@@ -24,7 +24,7 @@
     "@types/react-router": "^5.1.11",
     "@types/react-router-dom": "^5.1.7",
     "axios": "^1.3.4",
-    "background-pedometer": "link:background-pedometer",
+    "background-pedometer": "file:background-pedometer",
     "history": "^4.9.0",
     "ionicons": "^6.0.3",
     "react": "^18.2.0",
@@ -75,6 +75,7 @@
   },
   "devDependencies": {
     "@capacitor/cli": "4.6.3",
+    "dotenv": "^16.0.3",
     "react-scripts": "5.0.1",
     "tailwindcss": "^3.2.4"
   },
