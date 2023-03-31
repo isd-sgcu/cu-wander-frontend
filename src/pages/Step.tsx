@@ -1,13 +1,14 @@
 import { GoogleMap } from "@capacitor/google-maps";
 import { Geolocation } from "@capacitor/geolocation";
 import { IonContent, IonPage, useIonViewWillEnter } from "@ionic/react";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 // import { Pedometer, SensorEvent } from "pedometer-plugin";
 import { showTabBar } from "../utils/tab";
 import useFetch from "../utils/useFetch";
 // @ts-ignore
 import { PedometerService } from "background-pedometer";
 import { getAccessToken } from "../contexts/AuthContext";
+import { httpGet } from "../utils/fetch";
 
 const Step: React.FC = () => {
   // data scheme
@@ -26,6 +27,31 @@ const Step: React.FC = () => {
       });
     }
   });
+
+  const [steps, setSteps] = useState(0);
+
+  useEffect(() => {
+    const getUserStep = async () => {
+      try {
+        const {
+          data: { steps: s },
+        } = await httpGet("/step");
+
+        setSteps(s);
+        return;
+      } catch (error) {
+        console.error(error);
+
+        throw error;
+      }
+    };
+
+    // interval
+    // setInterval(() => {
+    //   getUserStep();
+    // }, 4000);
+    getUserStep();
+  }, []);
 
   // mockup map
   const [map, setMap] = useState();
@@ -102,7 +128,7 @@ const Step: React.FC = () => {
               <div className="flex justify-between items-end">
                 <div className="flex items-center space-x-1.5">
                   <span className="text-4xl font-bold">
-                    {totalSteps.toLocaleString("en-US")}
+                    {steps.toLocaleString("en-US")}
                   </span>
                   <span className="opacity-90">ก้าว</span>
                 </div>
@@ -122,7 +148,7 @@ const Step: React.FC = () => {
             <div className="flex justify-between text-center space-x-3">
               <div className="rounded-full w-full border-[2px] space-x-1.5 py-0.5">
                 <span className="font-semibold text-lg">
-                  -{/* {(totalDistances / 1000).toLocaleString("en-US")} */}
+                  {Math.floor(steps / 1312.33595801).toLocaleString("en-US")}
                 </span>
                 <span>กิโลเมตร</span>
               </div>
@@ -134,7 +160,10 @@ const Step: React.FC = () => {
               </div>
               <div className="rounded-full w-full border-[2px] space-x-1.5 py-0.5">
                 <span className="font-semibold text-lg">
-                  -{/* {totalCalories.toLocaleString("en-US")} */}
+                  {Math.floor(steps * 0.04) < 1000
+                    ? Math.floor(steps * 0.04).toLocaleString("en-US")
+                    : parseInt(Math.floor((steps * 0.04) / 1000).toFixed(1)) +
+                      "k"}
                 </span>
                 <span>แคลอรี่</span>
               </div>
