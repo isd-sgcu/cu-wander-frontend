@@ -56,7 +56,7 @@ const AuthProvider = ({ children }: { children: ReactNode | ReactNode[] }) => {
       console.error(err);
       history.replace("/signin");
 
-      return null;
+      throw err;
     }
   };
 
@@ -91,8 +91,7 @@ const AuthProvider = ({ children }: { children: ReactNode | ReactNode[] }) => {
       setUser(userData);
       history.replace(redirect);
     } catch (err) {
-      console.log(err);
-      return;
+      throw err;
     }
   };
 
