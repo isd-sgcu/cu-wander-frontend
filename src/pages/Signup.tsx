@@ -27,6 +27,9 @@ const Signup: React.FC = () => {
     | "formNotComplete"
     | "invalidEmail"
     | "invalidStudentId"
+    | "formSubmitFailed"
+    | "invalidHeartRate"
+    | "invalidAverageStep"
   >("");
 
   const { signUp } = useAuth();
@@ -57,7 +60,10 @@ const Signup: React.FC = () => {
       !target.faculty.value ||
       !target.year.value ||
       !target.password.value ||
-      !target.confirmPassword.value
+      !target.confirmPassword.value ||
+      // !target.heartRate.value ||
+      !target.averageStep.value ||
+      !target.personalDisease.value
     ) {
       setSubmitState("formNotComplete");
       return;
@@ -77,7 +83,16 @@ const Signup: React.FC = () => {
       return;
     }
 
-    // call api and redirect to home
+    if (typeof +target.heartRate.value !== "number") {
+      setSubmitState("invalidHeartRate");
+      return;
+    }
+
+    if (typeof +target.averageStep.value !== "number") {
+      setSubmitState("invalidAverageStep");
+      return;
+    }
+
     try {
       await signUp(
         {
@@ -88,17 +103,19 @@ const Signup: React.FC = () => {
           password: target.password.value,
           year: target.year.value,
           username: target.username.value, // Add this input (this is display name)
-          step_avg: target.averageStep.value,
+          step_avg: +target.averageStep.value,
           // studentId: target.studentid.value,
-          medical_problem: target.personalDisease.value,
-          heartbeat_avg: target.heartRate.value,
+          medical_problem: target?.personalDisease.value ?? "",
+          heartbeat_avg: +target?.heartRate.value ?? -1,
         },
         "/step"
       );
     } catch (e: unknown) {
+      console.error(e);
       setSubmitState("invalidStudentId");
       return;
     }
+
     setSubmitState("submitted");
     history.push("/step");
   };
@@ -149,12 +166,20 @@ const Signup: React.FC = () => {
                 <img src="assets/icon/add_image.svg" alt="upload profile pic" />
               </div> */}
               <div className="w-full space-y-5 py-4">
+                <Input
+                  name="username"
+                  type="text"
+                  label="ชื่อผู้ใช้งาน"
+                  placeholder="Ex. กอไก่กุ๊กกุ๊ก" // ต้องมีเพศมั้ยนะ
+                  required
+                  submitState={submitState}
+                />
                 <div className="flex space-x-3">
                   <Input
                     name="firstname"
                     type="text"
                     label="ชื่อจริง"
-                    placeholder="Ex. กอไก่กุ๊กกุ๊ก ออกลูกเป็นไข่" // ต้องมีเพศมั้ยนะ
+                    placeholder="Ex. กอไก่กุ๊กกุ๊ก" // ต้องมีเพศมั้ยนะ
                     required
                     submitState={submitState}
                   />
@@ -227,14 +252,14 @@ const Signup: React.FC = () => {
                   <Input
                     name="heartRate"
                     type="text"
-                    label="อัตราการเต้นหัวใจเฉลี่ย"
+                    label="อัตราการเต้นหัวใจเฉลี่ย (กรอกข้อมุลเป็นตัวเลข)"
                     placeholder="Ex. 86 BPM"
                     submitState={submitState}
                   />
                   <Input
                     name="averageStep"
                     type="text"
-                    label="ก้าวเฉลี่ยต่อเดือน"
+                    label="ก้าวเฉลี่ยต่อเดือน* (กรอกข้อมุลเป็นตัวเลข)"
                     placeholder="Ex. 1,000,000 ก้าว"
                     submitState={submitState}
                   />
@@ -265,6 +290,12 @@ const Signup: React.FC = () => {
               <p>
                 {submitState === "formNotComplete" && "กรุณากรอกข้อมูลให้ครบ"}
                 {submitState === "passwordNotMatch" && "รหัสผ่านไม่ตรงกัน"}
+                {submitState === "invalidAverageStep" &&
+                  "กรอกข้อมูลจำนวนก้าวเป็นตัวเลขเท่านั้น"}
+                {submitState === "invalidHeartRate" &&
+                  "กรอกข้อมูลอัตราการเต้นหัวใจเป็นตัวเลขเท่านั้น"}
+                {submitState === "formSubmitFailed" &&
+                  "ข้อมูลไม่ถูกต้อง กรุณาตรวจสอบข้อมูลอีกครั้ง"}
               </p>
             </div>
             <button

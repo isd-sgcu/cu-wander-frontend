@@ -76,7 +76,7 @@ const AuthProvider = ({ children }: { children: ReactNode | ReactNode[] }) => {
             JSON.stringify({
               access_token: credData.access_token,
               refresh_token: credData.refresh_token,
-              expries_in: +new Date() + credData.expires_in,
+              expries_in: +new Date() + credData.expires_in * 1000,
             })
           );
         })
@@ -101,22 +101,26 @@ const AuthProvider = ({ children }: { children: ReactNode | ReactNode[] }) => {
     redirect: string
   ): Promise<void> => {
     try {
-      const { data: credData } = await httpPost("/auth/register", userData);
+      const { data: resData } = await httpPost("/auth/register", userData);
 
-      localStorage.setItem(
-        "token",
-        JSON.stringify({
-          access_token: credData.access_token,
-          refresh_token: credData.refresh_token,
-          expries_in: +new Date() + credData.expires_in,
-        })
-      );
+      await httpPost("/auth/login", {
+        username: userData.username,
+        password: userData.password,
+      }).then(({ data: credData }) => {
+        localStorage.setItem(
+          "token",
+          JSON.stringify({
+            access_token: credData.access_token,
+            refresh_token: credData.refresh_token,
+            expries_in: +new Date() + credData.expires_in * 1000,
+          })
+        );
 
-      setUser(userData);
-      history.push(redirect);
+        setUser(userData);
+        history.push(redirect);
+      });
     } catch (err) {
-      console.log(err);
-      return;
+      throw err;
     }
   };
 
@@ -192,7 +196,7 @@ const renewAccessToken = async (refreshToken: string) => {
     JSON.stringify({
       access_token: res.data.access_token,
       refresh_token: res.data.refresh_token,
-      expries_in: +new Date() + res.data.expries_in,
+      expries_in: +new Date() + res.data.expries_in * 1000,
     })
   );
   return res.data.accessToken;
@@ -209,6 +213,7 @@ export const getAccessToken = async () => {
   // Renew access token if expired
   const now = new Date();
   const expiry = new Date(expries_in);
+
   if (now > expiry) {
     const newAccessToken = await renewAccessToken(refresh_token);
 

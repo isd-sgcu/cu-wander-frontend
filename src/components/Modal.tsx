@@ -19,14 +19,16 @@ const Modal: React.FC = () => {
       {/* background */}
       <div
         className={`bg-black fixed top-0 left-0 right-0 bottom-0 duration-300 z-40 flex ${
-          showModal ? "bg-opacity-40" : "bg-opacity-0 pointer-events-none"
+          showModal
+            ? "bg-opacity-40"
+            : "bg-opacity-0 pointer-events-none hidden"
         }`}
         onClick={() => setPromptModal(false)}
       ></div>
 
       <div
         className={`fixed flex justify-center items-center left-7 right-7 top-0 bottom-0 pointer-events-none z-50 duration-200 ${
-          showModal ? "opacity-100" : "opacity-0 pointer-events-none"
+          showModal ? "opacity-100" : "opacity-0 pointer-events-none hidden"
         }`}
       >
         {/* modal body */}
