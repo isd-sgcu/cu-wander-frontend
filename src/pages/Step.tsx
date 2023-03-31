@@ -5,7 +5,8 @@ import { useRef, useState } from "react";
 // import { Pedometer, SensorEvent } from "pedometer-plugin";
 import { showTabBar } from "../utils/tab";
 import useFetch from "../utils/useFetch";
-// import { PedometerService } from "background-pedometer";
+// @ts-ignore
+import { PedometerService } from "background-pedometer";
 import { getAccessToken } from "../contexts/AuthContext";
 
 const Step: React.FC = () => {
@@ -16,15 +17,15 @@ const Step: React.FC = () => {
   const totalTime = 2400; // count of time in seconds
   const totalCalories = 500; // count of calories
 
-  // PedometerService.requestPermission().then(async (res: any) => {
-  //   if (res.value) {
-  //     const token = await getAccessToken();
-  //     PedometerService.enable({
-  //       token: token, // Get token from localstorage / cookie / etc.
-  //       wsAddress: `${process.env.REACT_APP_BACKEND_URL}/ws`, // Read from env, etc.
-  //     });
-  //   }
-  // });
+  PedometerService.requestPermission().then(async (res: any) => {
+    if (res.value) {
+      const token = await getAccessToken();
+      PedometerService.enable({
+        token: token, // Get token from localstorage / cookie / etc.
+        wsAddress: `${process.env.REACT_APP_BACKEND_URL}/ws`, // Read from env, etc.
+      });
+    }
+  });
 
   // mockup map
   const [map, setMap] = useState();
@@ -106,7 +107,7 @@ const Step: React.FC = () => {
                   <span className="opacity-90">ก้าว</span>
                 </div>
                 <span className="text-[#bababa] text-xs">
-                  {stepsGoal.toLocaleString("en-US")}
+                  -{/* {stepsGoal.toLocaleString("en-US")} */}
                 </span>
               </div>
               <div className="w-full h-1.5 bg-[#D9D9D9] rounded-full">
@@ -121,19 +122,19 @@ const Step: React.FC = () => {
             <div className="flex justify-between text-center space-x-3">
               <div className="rounded-full w-full border-[2px] space-x-1.5 py-0.5">
                 <span className="font-semibold text-lg">
-                  {(totalDistances / 1000).toLocaleString("en-US")}
+                  -{/* {(totalDistances / 1000).toLocaleString("en-US")} */}
                 </span>
                 <span>กิโลเมตร</span>
               </div>
               <div className="rounded-full w-full border-[2px] space-x-1.5 py-0.5">
                 <span className="font-semibold text-lg">
-                  {(totalTime / 60).toLocaleString("en-US")}
+                  -{/* {(totalTime / 60).toLocaleString("en-US")} */}
                 </span>
                 <span>นาที</span>
               </div>
               <div className="rounded-full w-full border-[2px] space-x-1.5 py-0.5">
                 <span className="font-semibold text-lg">
-                  {totalCalories.toLocaleString("en-US")}
+                  -{/* {totalCalories.toLocaleString("en-US")} */}
                 </span>
                 <span>แคลอรี่</span>
               </div>
