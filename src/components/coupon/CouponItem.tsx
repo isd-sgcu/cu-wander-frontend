@@ -5,12 +5,18 @@ interface CouponItemInterface {
   name: string;
   merchant: string;
   steps: string | number;
+  id: string;
+  coupon_condition: string;
+  shop_image_url: string;
 }
 
 const CouponItem: React.FC<CouponItemInterface> = ({
   name,
   merchant,
   steps,
+  id,
+  coupon_condition,
+  shop_image_url,
 }) => {
   const { setShowModal, setSelectedCoupon } = useContext(CouponState);
 
@@ -24,12 +30,16 @@ const CouponItem: React.FC<CouponItemInterface> = ({
           name: name,
           merchant: merchant,
           steps: parseInt(steps.toString()),
+          id: id,
+          coupon_condition: coupon_condition,
         });
         setShowModal(true);
       }}
     >
       <div className="flex items-center h-full w-full space-x-4">
-        <div className="h-full aspect-square bg-gray-300 rounded-lg"></div>
+        <div className="h-full aspect-square bg-gray-300 rounded-lg">
+          <img src={shop_image_url} />
+        </div>
         <div className="flex flex-col justify-between h-full">
           <div className="space-y-1">
             <h3 className="font-bold">{name}</h3>

@@ -9,9 +9,12 @@ import useFetch from "../utils/useFetch";
 import { CouponState } from "../contexts/CouponContext";
 
 interface CouponType {
-  name: string;
-  merchant: string;
-  steps: number;
+  title: string;
+  id: string
+  shop_title: string;
+  step_condition: number;
+  coupon_condition: string;
+  shop_image_url: string;
 }
 
 
@@ -26,6 +29,7 @@ const Coupon: React.FC = () => {
     const { data: coupons, error } = useFetch<CouponType[]>("/coupon");
     // const coupons = mockCouponData;
     console.log(error);
+    console.log(coupons);
 
   return (
     <IonPage>
@@ -60,8 +64,8 @@ const Coupon: React.FC = () => {
           {coupons?.map((coupon, idx) => {
             if (searchPhrase !== "") {
               if (
-                !coupon.name.toLowerCase().includes(searchPhrase) &&
-                !coupon.merchant.toLowerCase().includes(searchPhrase)
+                !coupon.title.toLowerCase().includes(searchPhrase) &&
+                !coupon.shop_title.toLowerCase().includes(searchPhrase)
               ) {
                 return null;
               }
@@ -69,10 +73,13 @@ const Coupon: React.FC = () => {
 
             return (
               <CouponItem
+                shop_image_url={coupon.shop_image_url}
+                coupon_condition={coupon.coupon_condition}
+                id={coupon.id}
                 key={idx}
-                name={coupon.name}
-                merchant={coupon.merchant}
-                steps={coupon.steps}
+                name={coupon.title}
+                merchant={coupon.shop_title}
+                steps={coupon.step_condition}
               />
             );
           })}
