@@ -4,6 +4,8 @@ import { ModalState } from "../../contexts/ModalContext";
 import useFetch from "../../utils/useFetch";
 import { httpGet, httpPost } from "../../utils/fetch";
 import CountDown from "./CountDown";
+import { useState } from "react";
+import Coupon from "../../pages/Coupon";
 
 interface ShopType {
   address: string;
@@ -14,7 +16,7 @@ interface ShopType {
 }
 
 const CouponModal: React.FC = () => {
-  const { showModal, setShowModal, selectedCoupon } = useContext(CouponState);
+  const { showModal, setShowModal, selectedCoupon ,setSelectedCoupon } = useContext(CouponState);
 
   const { showModalHandler, setPromptModal } = useContext(ModalState);
 
@@ -40,6 +42,8 @@ const CouponModal: React.FC = () => {
         }),
       });
 
+      setSelectedCoupon({ ...selectedCoupon, time: Date.now() + 5 * 1000 * 60 });
+
       console.log(response);
 
       // Handle successful response, e.g. update UI, show a success message, etc.
@@ -49,6 +53,7 @@ const CouponModal: React.FC = () => {
     }
   };
 
+  const [ time , setTime ] = useState(0);
   return (
     <>
       <div
@@ -117,6 +122,9 @@ const CouponModal: React.FC = () => {
             </div>
           </div>
         </div>
+        {
+          selectedCoupon.time!=0 && <CountDown until={selectedCoupon.time} />
+        }
         <div className="flex justify-center">
           <div
             className="px-12 py-2.5 bg-green-500 text-white font-semibold rounded-lg"
@@ -130,8 +138,6 @@ const CouponModal: React.FC = () => {
                       <p className="text-red-600 ">
                         {selectedCoupon.coupon_condition}
                       </p>
-
-                      <CountDown until={Date.now() + 5 * 1000 * 60} />
                     </div>
                   ),
                   type: "multiple",
@@ -148,6 +154,7 @@ const CouponModal: React.FC = () => {
                       primary: true,
                       action() {
                         redeemCoupon();
+                        setSelectedCoupon({ ...selectedCoupon, time: (Date.now() + 5 * 1000 * 60) });
                         setPromptModal(false);
                       },
                     },
