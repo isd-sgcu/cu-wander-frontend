@@ -101,22 +101,26 @@ const AuthProvider = ({ children }: { children: ReactNode | ReactNode[] }) => {
     redirect: string
   ): Promise<void> => {
     try {
-      const { data: credData } = await httpPost("/auth/register", userData);
+      const { data: resData } = await httpPost("/auth/register", userData);
 
-      localStorage.setItem(
-        "token",
-        JSON.stringify({
-          access_token: credData.access_token,
-          refresh_token: credData.refresh_token,
-          expries_in: +new Date() + credData.expires_in,
-        })
-      );
+      await httpPost("/auth/login", {
+        username: userData.username,
+        password: userData.password,
+      }).then(({ data: credData }) => {
+        localStorage.setItem(
+          "token",
+          JSON.stringify({
+            access_token: credData.access_token,
+            refresh_token: credData.refresh_token,
+            expries_in: +new Date() + credData.expires_in,
+          })
+        );
 
-      setUser(userData);
-      history.push(redirect);
+        setUser(userData);
+        history.push(redirect);
+      });
     } catch (err) {
-      console.log(err);
-      return;
+      throw err;
     }
   };
 
