@@ -2,6 +2,7 @@ import { useContext } from "react";
 import { CouponState } from "../../contexts/CouponContext";
 import { ModalState } from "../../contexts/ModalContext";
 import useFetch from "../../utils/useFetch";
+import { httpGet, httpPost } from "../../utils/fetch";
 
 interface ShopType {
   address: string;
@@ -16,9 +17,37 @@ const CouponModal: React.FC = () => {
 
   const { showModalHandler, setPromptModal } = useContext(ModalState);
 
-  const steps = 10;
+  //do not forget to change step
+  const steps = 10000;
 
-  const { data:shops , error } = useFetch<ShopType>(`/shop/${selectedCoupon.id}`)
+
+  console.log(selectedCoupon.shop_id)
+  const { data:shops , error } = useFetch<ShopType>(`/shop/${selectedCoupon.shop_id}`)
+  // console.log(error)
+
+
+  const redeemCoupon = async () => {
+    try {
+      const response = await httpPost("/coupon/redeem", {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          "template_coupon_id": selectedCoupon.id,
+          // Add any additional data required by the API
+        }),
+      });
+
+      console.log(response);
+
+      // Handle successful response, e.g. update UI, show a success message, etc.
+    } catch (error) {
+      console.error('Error redeeming coupon:', error);
+      // Handle errors, e.g. show an error message, etc.
+    }
+  };
+
 
   return (
     <>
@@ -81,10 +110,10 @@ const CouponModal: React.FC = () => {
                 <span className="font-bold text-black">เวลาทำการ: </span>
                 {shops?.office_hour}
               </p>
-              <p>
+              {/* <p>
                 <span className="font-bold text-black">โทรศัพท์: </span>
                 {shops?.phone_number}
-              </p>
+              </p> */}
             </div>
           </div>
         </div>
@@ -97,6 +126,7 @@ const CouponModal: React.FC = () => {
                   {
                     title: "โปรดยืนยันการแลกคูปอง",
                     subtitle: "เมื่อยืนยันแล้วคูปองของคุณจะมีอายุการใช้งาน",
+                    body: <p className="text-red-600 ">{selectedCoupon.coupon_condition}</p>,
                     type: "multiple",
                     choices: [
                       {
@@ -110,6 +140,7 @@ const CouponModal: React.FC = () => {
                         title: "ยืนยัน",
                         primary: true,
                         action() {
+                          redeemCoupon();
                           setPromptModal(false);
                         },
                       },

@@ -8,6 +8,7 @@ interface CouponItemInterface {
   id: string;
   coupon_condition: string;
   shop_image_url: string;
+  shop_id: string;
 }
 
 const CouponItem: React.FC<CouponItemInterface> = ({
@@ -17,6 +18,7 @@ const CouponItem: React.FC<CouponItemInterface> = ({
   id,
   coupon_condition,
   shop_image_url,
+  shop_id,
 }) => {
   const { setShowModal, setSelectedCoupon } = useContext(CouponState);
 
@@ -32,6 +34,7 @@ const CouponItem: React.FC<CouponItemInterface> = ({
           steps: parseInt(steps.toString()),
           id: id,
           coupon_condition: coupon_condition,
+          shop_id: shop_id,
         });
         setShowModal(true);
       }}

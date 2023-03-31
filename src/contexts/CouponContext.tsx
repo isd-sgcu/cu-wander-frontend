@@ -11,6 +11,7 @@ export const CouponState = createContext({
     steps: 0,
     id: "",
     coupon_condition: "-",
+    shop_id: "",
   },
   setSelectedCoupon: (selectedCoupon: {
     name: string;
@@ -18,6 +19,7 @@ export const CouponState = createContext({
     steps: number;
     id: string;
     coupon_condition: string;
+    shop_id: string;
   }) => {},
 });
 
@@ -34,12 +36,14 @@ const CouponContext: React.FC<{ children: React.ReactNode }> = ({
     steps: number;
     id: string;
     coupon_condition: string;
+    shop_id: string;
   }>({
     name: "",
     merchant: "",
     steps: 0,
     id: "",
     coupon_condition: "-",
+    shop_id: "",
   });
 
   return (
