@@ -143,7 +143,7 @@ const Profile: React.FC = () => {
               onClick={() => {
                 showModalHandler({
                   title: "CU WANDER Application",
-                  subtitle: "แอปพลิเคชั่นเดินสะสมเก้า",
+                  subtitle: "แอปพลิเคชั่นเดินสะสมก้าว",
                   type: "default",
                 });
               }}
