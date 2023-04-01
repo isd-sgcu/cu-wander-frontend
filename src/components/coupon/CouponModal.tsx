@@ -142,7 +142,12 @@ const CouponModal: React.FC = () => {
             </div>
           </div>
         </div>
-        {selectedCoupon.time !== 0 && <CountDown until={selectedCoupon.time} />}
+        {selectedCoupon.time !== 0 && (
+          <CountDown
+            until={selectedCoupon.time}
+            endAction={() => setPromptModal(false)}
+          />
+        )}
         <div className="flex justify-center">
           <div
             className="px-12 py-2.5 bg-green-500 text-white font-semibold rounded-lg"
