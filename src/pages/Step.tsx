@@ -26,12 +26,13 @@ const Step: React.FC = () => {
   const totalTime = 2400; // count of time in seconds
   const totalCalories = 500; // count of calories
 
+  console.log(process.env.REACT_APP_WEBSOCKET_URL);
   PedometerService.requestPermission().then(async (res: any) => {
     if (res.value) {
       const token = await getAccessToken();
       PedometerService.enable({
         token: token, // Get token from localstorage / cookie / etc.
-        wsAddress: `${process.env.REACT_APP_BACKEND_URL}/ws`, // Read from env, etc.
+        wsAddress: process.env.REACT_APP_WEBSOCKET_URL as string, // Read from env, etc.
       });
     }
   });
