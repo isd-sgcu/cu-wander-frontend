@@ -36,6 +36,7 @@ const CouponItem: React.FC<CouponItemInterface> = ({
           coupon_condition: coupon_condition,
           shop_id: shop_id,
           time: 0,
+          redeem: false,
         });
         setShowModal(true);
       }}
