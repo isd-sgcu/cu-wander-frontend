@@ -76,6 +76,7 @@
   },
   "devDependencies": {
     "@capacitor/cli": "4.6.3",
+    "@ionic/lab": "3.2.15",
     "dotenv": "^16.0.3",
     "react-scripts": "5.0.1",
     "tailwindcss": "^3.2.4"
