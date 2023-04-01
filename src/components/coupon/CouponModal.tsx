@@ -103,6 +103,7 @@ const CouponModal: React.FC = () => {
                 primary: true,
                 action() {
                   setPromptModal(false);
+                  setShowModal(false);
                 },
               },
             ],
