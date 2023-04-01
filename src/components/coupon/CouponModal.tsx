@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import { CouponState } from "../../contexts/CouponContext";
 import { ModalState } from "../../contexts/ModalContext";
 import useFetch from "../../utils/useFetch";
@@ -22,9 +22,31 @@ const CouponModal: React.FC = () => {
   const { showModalHandler, setPromptModal } = useContext(ModalState);
 
   //do not forget to change step
-  const steps = 10000;
+  const [steps, setSteps] = useState(0);
 
-  console.log(selectedCoupon.shop_id);
+  useEffect(() => {
+    const getUserStep = async () => {
+      try {
+        const {
+          data: { steps: s },
+        } = await httpGet("/step");
+
+        setSteps(s);
+        return;
+      } catch (error) {
+        console.error(error);
+
+        throw error;
+      }
+    };
+
+    // interval
+    // setInterval(() => {
+    //   getUserStep();
+    // }, 4000);
+    getUserStep();
+  }, []);
+
   const { data: shops, error } = useFetch<ShopType>(
     `/shop/${selectedCoupon.shop_id}`
   );
@@ -60,13 +82,13 @@ const CouponModal: React.FC = () => {
         }`}
         onClick={() => setShowModal(false)}
       ></div>
-      <div
+      {/* <div
         className={`fixed right-5 bg-white h-12 w-12 rounded-full duration-300 ease-in-out grid place-content-center overflow-hidden pr-1 pt-0.5 ${
           showModal ? "bottom-[440px]" : "-bottom-16"
         }`}
       >
         <img src="assets/icon/location.svg" alt="view location" />
-      </div>
+      </div> */}
       <div
         className={`fixed flex flex-col justify-between duration-300 ease-in-out bottom-0 left-0 right-0 h-[420px] bg-white rounded-t-3xl px-6 font-noto py-6 ${
           showModal ? "translate-y-0" : "translate-y-[460px]"
