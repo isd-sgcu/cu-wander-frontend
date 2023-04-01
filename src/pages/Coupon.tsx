@@ -18,6 +18,9 @@ interface CouponType {
   shop_id: string;
 }
 
+interface RedeemCouponType {
+  template_coupon_id: string;
+}
 
 const Coupon: React.FC = () => {
   useIonViewWillEnter(() => {
@@ -27,11 +30,16 @@ const Coupon: React.FC = () => {
   const { setShowModal, searchPhrase, setSearchPhrase } =
     useContext(CouponState);
 
-    const { data: coupons, error } = useFetch<CouponType[]>("/coupon");
+    const { data , error } = useFetch<CouponType[]>("/coupon");
     // const coupons = mockCouponData;
     console.log(error);
-    console.log(coupons);
+    console.log(data);
 
+    const { data: redeemed_coupons , error: redeemed_coupons_error } = useFetch<RedeemCouponType[]>("/coupon/redeem");
+
+    console.log(redeemed_coupons_error);
+    const redeemedCouponIds = new Set(redeemed_coupons?.map((coupon) => coupon.template_coupon_id));
+    const coupons = data?.filter((coupon) => !redeemedCouponIds.has(coupon.id));
   return (
     <IonPage>
       <div

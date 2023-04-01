@@ -104,6 +104,7 @@ const CouponModal: React.FC = () => {
                 action() {
                   setPromptModal(false);
                   setShowModal(false);
+                  window.location.reload();
                 },
               },
             ],
