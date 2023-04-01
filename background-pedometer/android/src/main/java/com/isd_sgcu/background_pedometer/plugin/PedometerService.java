@@ -53,7 +53,7 @@ public class PedometerService extends Service implements SensorEventListener {
                 intent.getStringExtra("wsAddress")
         );
 
-        return START_STICKY;
+        return START_REDELIVER_INTENT;
     }
 
     @Override

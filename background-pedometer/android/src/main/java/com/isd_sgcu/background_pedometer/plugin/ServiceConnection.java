@@ -22,7 +22,7 @@ public class ServiceConnection {
     private String wsAddress;
     private boolean tryReconnect = true;
 
-    private static final int RECONNECT_INTERVAL = 5_000;
+    private static final int RECONNECT_INTERVAL = 15_000;
 
     public ServiceConnection(String authToken, String wsAddress) {
         this.authToken = authToken;
@@ -55,8 +55,6 @@ public class ServiceConnection {
             public void onFailure(@NonNull WebSocket webSocket, @NonNull Throwable t, @Nullable Response response) {
                 super.onFailure(webSocket, t, response);
                 Log.i("Connection", "Failed");
-                Log.e("Connection", t.getLocalizedMessage());
-                Log.e("Connection", t.getMessage());
                 wsConn = null;
                 if (tryReconnect) {
                     scheduleReconnect();
