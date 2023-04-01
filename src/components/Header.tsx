@@ -6,6 +6,7 @@ import {
   IonToolbar,
 } from "@ionic/react";
 import { useHistory } from "react-router";
+import { useStep } from "../contexts/StepContext";
 
 interface HeaderInterface {
   title: string;
@@ -19,7 +20,7 @@ const Header: React.FC<HeaderInterface> = ({
   showBack = false,
 }) => {
   const history = useHistory();
-
+  const { steps } = useStep();
   return (
     <IonHeader class="ion-no-border" className="relative">
       <IonToolbar mode="ios" className="font-noto relative">
@@ -30,6 +31,10 @@ const Header: React.FC<HeaderInterface> = ({
           <div className="absolute z-[32] w-[247px] h-[186px] rounded-[100%] bg-[#BF387F99] top-[-16px] left-[230px]"></div>
           <div className="absolute z-[31] w-[125px] h-[89px] rounded-[100%] bg-[#FF8A00B2] top-[50px] left-[190px] rotate-[8deg]"></div>
           <div className="absolute z-[30] w-[291px] h-[222px] rounded-[100%] bg-[#028A69B2] top-[-26.82px] left-[-50px] rotate-[-6.5deg]"></div>
+          <div className="absolute flex gap-1.5 z-[50] bg-white backdrop-blur-sm bg-opacity-40 py-0.5 px-3 w-[98px] h-[32px] top-[10px] right-[20px] rounded-2xl text-[16px] overflow-clip">
+            <img src="/assets/icon/shoe_white.svg" alt="shoe" width="18px" />
+            {steps || "-"}
+          </div>
           <div className="absolute z-50 left-0 right-0 bottom-0 top-8">
             {title}
           </div>
