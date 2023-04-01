@@ -44,17 +44,34 @@ const CouponModal: React.FC = () => {
         template_coupon_id: selectedCoupon.id,
         // Add any additional data required by the API
       });
-
-      setSelectedCoupon({
-        ...selectedCoupon,
-        time: Date.now() + 5 * 1000 * 60,
-      });
-
+      if (response.status >= 200 && response.status < 300) {
+        setSelectedCoupon({
+          ...selectedCoupon,
+          time: Date.now() + 5 * 1000 * 60,
+          redeem: true,
+        });
+        handleRedeemCoupon();
+      }
       console.log(response);
 
       // Handle successful response, e.g. update UI, show a success message, etc.
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error redeeming coupon:", error);
+      showModalHandler({
+        title: "Error",
+        subtitle: "แลกคูปองไม่สำเร็จ",
+        body: <p>Error: {error.message}</p>,
+        type: "single",
+        choices: [
+          {
+            title: "เสร็จสิ้น",
+            primary: false,
+            action() {
+              setPromptModal(false);
+            },
+          },
+        ],
+      });
       // Handle errors, e.g. show an error message, etc.
     }
   };
@@ -64,6 +81,51 @@ const CouponModal: React.FC = () => {
       window.open(
         `https://www.google.com/maps?q=${shops?.name} ${shops?.address}`
       );
+  };
+  const handleRedeemCoupon = () => {
+    showModalHandler({
+      title: `${selectedCoupon.name}`,
+      subtitle: `${selectedCoupon.merchant}`,
+      body: (
+        <div>
+          <CountDown
+            until={Date.now() + 5 * 1000 * 60}
+            endAction={() => setPromptModal(false)}
+          />
+          <div
+            className="flex justify-center"
+            onClick={() => {
+              showModalHandler({
+                title: "ต้องการจะปิดหน้านี้ใช่หรือไม่",
+                subtitle: "ถ้าปิดแล้วจะไม่สามารถใช้คูปองนี้ได้อีก",
+                body: <></>,
+                type: "multiple",
+                choices: [
+                  {
+                    title: "ยกเลิก",
+                    primary: false,
+                    action() {},
+                  },
+                  {
+                    title: "ยืนยัน",
+                    primary: true,
+                    action() {
+                      setPromptModal(false);
+                      setShowModal(false);
+                    },
+                  },
+                ],
+              });
+            }}
+          >
+            <div className="px-12 py-2.5 bg-red-500 text-white font-semibold rounded-lg">
+              แลกคูปองสำเร็จแล้ว
+            </div>
+          </div>
+        </div>
+      ),
+      type: "single",
+    });
   };
 
   const [time, setTime] = useState(0);
@@ -136,12 +198,6 @@ const CouponModal: React.FC = () => {
             </div>
           </div>
         </div>
-        {selectedCoupon.time !== 0 && (
-          <CountDown
-            until={selectedCoupon.time}
-            endAction={() => setPromptModal(false)}
-          />
-        )}
         <div className="flex justify-center">
           <div
             className="px-12 py-2.5 bg-green-500 text-white font-semibold rounded-lg"
@@ -171,10 +227,6 @@ const CouponModal: React.FC = () => {
                       primary: true,
                       action() {
                         redeemCoupon();
-                        setSelectedCoupon({
-                          ...selectedCoupon,
-                          time: Date.now() + 5 * 1000 * 60,
-                        });
                         setPromptModal(false);
                       },
                     },

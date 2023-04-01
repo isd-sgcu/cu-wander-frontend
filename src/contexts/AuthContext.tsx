@@ -150,6 +150,9 @@ const AuthProvider = ({ children }: { children: ReactNode | ReactNode[] }) => {
         console.error(err);
       }
     }
+
+    // invalid token
+    localStorage.removeItem("token");
     return false;
   };
 
