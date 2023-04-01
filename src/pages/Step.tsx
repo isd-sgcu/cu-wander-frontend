@@ -26,19 +26,15 @@ const Step: React.FC = () => {
   const totalTime = 2400; // count of time in seconds
   const totalCalories = 500; // count of calories
 
-  const [wsAddress, setWsAddress] = useState<string>();
-
   PedometerService.requestPermission().then(async (res: any) => {
     if (res.value) {
       const token = await getAccessToken();
-      const wsAddress = `${process.env.REACT_APP_WEBSOCKET_URL}/ws`;
       PedometerService.enable({
         token: token, // Get token from localstorage / cookie / etc.
         // expected wsAddress to be in this format
         // wss://<url>[:<port>]/<version>
         wsAddress: `${process.env.REACT_APP_WEBSOCKET_URL}/ws`, // Read from env, etc.
       });
-      setWsAddress(wsAddress);
     }
   });
 
@@ -151,11 +147,6 @@ const Step: React.FC = () => {
                 <div className="flex items-center space-x-1.5">
                   <span className="text-4xl font-bold">
                     {steps?.toLocaleString("en-US")}
-                    {wsAddress && (
-                      <div>
-                        <div>wsAddress: {wsAddress}</div>
-                      </div>
-                    )}
                   </span>
                   <span className="opacity-90">ก้าว</span>
                 </div>
