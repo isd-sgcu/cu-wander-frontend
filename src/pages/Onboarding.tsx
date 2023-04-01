@@ -34,7 +34,7 @@ const Onboarding: React.FC = () => {
             >
               สร้างบัญชี
             </Link>
-            <Link to="/signin" className="text-green-700">
+            <Link to="/signin" className="mt-4 text-green-700">
               มีบัญชีอยู่แล้ว{" "}
               <span className="font-bold underline">เข้าสู่ระบบ</span>
             </Link>
