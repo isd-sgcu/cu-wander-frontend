@@ -7,6 +7,15 @@ ion-toolbar {
   --padding-bottom: 20px;
 }
 
+.new-background-color {
+  --background: linear-gradient(
+    90deg,
+    #55ac91 3.33%,
+    #878fb0 45.9%,
+    #c98db4 103.85%
+  );
+}
+
 ion-button {
   --background: transparent;
 }

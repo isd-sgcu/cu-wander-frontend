@@ -26,14 +26,25 @@ const calculateTimeLeft: (time: number) => TimeLeft | null = (time) => {
   }
 };
 
-export default function CountDown({ until = OpeningTime }: { until?: number }) {
+export default function CountDown({
+  until = OpeningTime,
+  endAction,
+}: {
+  until?: number;
+  endAction: () => void;
+}) {
   const [timeLeft, setTimeLeft] = useState<TimeLeft | null>(
     calculateTimeLeft(until)
   );
 
   useEffect(() => {
     const timer = setInterval(() => {
-      setTimeLeft(calculateTimeLeft(until));
+      const currTimeLeft = calculateTimeLeft(until);
+      setTimeLeft(currTimeLeft);
+
+      if (currTimeLeft?.total === 0) {
+        endAction();
+      }
     }, 1000);
 
     return function cleanup() {
