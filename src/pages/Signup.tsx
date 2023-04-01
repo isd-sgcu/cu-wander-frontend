@@ -1,6 +1,7 @@
 import {
   IonContent,
   IonHeader,
+  IonLoading,
   IonPage,
   useIonViewWillEnter,
 } from "@ionic/react";
@@ -305,6 +306,12 @@ const Signup: React.FC = () => {
             >
               ต่อไป
             </button>
+            <IonLoading
+              isOpen={submitState === "submitting"}
+              message="กำลังเข้าสู่ระบบ"
+              spinner="crescent"
+              keyboardClose
+            />
           </div>
         </form>
       </IonContent>

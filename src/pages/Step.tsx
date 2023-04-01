@@ -1,16 +1,23 @@
 import { GoogleMap } from "@capacitor/google-maps";
 import { Geolocation } from "@capacitor/geolocation";
-import { IonContent, IonPage, useIonViewWillEnter } from "@ionic/react";
+import {
+  IonContent,
+  IonPage,
+  useIonViewDidLeave,
+  useIonViewWillEnter,
+} from "@ionic/react";
 import { useEffect, useRef, useState } from "react";
 // import { Pedometer, SensorEvent } from "pedometer-plugin";
 import { showTabBar } from "../utils/tab";
 import useFetch from "../utils/useFetch";
 // @ts-ignore
 import { PedometerService } from "background-pedometer";
-import { getAccessToken } from "../contexts/AuthContext";
+import { getAccessToken, useAuth } from "../contexts/AuthContext";
 import { httpGet } from "../utils/fetch";
 
 const Step: React.FC = () => {
+  const { user } = useAuth();
+
   // data scheme
   const totalSteps = 10500; // count of steps
   const stepsGoal = 20000;
@@ -30,27 +37,10 @@ const Step: React.FC = () => {
 
   const [steps, setSteps] = useState(0);
 
+  useEffect(() => {}, []);
+
   useEffect(() => {
-    const getUserStep = async () => {
-      try {
-        const {
-          data: { steps: s },
-        } = await httpGet("/step");
-
-        setSteps(s);
-        return;
-      } catch (error) {
-        console.error(error);
-
-        throw error;
-      }
-    };
-
-    // interval
-    // setInterval(() => {
-    //   getUserStep();
-    // }, 4000);
-    getUserStep();
+    console.log(user);
   }, []);
 
   // mockup map
@@ -91,12 +81,52 @@ const Step: React.FC = () => {
     console.log("Current position:", coordinates);
   };
 
+  let fetchStepsInterval: any;
+
   useIonViewWillEnter(() => {
     showTabBar();
     // createMap();
+
+    const getUserStep = async () => {
+      try {
+        const {
+          data: { steps: s },
+        } = await httpGet("/step");
+
+        setSteps(s);
+        return;
+      } catch (error) {
+        console.error(error);
+
+        throw error;
+      }
+    };
+
+    getUserStep();
+
+    // interval
+    fetchStepsInterval = setInterval(() => {
+      getUserStep();
+    }, 10000);
+  });
+
+  useIonViewDidLeave(() => {
+    clearInterval(fetchStepsInterval);
   });
 
   printCurrentPosition();
+
+  function ceilToTen(num: number) {
+    let exponent = Math.floor(Math.log10(num));
+    let base = Math.ceil(num / Math.pow(10, exponent));
+    return base * Math.pow(10, exponent);
+  }
+
+  function nearestPowerOfTen(num: number) {
+    const exponent = Math.floor(Math.log10(num));
+    const nearestPowerOf10 = 10 ** exponent;
+    return nearestPowerOf10;
+  }
 
   return (
     <IonPage>
@@ -132,18 +162,24 @@ const Step: React.FC = () => {
                   </span>
                   <span className="opacity-90">ก้าว</span>
                 </div>
-                <span className="text-[#bababa] text-xs">
-                  -{/* {stepsGoal.toLocaleString("en-US")} */}
-                </span>
+                {/* <span className="text-[#bababa] text-xs">
+                  {ceilToTen(steps).toLocaleString("en-US")}
+                </span> */}
               </div>
-              <div className="w-full h-1.5 bg-[#D9D9D9] rounded-full">
+              {/* <div className="w-full h-1.5 bg-[#D9D9D9] rounded-full">
                 <div
                   className="h-full bg-green-500 rounded-full"
                   style={{
-                    width: `${(totalSteps / stepsGoal) * 100}%`,
+                    width: `${
+                      ((steps -
+                        (ceilToTen(steps) -
+                          nearestPowerOfTen(ceilToTen(steps)))) /
+                        nearestPowerOfTen(ceilToTen(steps))) *
+                      100
+                    }%`,
                   }}
                 ></div>
-              </div>
+              </div> */}
             </div>
             <div className="flex justify-between text-center space-x-3">
               <div className="rounded-full w-full border-[2px] space-x-1.5 py-0.5">

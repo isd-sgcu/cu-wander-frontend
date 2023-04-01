@@ -2,6 +2,7 @@ import {
   IonContent,
   IonHeader,
   IonPage,
+  IonLoading,
   useIonViewWillEnter,
 } from "@ionic/react";
 import { useState } from "react";
@@ -104,6 +105,12 @@ const Signin: React.FC = () => {
             >
               ต่อไป
             </button>
+            <IonLoading
+              isOpen={submitState === "submitting"}
+              message="กำลังเข้าสู่ระบบ"
+              spinner="crescent"
+              keyboardClose
+            />
           </div>
         </form>
       </IonContent>

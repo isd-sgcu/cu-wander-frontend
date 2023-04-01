@@ -52,9 +52,12 @@ const AuthProvider = ({ children }: { children: ReactNode | ReactNode[] }) => {
 
   const getUserData = async (): Promise<UserData | null> => {
     try {
-      const { data: userData } = await httpGet("/auth/me");
-
-      return userData;
+      if (!user) {
+        const { data: userData } = await httpGet("/auth/me");
+        setUser(userData);
+        return userData;
+      }
+      return user;
     } catch (err) {
       console.error("getUserData error:", err);
       history.replace("/signin");
