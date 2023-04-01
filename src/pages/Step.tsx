@@ -14,6 +14,7 @@ import useFetch from "../utils/useFetch";
 import { PedometerService } from "background-pedometer";
 import { getAccessToken, useAuth } from "../contexts/AuthContext";
 import { httpGet } from "../utils/fetch";
+import { useStep } from "../contexts/StepContext";
 
 const Step: React.FC = () => {
   const { user } = useAuth();
@@ -35,7 +36,7 @@ const Step: React.FC = () => {
     }
   });
 
-  const [steps, setSteps] = useState(0);
+  const { steps, getUserStep } = useStep();
 
   useEffect(() => {}, []);
 
@@ -86,21 +87,6 @@ const Step: React.FC = () => {
   useIonViewWillEnter(() => {
     showTabBar();
     // createMap();
-
-    const getUserStep = async () => {
-      try {
-        const {
-          data: { steps: s },
-        } = await httpGet("/step");
-
-        setSteps(s);
-        return;
-      } catch (error) {
-        console.error(error);
-
-        throw error;
-      }
-    };
 
     getUserStep();
 
@@ -158,7 +144,7 @@ const Step: React.FC = () => {
               <div className="flex justify-between items-end">
                 <div className="flex items-center space-x-1.5">
                   <span className="text-4xl font-bold">
-                    {steps.toLocaleString("en-US")}
+                    {steps?.toLocaleString("en-US")}
                   </span>
                   <span className="opacity-90">ก้าว</span>
                 </div>
@@ -184,7 +170,7 @@ const Step: React.FC = () => {
             <div className="flex justify-between text-center space-x-3">
               <div className="rounded-full w-full border-[2px] space-x-1.5 py-0.5">
                 <span className="font-semibold text-lg">
-                  {Math.floor(steps / 1312.33595801).toLocaleString("en-US")}
+                  {Math.floor(steps! / 1312.33595801).toLocaleString("en-US")}
                 </span>
                 <span>กิโลเมตร</span>
               </div>
@@ -196,9 +182,9 @@ const Step: React.FC = () => {
               </div>
               <div className="rounded-full w-full border-[2px] space-x-1.5 py-0.5">
                 <span className="font-semibold text-lg">
-                  {Math.floor(steps * 0.04) < 1000
-                    ? Math.floor(steps * 0.04).toLocaleString("en-US")
-                    : parseInt(Math.floor((steps * 0.04) / 1000).toFixed(1)) +
+                  {Math.floor(steps! * 0.04) < 1000
+                    ? Math.floor(steps! * 0.04).toLocaleString("en-US")
+                    : parseInt(Math.floor((steps! * 0.04) / 1000).toFixed(1)) +
                       "k"}
                 </span>
                 <span>แคลอรี่</span>
