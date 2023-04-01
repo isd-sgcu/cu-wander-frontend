@@ -33,6 +33,13 @@ const CouponModal: React.FC = () => {
     getUserStep();
   }, []);
 
+  const generateUUID = () => {
+    const randomNumber = Math.floor(Math.random() * (1e13 - 1e12) + 1e12);
+    const numberString = randomNumber.toString();
+    const UUID = `${numberString.slice(0, 4)}-${numberString.slice(4, 8)}-${numberString.slice(8, 13)}`;
+    return UUID;
+  };
+
   const { data: shops, error } = useFetch<ShopType>(
     `/shop/${selectedCoupon.shop_id}`
   );
@@ -79,11 +86,16 @@ const CouponModal: React.FC = () => {
   };
 
   const handleRedeemCoupon = (redeemTime: number) => {
+    const UUID = generateUUID();
+
     showModalHandler({
       title: `${selectedCoupon.name}`,
       subtitle: `${selectedCoupon.merchant}`,
       body: (
         <div>
+          <div className="text-center mb-4">
+          <span className="font-bold">{UUID}</span> 
+          </div>
           <CountDown
             until={redeemTime}
             endAction={() => setPromptModal(false)}
@@ -234,9 +246,14 @@ const CouponModal: React.FC = () => {
               if (steps! >= selectedCoupon.steps) {
                 showModalHandler({
                   title: "โปรดยืนยันการแลกคูปอง",
-                  subtitle: "เมื่อยืนยันแล้วคูปองของคุณจะมีอายุการใช้งาน",
+                  subtitle: "เมื่อยืนยันแล้วคูปองของคุณจะ",
                   body: (
                     <div>
+                      <div className="flex-col flex">
+                        <span className="font-semibold pr-3 pl-3 text-center">มีอายุการใช้งานเพียง 5 นาที</span>
+                        <span className="font-semibold pr-3 pl-3 text-center">หลังยืนยันโปรดโชว์หน้าจอให้ร้านค้า</span>
+                      </div>
+    
                       <p className="text-red-600 ">
                         {selectedCoupon.coupon_condition}
                       </p>
