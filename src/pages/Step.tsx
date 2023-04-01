@@ -162,11 +162,11 @@ const Step: React.FC = () => {
                   </span>
                   <span className="opacity-90">ก้าว</span>
                 </div>
-                <span className="text-[#bababa] text-xs">
+                {/* <span className="text-[#bababa] text-xs">
                   {ceilToTen(steps).toLocaleString("en-US")}
-                </span>
+                </span> */}
               </div>
-              <div className="w-full h-1.5 bg-[#D9D9D9] rounded-full">
+              {/* <div className="w-full h-1.5 bg-[#D9D9D9] rounded-full">
                 <div
                   className="h-full bg-green-500 rounded-full"
                   style={{
@@ -179,7 +179,7 @@ const Step: React.FC = () => {
                     }%`,
                   }}
                 ></div>
-              </div>
+              </div> */}
             </div>
             <div className="flex justify-between text-center space-x-3">
               <div className="rounded-full w-full border-[2px] space-x-1.5 py-0.5">
