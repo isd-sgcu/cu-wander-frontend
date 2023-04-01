@@ -50,8 +50,8 @@ const CouponModal: React.FC = () => {
           time: Date.now() + 5 * 1000 * 60,
           redeem: true,
         });
+        handleRedeemCoupon();
       } 
-
       console.log(response);
 
       // Handle successful response, e.g. update UI, show a success message, etc.
@@ -60,7 +60,7 @@ const CouponModal: React.FC = () => {
       showModalHandler({
         title: "Error",
         subtitle: "แลกคูปองไม่สำเร็จ",
-        body: <p>Error Code: {error.message}</p>,
+        body: <p>Error: {error.message}</p>,
         type: "single",
         choices: [
           {
@@ -75,6 +75,47 @@ const CouponModal: React.FC = () => {
       // Handle errors, e.g. show an error message, etc.
     }
   };
+
+  const handleRedeemCoupon = () => {
+    showModalHandler({
+      title: `${selectedCoupon.name}` ,
+      subtitle: `${selectedCoupon.merchant}` ,
+      body: 
+      <div>
+        <CountDown
+          until={Date.now() + 5 * 1000 * 60}
+          endAction={() => setPromptModal(false)}
+        /> 
+        <div className="flex justify-center" onClick={() => {
+          showModalHandler({
+            title: "ต้องการจะปิดหน้านี้ใช่หรือไม่",
+            subtitle: "ถ้าปิดแล้วจะไม่สามารถใช้คูปองนี้ได้อีก",
+            body: <></>,
+            type: "multiple",
+            choices: [
+              {
+                title: "ยกเลิก",
+                primary: false,
+                action() {}
+              },
+              {
+                title: "ยืนยัน",
+                primary: true,
+                action() {
+                  setPromptModal(false);
+                },
+              },
+            ],
+          });
+        }}>
+          <div className="px-12 py-2.5 bg-red-500 text-white font-semibold rounded-lg">
+            แลกคูปองสำเร็จแล้ว
+          </div>
+        </div>
+      </div>,
+      type: "single",
+    });
+  }
 
   const [time, setTime] = useState(0);
   return (
@@ -145,83 +186,69 @@ const CouponModal: React.FC = () => {
             </div>
           </div>
         </div>
-        {selectedCoupon.time !== 0 && (
-          <CountDown
-            until={selectedCoupon.time}
-            endAction={() => setPromptModal(false)}
-          />
-        )}
-        {!selectedCoupon.redeem && 
-          (<div className="flex justify-center">
-            <div
-              className="px-12 py-2.5 bg-green-500 text-white font-semibold rounded-lg"
-              onClick={() => {
-                if (steps! >= selectedCoupon.steps) {
-                  showModalHandler({
-                    title: "โปรดยืนยันการแลกคูปอง",
-                    subtitle: "เมื่อยืนยันแล้วคูปองของคุณจะมีอายุการใช้งาน",
-                    body: (
-                      <div>
-                        <p className="text-red-600 ">
-                          {selectedCoupon.coupon_condition}
-                        </p>
-                      </div>
-                    ),
-                    type: "multiple",
-                    choices: [
-                      {
-                        title: "ยกเลิก",
-                        primary: false,
-                        action() {
-                          setPromptModal(false);
-                        },
+        <div className="flex justify-center">
+          <div
+            className="px-12 py-2.5 bg-green-500 text-white font-semibold rounded-lg"
+            onClick={() => {
+              if (steps! >= selectedCoupon.steps) {
+                showModalHandler({
+                  title: "โปรดยืนยันการแลกคูปอง",
+                  subtitle: "เมื่อยืนยันแล้วคูปองของคุณจะมีอายุการใช้งาน",
+                  body: (
+                    <div>
+                      <p className="text-red-600 ">
+                        {selectedCoupon.coupon_condition}
+                      </p>
+                    </div>
+                  ),
+                  type: "multiple",
+                  choices: [
+                    {
+                      title: "ยกเลิก",
+                      primary: false,
+                      action() {
+                        setPromptModal(false);
                       },
-                      {
-                        title: "ยืนยัน",
-                        primary: true,
-                        action() {
-                          redeemCoupon();
-                          setPromptModal(false);
-                        },
+                    },
+                    {
+                      title: "ยืนยัน",
+                      primary: true,
+                      action() {
+                        redeemCoupon();
+                        setPromptModal(false);
                       },
-                    ],
-                  });
-                } else {
-                  showModalHandler({
-                    title: "คะแนนไม่พอ",
-                    subtitle: "แต้มนับก้าวของคุณไม่เพียงพอในการแลกคูปองนี้",
-                    type: "single",
-                    choices: [
-                      {
-                        title: "เสร็จสิ้น",
-                        primary: false,
-                        action() {
-                          setPromptModal(false);
-                        },
+                    },
+                  ],
+                });
+              } else {
+                showModalHandler({
+                  title: "คะแนนไม่พอ",
+                  subtitle: "แต้มนับก้าวของคุณไม่เพียงพอในการแลกคูปองนี้",
+                  type: "single",
+                  choices: [
+                    {
+                      title: "เสร็จสิ้น",
+                      primary: false,
+                      action() {
+                        setPromptModal(false);
                       },
-                    ],
-                  });
-                }
+                    },
+                  ],
+                });
+              }
 
-                // {
-                //   title: "โปรดยืนยันการแลกคูปอง",
-                //   subtitle: "เมื่อยืนยันแล้วคูปองของคุณจะมีอายุการใช้งาน",
-                //   type: "default",
-                //   body: <div>fasd</div>,
-                // }
-              }}
-            >
-              แลกคูปอง
-            </div>
-          </div>) 
-        }
-        {selectedCoupon.redeem && 
-          (<div className="flex justify-center">
-            <div className="px-12 py-2.5 bg-gray-400 text-grey-700 font-semibold rounded-lg">
-              แลกคูปองสำเร็จแล้ว
-            </div>
-          </div>) 
-        }
+              // {
+              //   title: "โปรดยืนยันการแลกคูปอง",
+              //   subtitle: "เมื่อยืนยันแล้วคูปองของคุณจะมีอายุการใช้งาน",
+              //   type: "default",
+              //   body: <div>fasd</div>,
+              // }
+            }}
+          >
+            แลกคูปอง
+          </div>
+        </div>
+
       </div>
     </>
   );
