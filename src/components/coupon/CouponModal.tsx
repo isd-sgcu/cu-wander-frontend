@@ -60,7 +60,7 @@ const CouponModal: React.FC = () => {
       showModalHandler({
         title: "Error",
         subtitle: "แลกคูปองไม่สำเร็จ",
-        body: <p>Error: {error.message}</p>,
+        body: <p>Error: ท่านได้แลกคูปองนี้ไปแล้ว</p>,
         type: "single",
         choices: [
           {
