@@ -6,6 +6,7 @@ import { httpGet, httpPost } from "../../utils/fetch";
 import CountDown from "./CountDown";
 import { useState } from "react";
 import Coupon from "../../pages/Coupon";
+import { useStep } from "../../contexts/StepContext";
 
 interface ShopType {
   address: string;
@@ -22,24 +23,9 @@ const CouponModal: React.FC = () => {
   const { showModalHandler, setPromptModal } = useContext(ModalState);
 
   //do not forget to change step
-  const [steps, setSteps] = useState(0);
+  const { steps, getUserStep } = useStep();
 
   useEffect(() => {
-    const getUserStep = async () => {
-      try {
-        const {
-          data: { steps: s },
-        } = await httpGet("/step");
-
-        setSteps(s);
-        return;
-      } catch (error) {
-        console.error(error);
-
-        throw error;
-      }
-    };
-
     // interval
     // setInterval(() => {
     //   getUserStep();
@@ -152,7 +138,7 @@ const CouponModal: React.FC = () => {
           <div
             className="px-12 py-2.5 bg-green-500 text-white font-semibold rounded-lg"
             onClick={() => {
-              if (steps >= selectedCoupon.steps) {
+              if (steps! >= selectedCoupon.steps) {
                 showModalHandler({
                   title: "โปรดยืนยันการแลกคูปอง",
                   subtitle: "เมื่อยืนยันแล้วคูปองของคุณจะมีอายุการใช้งาน",
