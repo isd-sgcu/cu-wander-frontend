@@ -47,12 +47,14 @@ const CouponModal: React.FC = () => {
       if (response.status >= 200 && response.status < 300) {
         setSelectedCoupon({
           ...selectedCoupon,
-          time: Date.now() + 5 * 1000 * 60,
+          // parse: 2023-04-01 18:09:44 +0000 UTC
+          time: Date.parse(response.data.redeem_at) + 5 * 1000 * 60,
           redeem: true,
         });
-        handleRedeemCoupon();
+
+        handleRedeemCoupon(Date.parse(response.data.redeem_at) + 5 * 1000 * 60);
       }
-      console.log(response);
+      // console.log(response);
 
       // Handle successful response, e.g. update UI, show a success message, etc.
     } catch (error: any) {
@@ -60,7 +62,7 @@ const CouponModal: React.FC = () => {
       showModalHandler({
         title: "Error",
         subtitle: "แลกคูปองไม่สำเร็จ",
-        body: <p>Error: {error.message}</p>,
+        body: <p>Error: ท่านได้แลกคูปองนี้ไปแล้ว</p>,
         type: "single",
         choices: [
           {
@@ -82,14 +84,15 @@ const CouponModal: React.FC = () => {
         `https://www.google.com/maps?q=${shops?.name} ${shops?.address}`
       );
   };
-  const handleRedeemCoupon = () => {
+
+  const handleRedeemCoupon = (redeemTime: number) => {
     showModalHandler({
       title: `${selectedCoupon.name}`,
       subtitle: `${selectedCoupon.merchant}`,
       body: (
         <div>
           <CountDown
-            until={Date.now() + 5 * 1000 * 60}
+            until={redeemTime}
             endAction={() => setPromptModal(false)}
           />
           <div
@@ -104,7 +107,10 @@ const CouponModal: React.FC = () => {
                   {
                     title: "ยกเลิก",
                     primary: false,
-                    action() {},
+                    action() {
+                      setPromptModal(false);
+                      handleRedeemCoupon(redeemTime);
+                    },
                   },
                   {
                     title: "ยืนยัน",
@@ -112,6 +118,7 @@ const CouponModal: React.FC = () => {
                     action() {
                       setPromptModal(false);
                       setShowModal(false);
+                      window.location.reload();
                     },
                   },
                 ],
@@ -125,17 +132,47 @@ const CouponModal: React.FC = () => {
         </div>
       ),
       type: "single",
+      preventClose: true,
+      onClose: () => {
+        showModalHandler({
+          title: "ต้องการจะปิดหน้านี้ใช่หรือไม่",
+          subtitle: "ถ้าปิดแล้วจะไม่สามารถใช้คูปองนี้ได้อีก",
+          body: <></>,
+          type: "multiple",
+          choices: [
+            {
+              title: "ยกเลิก",
+              primary: false,
+              action() {
+                setPromptModal(false);
+                handleRedeemCoupon(redeemTime);
+              },
+            },
+            {
+              title: "ยืนยัน",
+              primary: true,
+              action() {
+                setPromptModal(false);
+                setShowModal(false);
+                window.location.reload();
+              },
+            },
+          ],
+          preventClose: true,
+        });
+      },
     });
   };
 
-  const [time, setTime] = useState(0);
   return (
     <>
       <div
         className={`bg-black fixed top-0 left-0 right-0 bottom-0 duration-300 ${
           showModal ? "bg-opacity-40" : "bg-opacity-0 pointer-events-none"
         }`}
-        onClick={() => setShowModal(false)}
+        onClick={() => {
+          setShowModal(false);
+        }}
       ></div>
       <div
         className={`fixed right-5 bg-white h-12 w-12 rounded-full duration-300 ease-in-out grid place-content-center overflow-hidden pr-1 pt-0.5 ${
