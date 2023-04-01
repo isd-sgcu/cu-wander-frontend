@@ -46,7 +46,7 @@ function MainPage({ setCurrentPage }: { setCurrentPage: any }) {
 
 function EditUserPage({ setCurrentPage }: { setCurrentPage: any }) {
   const { user } = useAuth();
-  console.log(user);
+  // console.log(user);
   return (
     <motion.div
       {...AnimationPropsInside}

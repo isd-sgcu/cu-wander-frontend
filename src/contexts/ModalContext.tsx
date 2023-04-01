@@ -11,6 +11,8 @@ interface ModalProps {
     primary: boolean;
     action: () => void;
   }[];
+  onClose?: () => void;
+  preventClose?: boolean;
 }
 
 export const ModalState = createContext<{

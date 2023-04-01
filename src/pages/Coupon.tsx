@@ -10,7 +10,7 @@ import { CouponState } from "../contexts/CouponContext";
 
 interface CouponType {
   title: string;
-  id: string
+  id: string;
   shop_title: string;
   step_condition: number;
   coupon_condition: string;
@@ -30,16 +30,19 @@ const Coupon: React.FC = () => {
   const { setShowModal, searchPhrase, setSearchPhrase } =
     useContext(CouponState);
 
-    const { data , error } = useFetch<CouponType[]>("/coupon");
-    // const coupons = mockCouponData;
-    console.log(error);
-    console.log(data);
+  const { data, error } = useFetch<CouponType[]>("/coupon");
+  // const coupons = mockCouponData;
+  // console.log(error);
+  // console.log(data);
 
-    const { data: redeemed_coupons , error: redeemed_coupons_error } = useFetch<RedeemCouponType[]>("/coupon/redeem");
+  const { data: redeemed_coupons, error: redeemed_coupons_error } =
+    useFetch<RedeemCouponType[]>("/coupon/redeem");
 
-    console.log(redeemed_coupons_error);
-    const redeemedCouponIds = new Set(redeemed_coupons?.map((coupon) => coupon.template_coupon_id));
-    const coupons = data?.filter((coupon) => !redeemedCouponIds.has(coupon.id));
+  // console.log(redeemed_coupons_error);
+  const redeemedCouponIds = new Set(
+    redeemed_coupons?.map((coupon) => coupon.template_coupon_id)
+  );
+  const coupons = data?.filter((coupon) => !redeemedCouponIds.has(coupon.id));
   return (
     <IonPage>
       <div

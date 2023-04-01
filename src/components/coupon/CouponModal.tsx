@@ -44,15 +44,17 @@ const CouponModal: React.FC = () => {
         template_coupon_id: selectedCoupon.id,
         // Add any additional data required by the API
       });
-      if(response.status >= 200 && response.status<300) {
+      if (response.status >= 200 && response.status < 300) {
         setSelectedCoupon({
           ...selectedCoupon,
-          time: Date.now() + 5 * 1000 * 60,
+          // parse: 2023-04-01 18:09:44 +0000 UTC
+          time: Date.parse(response.data.redeem_at) + 5 * 1000 * 60,
           redeem: true,
         });
-        handleRedeemCoupon();
-      } 
-      console.log(response);
+
+        handleRedeemCoupon(Date.parse(response.data.redeem_at) + 5 * 1000 * 60);
+      }
+      // console.log(response);
 
       // Handle successful response, e.g. update UI, show a success message, etc.
     } catch (error: any) {
@@ -76,57 +78,94 @@ const CouponModal: React.FC = () => {
     }
   };
 
-  const handleRedeemCoupon = () => {
+  const handleRedeemCoupon = (redeemTime: number) => {
     showModalHandler({
-      title: `${selectedCoupon.name}` ,
-      subtitle: `${selectedCoupon.merchant}` ,
-      body: 
-      <div>
-        <CountDown
-          until={Date.now() + 5 * 1000 * 60}
-          endAction={() => setPromptModal(false)}
-        /> 
-        <div className="flex justify-center" onClick={() => {
-          showModalHandler({
-            title: "ต้องการจะปิดหน้านี้ใช่หรือไม่",
-            subtitle: "ถ้าปิดแล้วจะไม่สามารถใช้คูปองนี้ได้อีก",
-            body: <></>,
-            type: "multiple",
-            choices: [
-              {
-                title: "ยกเลิก",
-                primary: false,
-                action() {}
-              },
-              {
-                title: "ยืนยัน",
-                primary: true,
-                action() {
-                  setPromptModal(false);
-                  setShowModal(false);
-                  window.location.reload();
-                },
-              },
-            ],
-          });
-        }}>
-          <div className="px-12 py-2.5 bg-red-500 text-white font-semibold rounded-lg">
-            แลกคูปองสำเร็จแล้ว
+      title: `${selectedCoupon.name}`,
+      subtitle: `${selectedCoupon.merchant}`,
+      body: (
+        <div>
+          <CountDown
+            until={redeemTime}
+            endAction={() => setPromptModal(false)}
+          />
+          <div
+            className="flex justify-center"
+            onClick={() => {
+              showModalHandler({
+                title: "ต้องการจะปิดหน้านี้ใช่หรือไม่",
+                subtitle: "ถ้าปิดแล้วจะไม่สามารถใช้คูปองนี้ได้อีก",
+                body: <></>,
+                type: "multiple",
+                choices: [
+                  {
+                    title: "ยกเลิก",
+                    primary: false,
+                    action() {
+                      setPromptModal(false);
+                      handleRedeemCoupon(redeemTime);
+                    },
+                  },
+                  {
+                    title: "ยืนยัน",
+                    primary: true,
+                    action() {
+                      setPromptModal(false);
+                      setShowModal(false);
+                      window.location.reload();
+                    },
+                  },
+                ],
+              });
+            }}
+          >
+            <div className="px-12 py-2.5 bg-red-500 text-white font-semibold rounded-lg">
+              แลกคูปองสำเร็จแล้ว
+            </div>
           </div>
         </div>
-      </div>,
+      ),
       type: "single",
+      preventClose: true,
+      onClose: () => {
+        showModalHandler({
+          title: "ต้องการจะปิดหน้านี้ใช่หรือไม่",
+          subtitle: "ถ้าปิดแล้วจะไม่สามารถใช้คูปองนี้ได้อีก",
+          body: <></>,
+          type: "multiple",
+          choices: [
+            {
+              title: "ยกเลิก",
+              primary: false,
+              action() {
+                setPromptModal(false);
+                handleRedeemCoupon(redeemTime);
+              },
+            },
+            {
+              title: "ยืนยัน",
+              primary: true,
+              action() {
+                setPromptModal(false);
+                setShowModal(false);
+                window.location.reload();
+              },
+            },
+          ],
+          preventClose: true,
+        });
+      },
     });
-  }
+  };
 
-  const [time, setTime] = useState(0);
   return (
     <>
       <div
         className={`bg-black fixed top-0 left-0 right-0 bottom-0 duration-300 ${
           showModal ? "bg-opacity-40" : "bg-opacity-0 pointer-events-none"
         }`}
-        onClick={() => setShowModal(false)}
+        onClick={() => {
+          setShowModal(false);
+        }}
       ></div>
       {/* <div
         className={`fixed right-5 bg-white h-12 w-12 rounded-full duration-300 ease-in-out grid place-content-center overflow-hidden pr-1 pt-0.5 ${
@@ -250,7 +289,6 @@ const CouponModal: React.FC = () => {
             แลกคูปอง
           </div>
         </div>
-
       </div>
     </>
   );

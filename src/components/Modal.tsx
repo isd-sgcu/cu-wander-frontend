@@ -23,7 +23,13 @@ const Modal: React.FC = () => {
             ? "bg-opacity-40"
             : "bg-opacity-0 pointer-events-none hidden"
         }`}
-        onClick={() => setPromptModal(false)}
+        id="modal-background"
+        onClick={() => {
+          if (!content.preventClose && !content.onClose) {
+            setPromptModal(false);
+          }
+          if (content.onClose) content.onClose();
+        }}
       ></div>
 
       <div
