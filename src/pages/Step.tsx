@@ -33,8 +33,10 @@ const Step: React.FC = () => {
       const token = await getAccessToken();
       const wsAddress = `${process.env.REACT_APP_WEBSOCKET_URL}/ws`;
       PedometerService.enable({
-        token, // Get token from localstorage / cookie / etc.
-        wsAddress, // Read from env, etc.
+        token: token, // Get token from localstorage / cookie / etc.
+        // expected wsAddress to be in this format
+        // wss://<url>[:<port>]/<version>
+        wsAddress: `${process.env.REACT_APP_WEBSOCKET_URL}/ws`, // Read from env, etc.
       });
       setWsAddress(wsAddress);
     }

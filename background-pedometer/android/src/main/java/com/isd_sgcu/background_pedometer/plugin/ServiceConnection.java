@@ -22,10 +22,9 @@ public class ServiceConnection {
     private String wsAddress;
     private boolean tryReconnect = true;
 
-    private static final int RECONNECT_INTERVAL = 5_000;
+    private static final int RECONNECT_INTERVAL = 15_000;
 
     public ServiceConnection(String authToken, String wsAddress) {
-        Log.i("Connection", String.format("Constructor with %s, %s", authToken, wsAddress));
         this.authToken = authToken;
         this.wsAddress = wsAddress;
         connect();
@@ -38,13 +37,15 @@ public class ServiceConnection {
                 .build();
 
         Request request = new Request.Builder()
-                .url(String.format("wss://%s/ws", wsAddress))
+                .url(wsAddress)
                 .build();
 
-        wsConn = client.newWebSocket(request, new WebSocketListener() {
+        client.newWebSocket(request, new WebSocketListener() {
             @Override
             public void onClosed(@NonNull WebSocket webSocket, int code, @NonNull String reason) {
                 super.onClosed(webSocket, code, reason);
+                Log.i("Connection", "Closed");
+                wsConn = null;
                 if (tryReconnect) {
                     scheduleReconnect();
                 }
@@ -53,6 +54,8 @@ public class ServiceConnection {
             @Override
             public void onFailure(@NonNull WebSocket webSocket, @NonNull Throwable t, @Nullable Response response) {
                 super.onFailure(webSocket, t, response);
+                Log.i("Connection", "Failed");
+                wsConn = null;
                 if (tryReconnect) {
                     scheduleReconnect();
                 }
@@ -61,7 +64,9 @@ public class ServiceConnection {
             @Override
             public void onOpen(@NonNull WebSocket webSocket, @NonNull Response response) {
                 super.onOpen(webSocket, response);
+                Log.i("Connection", "Opened");
                 webSocket.send(authToken);
+                wsConn = webSocket;
             }
         });
     }
@@ -71,6 +76,9 @@ public class ServiceConnection {
     }
 
     public boolean send(String data) {
+        if(wsConn == null) {
+            return false;
+        }
         Log.v("Connection", "Sending " + data);
         return wsConn.send(data);
     }
