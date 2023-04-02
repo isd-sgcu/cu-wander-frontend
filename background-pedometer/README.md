@@ -16,6 +16,7 @@ npx cap sync
 * [`requestPermission()`](#requestpermission)
 * [`enable(...)`](#enable)
 * [`disable()`](#disable)
+* [`addListener('steps', ...)`](#addlistenersteps)
 * [Interfaces](#interfaces)
 
 </docgen-index>
@@ -67,6 +68,24 @@ Stop pedometer background service
 --------------------
 
 
+### addListener('steps', ...)
+
+```typescript
+addListener(eventName: 'steps', callback: (event: SensorEvent) => void) => Promise<PluginListenerHandle> & PluginListenerHandle
+```
+
+add listener to change in step.
+
+| Param           | Type                                                                    |
+| --------------- | ----------------------------------------------------------------------- |
+| **`eventName`** | <code>'steps'</code>                                                    |
+| **`callback`**  | <code>(event: <a href="#sensorevent">SensorEvent</a>) =&gt; void</code> |
+
+**Returns:** <code>Promise&lt;<a href="#pluginlistenerhandle">PluginListenerHandle</a>&gt; & <a href="#pluginlistenerhandle">PluginListenerHandle</a></code>
+
+--------------------
+
+
 ### Interfaces
 
 
@@ -88,5 +107,19 @@ error can be check by checking whether `errMsg` is empty
 | --------------- | ------------------- |
 | **`token`**     | <code>string</code> |
 | **`wsAddress`** | <code>string</code> |
+
+
+#### PluginListenerHandle
+
+| Prop         | Type                                      |
+| ------------ | ----------------------------------------- |
+| **`remove`** | <code>() =&gt; Promise&lt;void&gt;</code> |
+
+
+#### SensorEvent
+
+| Prop        | Type                |
+| ----------- | ------------------- |
+| **`steps`** | <code>number</code> |
 
 </docgen-api>

@@ -1,5 +1,6 @@
 package com.isd_sgcu.background_pedometer.plugin;
 
+import android.os.Binder;
 import android.util.Log;
 import android.app.Notification;
 import android.app.NotificationChannel;
@@ -16,29 +17,35 @@ import android.os.IBinder;
 import androidx.core.app.NotificationCompat;
 
 public class PedometerService extends Service implements SensorEventListener {
-    int steps = 0;
+    private int steps = 0;
+    private int localSteps = 0;
+
     SensorManager sensorManager;
     Sensor stepCounterSensor;
     Sensor stepDetectorSensor;
 
-    ServiceConnection conn;
+    WebSocketConnection conn;
 
     private final static String CHANNEL_NAME = "pedometer_service_channel";
-    private final static String NOTIFICATION_TITLE = "Step Tracker";
+    private final static String NOTIFICATION_TITLE = "CU Wander";
     private final static int IMPORTANCE = NotificationManager.IMPORTANCE_MIN;
     private final static int NOTIFICATION_ID = 312;
     private final static int SENSOR_DELAY = SensorManager.SENSOR_DELAY_UI;
 
-    @Override
-    public void onCreate() {
-        super.onCreate();
-        Log.i("Service", "Created");
+    private final IBinder binder = new MyBinder();
+    private PedometerServicePlugin plugin;
+
+    public class MyBinder extends Binder {
+        PedometerService getService() {
+            return PedometerService.this;
+        }
     }
 
     @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
-        super.onStartCommand(intent, flags, startId);
-        Log.i("Service", "StartCommand");
+    public void onCreate() {
+        super.onCreate();
+        Log.i("Service", "onCreate");
+
         Notification notification = getNotification();
 
         sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
@@ -48,17 +55,26 @@ public class PedometerService extends Service implements SensorEventListener {
         sensorManager.registerListener(this, stepDetectorSensor, SENSOR_DELAY);
 
         startForeground(NOTIFICATION_ID, notification);
-        conn = new ServiceConnection(
+    }
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        super.onStartCommand(intent, flags, startId);
+        Log.i("Service", "StartCommand");
+
+        conn = new WebSocketConnection(
                 intent.getStringExtra("token"),
                 intent.getStringExtra("wsAddress")
         );
 
-        return START_REDELIVER_INTENT;
+        return START_STICKY;
     }
 
     @Override
     public IBinder onBind(Intent intent) {
-        return null;
+        Log.i("Service", "onBind");
+
+        return binder;
     }
 
     @Override
@@ -66,6 +82,9 @@ public class PedometerService extends Service implements SensorEventListener {
         super.onDestroy();
         conn.disconnect();
         conn = null;
+
+        plugin.setService(null);
+        setPlugin(null);
 
         Log.i("Service", "Destroyed!");
     }
@@ -76,8 +95,12 @@ public class PedometerService extends Service implements SensorEventListener {
 
     @Override
     public void onSensorChanged(SensorEvent event) {
+        // When service is created it's default to 0
+        // and when the first packet come it will jump to the
+        // last steps it can find
         if (steps == 0) {
             steps = (int) event.values[0];
+            localSteps = steps;
             Log.v("Service", "onSensorChanged init " + steps);
             return;
         }
@@ -85,9 +108,16 @@ public class PedometerService extends Service implements SensorEventListener {
             int newSteps = (int) event.values[0];
             int dSteps = newSteps - steps;
             Log.v("Service", "onSensorChanged " + dSteps);
-            // only update delta what connection is available.
+            // update to server (only when connection is available).
             if (conn.send(String.valueOf(dSteps))) {
                 steps = newSteps;
+            }
+
+            // update for local
+            if(isPluginBounded()) {
+                dSteps = newSteps - localSteps;
+                localSteps = newSteps;
+                plugin.fireSteps(dSteps);
             }
         }
     }
@@ -96,10 +126,9 @@ public class PedometerService extends Service implements SensorEventListener {
         String channel = createChannel();
 
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this, channel)
-                .setSmallIcon(android.R.drawable.ic_menu_mylocation).setContentTitle(NOTIFICATION_TITLE);
+                .setSmallIcon(android.R.drawable.ic_menu_compass).setContentTitle(NOTIFICATION_TITLE);
 
-        // Uncomment to remove visible notification.
-        // mBuilder.setVisibility(NotificationCompat.VISIBILITY_SECRET);
+        mBuilder.setVisibility(NotificationCompat.VISIBILITY_SECRET);
 
         return mBuilder
                 .setPriority(IMPORTANCE)
@@ -122,5 +151,17 @@ public class PedometerService extends Service implements SensorEventListener {
             stopSelf();
         }
         return CHANNEL_NAME;
+    }
+
+    public void setPlugin(PedometerServicePlugin plugin) {
+        this.plugin = plugin;
+    }
+
+    public PedometerServicePlugin getPlugin() {
+        return plugin;
+    }
+
+    public boolean isPluginBounded() {
+        return plugin != null;
     }
 }

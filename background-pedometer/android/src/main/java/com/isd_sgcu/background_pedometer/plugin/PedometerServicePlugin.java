@@ -1,7 +1,11 @@
 package com.isd_sgcu.background_pedometer.plugin;
 
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.Manifest;
+import android.content.ServiceConnection;
+import android.os.IBinder;
 import android.util.Log;
 import com.getcapacitor.JSObject;
 import com.getcapacitor.Plugin;
@@ -17,7 +21,22 @@ import com.getcapacitor.annotation.PermissionCallback;
 })
 public class PedometerServicePlugin extends Plugin {
 
-    private PedometerService implementation = new PedometerService();
+    private PedometerService service;
+
+    private ServiceConnection connection = new ServiceConnection() {
+        public void onServiceConnected(ComponentName name, IBinder binder) {
+            Log.i("Binder", "Bound Service");
+            PedometerService.MyBinder mBinder = (PedometerService.MyBinder) binder;
+            setService(mBinder.getService());
+            service.setPlugin(PedometerServicePlugin.this);
+        }
+
+        public void onServiceDisconnected(ComponentName name) {
+            Log.i("Binder", "Bound Service");
+            service.setPlugin(null);
+            setService(null);
+        }
+    };
 
     @PluginMethod()
     public void requestPermission(PluginCall call) {
@@ -50,6 +69,7 @@ public class PedometerServicePlugin extends Plugin {
         intent.putExtra("token", call.getString("token"));
         intent.putExtra("wsAddress", call.getString("wsAddress"));
         getContext().startService(intent);
+        getContext().bindService(intent, connection, Context.BIND_AUTO_CREATE);
 
         JSObject ret = new JSObject();
         ret.put("errMsg", "");
@@ -60,7 +80,7 @@ public class PedometerServicePlugin extends Plugin {
     public void disable(PluginCall call) {
         Log.i("Plugin", "disable");
 
-        getContext().stopService(new Intent(getContext(), PedometerService.class));
+        getContext().unbindService(connection);
 
         JSObject ret = new JSObject();
         ret.put("errMsg", "");
@@ -79,5 +99,24 @@ public class PedometerServicePlugin extends Plugin {
             ret.put("errMsg", "");
             call.resolve(ret);
         }
+    }
+
+    public void fireSteps(int steps) {
+        JSObject ret = new JSObject();
+        ret.put("steps", steps);
+
+        notifyListeners("steps", ret);
+    }
+
+    public boolean isServiceBounded() {
+        return service != null;
+    }
+
+    public void setService(PedometerService service) {
+        this.service = service;
+    }
+
+    public PedometerService getService() {
+        return service;
     }
 }
