@@ -1,3 +1,5 @@
+import { PluginListenerHandle } from "@capacitor/core";
+
 export interface PedometerServicePlugin {
   /**
     * Asking for permission
@@ -16,6 +18,14 @@ export interface PedometerServicePlugin {
     * Stop pedometer background service
     */
   disable(): Promise<void>;
+
+  /**
+    * add listener to change in step.
+    */
+  addListener(
+      eventName: 'steps',
+      callback: (event: SensorEvent) => void,
+  ): Promise<PluginListenerHandle> & PluginListenerHandle
 }
 
 
@@ -32,4 +42,8 @@ export interface CallResponse<T> {
 export interface EnableOption {
     token: string;
     wsAddress: string;
+}
+
+export interface SensorEvent {
+    steps: number;
 }

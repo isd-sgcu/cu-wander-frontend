@@ -15,7 +15,7 @@ import okhttp3.Response;
 import okhttp3.WebSocket;
 import okhttp3.WebSocketListener;
 
-public class ServiceConnection {
+public class WebSocketConnection {
 
     private WebSocket wsConn;
     private String authToken;
@@ -24,7 +24,7 @@ public class ServiceConnection {
 
     private static final int RECONNECT_INTERVAL = 15_000;
 
-    public ServiceConnection(String authToken, String wsAddress) {
+    public WebSocketConnection(String authToken, String wsAddress) {
         this.authToken = authToken;
         this.wsAddress = wsAddress;
         connect();

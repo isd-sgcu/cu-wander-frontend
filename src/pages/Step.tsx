@@ -26,18 +26,6 @@ const Step: React.FC = () => {
   const totalTime = 2400; // count of time in seconds
   const totalCalories = 500; // count of calories
 
-  PedometerService.requestPermission().then(async (res: any) => {
-    if (res.value) {
-      const token = await getAccessToken();
-      PedometerService.enable({
-        token: token, // Get token from localstorage / cookie / etc.
-        // expected wsAddress to be in this format
-        // wss://<url>[:<port>]/<version>
-        wsAddress: `${process.env.REACT_APP_WEBSOCKET_URL}/ws`, // Read from env, etc.
-      });
-    }
-  });
-
   const { steps, getUserStep } = useStep();
 
   useEffect(() => {}, []);
@@ -84,22 +72,23 @@ const Step: React.FC = () => {
     console.log("Current position:", coordinates);
   };
 
-  let fetchStepsInterval: any;
-
   useIonViewWillEnter(() => {
     showTabBar();
     // createMap();
 
+    PedometerService.requestPermission().then(async (res: any) => {
+      if (res.value) {
+        const token = await getAccessToken();
+        PedometerService.enable({
+          token: token, // Get token from localstorage / cookie / etc.
+          // expected wsAddress to be in this format
+          // wss://<url>[:<port>]/<version>
+          wsAddress: `${process.env.REACT_APP_WEBSOCKET_URL}/ws`, // Read from env, etc.
+        });
+      }
+    });
+
     getUserStep();
-
-    // interval
-    fetchStepsInterval = setInterval(() => {
-      getUserStep();
-    }, 10000);
-  });
-
-  useIonViewDidLeave(() => {
-    clearInterval(fetchStepsInterval);
   });
 
   printCurrentPosition();
