@@ -28,8 +28,9 @@ class WebSocketConnection {
         let socket = WebSocket(request: request)
         webSocket = socket
         
-        socket.onConnect = {
+        socket.onConnect = { [weak self] in
             print("WebSocket connected")
+            self?.webSocket?.write(string: self?.authToken ?? "")
         }
         
         socket.onDisconnect = { (error: Error?) in
