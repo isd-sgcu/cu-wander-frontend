@@ -2,7 +2,7 @@ import { AxiosResponse } from "axios";
 import { useEffect, useState } from "react";
 import { httpGet } from "./fetch";
 
-const path = "/coupon";
+const path = "/coupon/available";
 export interface CouponType {
   title: string;
   id: string;
