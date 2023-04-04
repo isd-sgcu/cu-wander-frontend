@@ -1,18 +1,34 @@
 import Foundation
+import CoreMotion
 import Capacitor
 
-/**
- * Please read the Capacitor iOS Plugin Development Guide
- * here: https://capacitorjs.com/docs/plugins/ios
- */
 @objc(PedometerServicePlugin)
 public class PedometerServicePlugin: CAPPlugin {
-    private let implementation = PedometerService()
-
-    @objc func echo(_ call: CAPPluginCall) {
-        let value = call.getString("value") ?? ""
-        call.resolve([
-            "value": implementation.echo(value)
-        ])
+    
+    var service: PedometerService?
+    
+    @objc func enable(_ call: CAPPluginCall) {
+        guard service == nil else {
+            let error = "Pedometer service is already running"
+            print(error)
+            call.reject(error)
+            return
+        }
+        
+        service = PedometerService()
+        service?.plugin = self
+        
+        call.resolve()
+    }
+    
+    @objc func disable(_ call: CAPPluginCall) {
+        service?.stop()
+        service = nil
+        call.resolve()
+    }
+    
+    func fireSteps(_ steps: Int) {
+        let data: [String: Any] = ["steps": steps]
+        notifyListeners("steps", data: data)
     }
 }
