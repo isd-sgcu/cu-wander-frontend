@@ -18,6 +18,16 @@ interface CouponType {
   shop_id: string;
 }
 
+interface CouponDataType {
+  items: CouponType[];
+  meta: {
+    currentPage: number; // ex: 1
+    itemsPerPage: number; // ex: 10
+    totalItem: number; // ex: 55
+    totalPage: number; // ex: 6
+  };
+}
+
 interface RedeemCouponType {
   template_coupon_id: string;
 }
@@ -30,7 +40,7 @@ const Coupon: React.FC = () => {
   const { setShowModal, searchPhrase, setSearchPhrase } =
     useContext(CouponState);
 
-  const { data, error } = useFetch<CouponType[]>("/coupon");
+  const { data, error } = useFetch<CouponDataType>("/coupon");
   // const coupons = mockCouponData;
   // console.log(error);
   // console.log(data);
@@ -42,7 +52,9 @@ const Coupon: React.FC = () => {
   const redeemedCouponIds = new Set(
     redeemed_coupons?.map((coupon) => coupon.template_coupon_id)
   );
-  const coupons = data?.filter((coupon) => !redeemedCouponIds.has(coupon.id));
+  const coupons = data?.items?.filter(
+    (coupon) => !redeemedCouponIds.has(coupon.id)
+  );
   return (
     <IonPage>
       <div
