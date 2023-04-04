@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Workspace
+   version = "1.0">
+   <FileRef
+      location = "group:Plugin/Podfile">
+   </FileRef>
+   <Group
+      location = "group:PluginTests"
+      name = "PluginTests">
+      <FileRef
+         location = "group:PedometerServiceTests.swift">
+      </FileRef>
+      <FileRef
+         location = "group:Info.plist">
+      </FileRef>
+   </Group>
+   <FileRef
+      location = "group:Plugin">
+   </FileRef>
+</Workspace>
