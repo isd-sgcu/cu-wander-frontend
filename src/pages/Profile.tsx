@@ -141,15 +141,11 @@ const Profile: React.FC = () => {
           <div className="flex justify-between space-x-5 p-5">
             <div
               onClick={() => {
-                showModalHandler({
-                  title: "CU WANDER Application",
-                  subtitle: "แอปพลิเคชั่นเดินสะสมก้าว",
-                  type: "default",
-                });
+                window.open("https://airtable.com/shrppuCwJyTJVQrgH");
               }}
               className="rounded-full w-full border-[2px] space-x-1.5 py-1.5 text-center"
             >
-              เกี่ยวกับแอปพลิเคชัน
+              ร้องเรียนปัญหา
             </div>
             <div
               onClick={() => {
