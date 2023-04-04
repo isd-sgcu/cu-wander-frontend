@@ -4,35 +4,15 @@ import CouponItem from "../components/coupon/CouponItem";
 import CouponModal from "../components/coupon/CouponModal";
 import Header from "../components/Header";
 import { showTabBar } from "../utils/tab";
-import mockCouponData from "../data/mockCouponData.json";
-import useFetch from "../utils/useFetch";
 import { CouponState } from "../contexts/CouponContext";
-
-interface CouponType {
-  title: string;
-  id: string;
-  shop_title: string;
-  step_condition: number;
-  coupon_condition: string;
-  shop_image_url: string;
-  shop_id: string;
-}
-
-interface CouponDataType {
-  items: CouponType[];
-  meta: {
-    currentPage: number; // ex: 1
-    itemsPerPage: number; // ex: 10
-    totalItem: number; // ex: 55
-    totalPage: number; // ex: 6
-  };
-}
+import useCouponPagination from "../utils/usePagination";
+import clsx from "clsx";
 
 interface RedeemCouponType {
   template_coupon_id: string;
 }
 
-const Coupon: React.FC = () => {
+export default function Coupon() {
   useIonViewWillEnter(() => {
     showTabBar();
   });
@@ -40,21 +20,13 @@ const Coupon: React.FC = () => {
   const { setShowModal, searchPhrase, setSearchPhrase } =
     useContext(CouponState);
 
-  const { data, error } = useFetch<CouponDataType>("/coupon");
-  // const coupons = mockCouponData;
-  // console.log(error);
-  // console.log(data);
-
-  const { data: redeemed_coupons, error: redeemed_coupons_error } =
-    useFetch<RedeemCouponType[]>("/coupon/redeem");
-
-  // console.log(redeemed_coupons_error);
-  const redeemedCouponIds = new Set(
-    redeemed_coupons?.map((coupon) => coupon.template_coupon_id)
-  );
-  const coupons = data?.items?.filter(
-    (coupon) => !redeemedCouponIds.has(coupon.id)
-  );
+  const {
+    data: coupons,
+    totalPages,
+    page,
+    setPage,
+    loading,
+  } = useCouponPagination();
   return (
     <IonPage>
       <div
@@ -84,34 +56,84 @@ const Coupon: React.FC = () => {
         <CouponModal />
 
         {/* page content */}
-        <div className="flex flex-col items-center bg-white font-noto pt-12 pb-6 space-y-2">
-          {coupons?.map((coupon, idx) => {
-            if (searchPhrase !== "") {
-              if (
-                !coupon.title.toLowerCase().includes(searchPhrase) &&
-                !coupon.shop_title.toLowerCase().includes(searchPhrase)
-              ) {
-                return null;
-              }
-            }
+        {coupons && loading ? (
+          <div className="text-center text-green-500 h-48">loading...</div>
+        ) : (
+          <>
+            <div className="flex flex-col items-center bg-white font-noto pt-12 pb-6 space-y-2">
+              {coupons?.map((coupon, idx) => {
+                if (searchPhrase !== "") {
+                  if (
+                    !coupon.title.toLowerCase().includes(searchPhrase) &&
+                    !coupon.shop_title.toLowerCase().includes(searchPhrase)
+                  ) {
+                    return null;
+                  }
+                }
 
-            return (
-              <CouponItem
-                shop_id={coupon.shop_id}
-                shop_image_url={coupon.shop_image_url}
-                coupon_condition={coupon.coupon_condition}
-                id={coupon.id}
-                key={idx}
-                name={coupon.title}
-                merchant={coupon.shop_title}
-                steps={coupon.step_condition}
-              />
-            );
-          })}
-        </div>
+                return (
+                  <CouponItem
+                    shop_id={coupon.shop_id}
+                    shop_image_url={coupon.shop_image_url}
+                    coupon_condition={coupon.coupon_condition}
+                    id={coupon.id}
+                    key={idx}
+                    name={coupon.title}
+                    merchant={coupon.shop_title}
+                    steps={coupon.step_condition}
+                  />
+                );
+              })}
+            </div>
+            {/* pagination */}
+            <div className="flex justify-center items-center gap-3 mb-4">
+              <button
+                className={clsx(
+                  "grid place-content-center text-center whitespace-nowrap px-2.5 py-2.5 font-bold text-2xl",
+                  page === 1 ? "text-black/50" : "text-green-500"
+                )}
+                onClick={() => {
+                  if (page !== 1) setPage(page - 1);
+                }}
+              >
+                {/* unicode left chevron */}
+                &#8249;
+              </button>
+              {
+                // count from 1 to total pages
+                [...Array(totalPages)].map((_, idx) => (
+                  <button
+                    onClick={() => {
+                      setPage(idx + 1);
+                    }}
+                    key={idx + 1}
+                    className={clsx(
+                      "grid place-content-center text-center whitespace-nowrap px-3 py-2.5 text-lg",
+                      page === idx + 1
+                        ? "border border-dashed border-green-500/75 rounded-md text-green-500 font-bold"
+                        : "text-black/75 font-semibold"
+                    )}
+                  >
+                    {idx + 1}
+                  </button>
+                ))
+              }
+              <button
+                className={clsx(
+                  "grid place-content-center text-center whitespace-nowrap px-2.5 py-2.5 font-bold text-2xl",
+                  page === totalPages ? "text-black/50" : "text-green-500"
+                )}
+                onClick={() => {
+                  if (page !== totalPages) setPage(page + 1);
+                }}
+              >
+                {/* unicode right chevron */}
+                &#8250;
+              </button>
+            </div>
+          </>
+        )}
       </IonContent>
     </IonPage>
   );
-};
-
-export default Coupon;
+}

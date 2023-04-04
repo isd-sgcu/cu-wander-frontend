@@ -1,5 +1,6 @@
 import { useContext } from "react";
 import { CouponState } from "../../contexts/CouponContext";
+import { IonAvatar, IonItem } from "@ionic/react";
 
 interface CouponItemInterface {
   name: string;
