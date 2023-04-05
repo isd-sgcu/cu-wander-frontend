@@ -23,8 +23,14 @@ interface CouponDataType {
   };
 }
 
+interface UseCouponPaginationProps {
+  keyword?: string;
+}
+
 // pagination is done on the backend, we just need to keep track of the current page and fetch the data for that page
-export default function useCouponPagination() {
+export default function useCouponPagination({
+  keyword,
+}: UseCouponPaginationProps) {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [totalItems, setTotalItems] = useState(0);
@@ -36,7 +42,7 @@ export default function useCouponPagination() {
   useEffect(() => {
     setLoading(true); // set loading to true
     setError(null);
-    httpGet(path, { params: { page } })
+    httpGet(path, { params: { page, keyword } })
       .then((response: AxiosResponse<CouponDataType>) => {
         setData(response.data.items);
         setTotalPages(response.data.meta.totalPage);
@@ -49,7 +55,7 @@ export default function useCouponPagination() {
       .finally(() => {
         setLoading(false);
       });
-  }, [page]);
+  }, [page, keyword]);
 
   return {
     data,

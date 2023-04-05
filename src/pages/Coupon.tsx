@@ -26,7 +26,9 @@ export default function Coupon() {
     page,
     setPage,
     loading,
-  } = useCouponPagination();
+  } = useCouponPagination({
+    keyword: searchPhrase,
+  });
   return (
     <IonPage>
       <div
@@ -44,6 +46,7 @@ export default function Coupon() {
           type="text"
           value={searchPhrase}
           onChange={(e) => {
+            setPage(1);
             setSearchPhrase(e.target.value.toLowerCase());
           }}
           placeholder="ค้นหาชื่อร้านค้า"
