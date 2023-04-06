@@ -20,9 +20,9 @@ public class WebSocketConnection {
     private WebSocket wsConn;
     private String authToken;
     private String wsAddress;
-    private boolean tryReconnect = true;
+    private boolean tryReconnect;
 
-    private static final int RECONNECT_INTERVAL = 15_000;
+    private static final int RECONNECT_INTERVAL = 450_000;
 
     public WebSocketConnection(String authToken, String wsAddress) {
         this.authToken = authToken;
@@ -31,6 +31,11 @@ public class WebSocketConnection {
     }
 
     private void connect() {
+        // there's ongoing connection
+        if (wsConn != null) {
+            return;
+        }
+
         Log.i("Connection", String.format("Connecting with %s, %s", authToken, wsAddress));
         OkHttpClient client = new OkHttpClient.Builder()
                 .readTimeout(0,  TimeUnit.MILLISECONDS)
@@ -40,6 +45,7 @@ public class WebSocketConnection {
                 .url(wsAddress)
                 .build();
 
+        tryReconnect = true;
         client.newWebSocket(request, new WebSocketListener() {
             @Override
             public void onClosed(@NonNull WebSocket webSocket, int code, @NonNull String reason) {
