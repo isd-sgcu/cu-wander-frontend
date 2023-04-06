@@ -16,6 +16,9 @@ import android.hardware.SensorEventListener;
 import android.os.IBinder;
 import androidx.core.app.NotificationCompat;
 
+import java.time.Duration;
+import java.time.Instant;
+
 public class PedometerService extends Service implements SensorEventListener {
     private int steps = 0;
     private int localSteps = 0;
@@ -25,6 +28,8 @@ public class PedometerService extends Service implements SensorEventListener {
     Sensor stepDetectorSensor;
 
     WebSocketConnection conn;
+
+    private Instant lastSync = Instant.now();
 
     private final static String CHANNEL_NAME = "pedometer_service_channel";
     private final static String NOTIFICATION_TITLE = "CU Wander";
@@ -109,8 +114,12 @@ public class PedometerService extends Service implements SensorEventListener {
             int dSteps = newSteps - steps;
             Log.v("Service", "onSensorChanged " + dSteps);
             // update to server (only when connection is available).
-            if (conn.send(String.valueOf(dSteps))) {
-                steps = newSteps;
+
+            if (Duration.between(lastSync, Instant.now()).getSeconds() > 8) {
+                if (conn.send(String.valueOf(dSteps))) {
+                    steps = newSteps;
+                    lastSync = Instant.now();
+                }
             }
 
             // update for local
