@@ -1,7 +1,8 @@
 import axios, { AxiosResponse } from "axios";
 import React, { createContext, ReactNode, useContext, useState } from "react";
 import { useHistory } from "react-router";
-import { httpGet, httpPost } from "../utils/fetch";
+import { httpDelete, httpGet, httpPost } from "../utils/fetch";
+import { useVersion } from "./VersionContext";
 
 // Define the interface for the authentication credentials
 interface AuthCredentials {
@@ -49,8 +50,11 @@ const AuthProvider = ({ children }: { children: ReactNode | ReactNode[] }) => {
   // Define the state variables
   const [user, setUser] = useState<UserData>();
   const history = useHistory();
+  const { checkUpdate } = useVersion();
 
   const getUserData = async (): Promise<UserData | null> => {
+    await checkUpdate();
+
     try {
       if (!user) {
         const { data: userData } = await httpGet("/auth/me");
@@ -131,6 +135,12 @@ const AuthProvider = ({ children }: { children: ReactNode | ReactNode[] }) => {
   };
 
   const signOut = async (redirect: string) => {
+    try {
+      await httpGet("/auth/logout");
+    } catch (err) {
+      throw err;
+    }
+
     localStorage.removeItem("token");
     setUser(undefined);
     history.push(redirect);
