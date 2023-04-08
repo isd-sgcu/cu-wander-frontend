@@ -9,7 +9,7 @@
     "@capacitor/geolocation": "^4.1.0",
     "@capacitor/google-maps": "^4.5.0",
     "@capacitor/haptics": "4.1.0",
-    "@capacitor/ios": "^4.7.3",
+    "@capacitor/ios": "4.6.3",
     "@capacitor/keyboard": "4.1.1",
     "@capacitor/status-bar": "4.1.1",
     "@ionic/cli": "^7.0.0",
@@ -55,12 +55,6 @@
     "test": "react-scripts test --transformIgnorePatterns 'node_modules/(?!(@ionic/react|@ionic/react-router|@ionic/core|@stencil/core|ionicons)/)'",
     "eject": "react-scripts eject",
     "plugin:build": "cd background-pedometer && pnpm i && pnpm build && cd .."
-  },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
   },
   "browserslist": {
     "production": [
