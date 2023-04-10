@@ -7,7 +7,7 @@ class WebSocketConnection {
     private var webSocket: WebSocket?
     private var tryReconnect = true
     
-    private let RECONNECT_INTERVAL: TimeInterval = 15_000
+    private let RECONNECT_INTERVAL: TimeInterval = 15
     
     init(authToken: String, wsAddress: String) {
         self.authToken = authToken
@@ -56,7 +56,8 @@ class WebSocketConnection {
                 break
             case .cancelled:
                 break
-            case .error(let _):
+            case .error(let error):
+                print("Websocket event error: \(String(describing: error))")
                 break
             }
         }
