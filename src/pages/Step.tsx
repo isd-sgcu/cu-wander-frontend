@@ -15,6 +15,7 @@ import { PedometerService } from "background-pedometer";
 import { getAccessToken, useAuth } from "../contexts/AuthContext";
 import { httpGet } from "../utils/fetch";
 import { useStep } from "../contexts/StepContext";
+import { useDevice } from "../contexts/DeviceContext";
 
 const Step: React.FC = () => {
   const { user } = useAuth();
@@ -72,21 +73,27 @@ const Step: React.FC = () => {
     console.log("Current position:", coordinates);
   };
 
-  useIonViewWillEnter(() => {
-    showTabBar();
-    // createMap();
+  const { device } = useDevice();
 
-    PedometerService.requestPermission().then(async (res: any) => {
-      if (res.value) {
-        const token = await getAccessToken();
-        PedometerService.enable({
-          token: token, // Get token from localstorage / cookie / etc.
-          // expected wsAddress to be in this format
-          // wss://<url>[:<port>]/<version>
-          wsAddress: `${process.env.REACT_APP_WEBSOCKET_URL}/ws`, // Read from env, etc.
-        });
-      }
-    });
+  useIonViewWillEnter(async () => {
+    showTabBar();
+    PedometerService.requestPermission()
+      .then(async (res: any) => {
+        console.log(`Resolved! ${res}`);
+        if (res.value) {
+          const token = await getAccessToken();
+          PedometerService.enable({
+            token: token, // Get token from localstorage / cookie / etc.
+            // expected wsAddress to be in this format
+            // wss://<url>[:<port>]/<version>
+            wsAddress: `${process.env.REACT_APP_WEBSOCKET_URL}/ws`, // Read from env, etc.
+          });
+          console.log("Connected to websocket");
+        }
+      })
+      .catch((err: any) => {
+        console.log(`Pedometer service connection error ${err}`);
+      });
 
     getUserStep();
   });
