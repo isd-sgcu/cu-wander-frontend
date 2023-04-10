@@ -9,7 +9,6 @@ class PedometerService: NSObject {
     
     override init() {
         super.init()
-        
         if CMPedometer.isStepCountingAvailable() {
             pedometer = CMPedometer()
             pedometer?.startUpdates(from: Date()) { [weak self] (data, error) in
@@ -24,6 +23,7 @@ class PedometerService: NSObject {
                 }
                 
                 if let localSteps = self?.localSteps {
+                    print("Local steps found \(String(describing: self?.localSteps))")
                     let dSteps = data.numberOfSteps.intValue - localSteps
                     self?.localSteps = data.numberOfSteps.intValue
                     self?.plugin?.fireSteps(dSteps)
