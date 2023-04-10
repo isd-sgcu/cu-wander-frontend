@@ -1,34 +1,34 @@
-import Foundation
-import CoreMotion
 import Capacitor
 
 @objc(PedometerServicePlugin)
 public class PedometerServicePlugin: CAPPlugin {
-    
-    var service: PedometerService?
-    
-    @objc func enable(_ call: CAPPluginCall) {
-        guard service == nil else {
-            let error = "Pedometer service is already running"
-            print(error)
-            call.reject(error)
-            return
+    private var pedometerService: PedometerService?
+
+    @objc func requestPermission(_ call: CAPPluginCall) {
+        // Implement permission request
+        let options: UNAuthorizationOptions = [.alert, .sound, .badge]
+        UNUserNotificationCenter.current().requestAuthorization(options: options) { (granted, error) in
+            if granted {
+                call.resolve()
+            } else {
+                call.reject("Permission not granted.")
+            }
         }
-        
-        service = PedometerService()
-        service?.plugin = self
-        
+    }
+
+    @objc func enable(_ call: CAPPluginCall) {
+        // Implement enabling the service
+        if pedometerService == nil {
+            pedometerService = PedometerService()
+        }
+        pedometerService?.start()
         call.resolve()
     }
-    
+
     @objc func disable(_ call: CAPPluginCall) {
-        service?.stop()
-        service = nil
+        // Implement disabling the service
+        pedometerService?.stop()
+        pedometerService = nil
         call.resolve()
-    }
-    
-    func fireSteps(_ steps: Int) {
-        let data: [String: Any] = ["steps": steps]
-        notifyListeners("steps", data: data)
     }
 }
