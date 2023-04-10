@@ -6,6 +6,14 @@ import Capacitor
 public class PedometerServicePlugin: CAPPlugin {
     
     var service: PedometerService?
+    var webSocket: WebSocketConnection?
+    
+    @objc func requestPermission(_ call: CAPPluginCall) {
+        var data = Dictionary<String, Any>()
+        data["value"] = true
+        call.resolve(data)
+    }
+
     
     @objc func enable(_ call: CAPPluginCall) {
         guard service == nil else {
@@ -13,6 +21,13 @@ public class PedometerServicePlugin: CAPPlugin {
             print(error)
             call.reject(error)
             return
+        }
+        
+        let token = call.getString("token")
+        let wsAddress = call.getString("wsAddress")
+      
+        if token != nil && wsAddress != nil {
+            self.webSocket = WebSocketConnection(authToken: String(describing: token!), wsAddress: String(describing: wsAddress!))
         }
         
         service = PedometerService()
@@ -29,6 +44,9 @@ public class PedometerServicePlugin: CAPPlugin {
     
     func fireSteps(_ steps: Int) {
         let data: [String: Any] = ["steps": steps]
+        if(self.webSocket !== nil) {
+            self.webSocket?.send(data: String(describing: data))
+        }
         notifyListeners("steps", data: data)
     }
 }
