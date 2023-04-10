@@ -28,22 +28,55 @@ class WebSocketConnection {
         let socket = WebSocket(request: request)
         webSocket = socket
         
-        socket.onConnect = { [weak self] in
-            print("WebSocket connected")
-            self?.webSocket?.write(string: self?.authToken ?? "")
-        }
-        
-        socket.onDisconnect = { (error: Error?) in
-            print("WebSocket disconnected with error: \(String(describing: error))")
-            self.webSocket = nil
-            if self.tryReconnect {
-                self.scheduleReconnect()
+        socket.onEvent = { [weak self] (event: WebSocketEvent) in
+            switch event {
+            case .connected(let _):
+                print("WebSocket connected")
+                self?.webSocket?.write(string: self?.authToken ?? "")
+                break
+            case .disconnected(let reason, let _):
+                print("WebSocket disconnected with error: \(reason)")
+                self?.webSocket = nil
+                if self?.tryReconnect ?? true {
+                    self?.scheduleReconnect()
+                }
+                break
+            case .text(let text):
+                print("WebSocket received text message: \(text)")
+                break
+        case .binary(let data):
+                print("Received data: \(data.count)")
+            case .ping(_):
+                break
+            case .pong(_):
+                break
+            case .viabilityChanged(_):
+                break
+            case .reconnectSuggested(_):
+                break
+            case .cancelled:
+                break
+            case .error(let _):
+                break
             }
         }
+
+//        socket.onConnect = { [weak self] in
+//            print("WebSocket connected")
+//            self?.webSocket?.write(string: self?.authToken ?? "")
+//        }
         
-        socket.onText = { (text: String) in
-            print("WebSocket received text message: \(text)")
-        }
+//        socket.onDisconnect = { (error: Error?) in
+//            print("WebSocket disconnected with error: \(String(describing: error))")
+//            self.webSocket = nil
+//            if self.tryReconnect {
+//                self.scheduleReconnect()
+//            }
+//        }
+        
+//        socket.onText = { (text: String) in
+//            print("WebSocket received text message: \(text)")
+//        }
         
         socket.connect()
     }
