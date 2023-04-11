@@ -44,9 +44,18 @@ public class PedometerServicePlugin: CAPPlugin {
     
     func fireSteps(_ steps: Int) {
         let data: [String: Any] = ["steps": steps]
+        let stepJson: [String: Any] = ["step": steps]
         if(self.webSocket !== nil) {
-            self.webSocket?.send(data: String(describing: steps))
+            do {
+                let jsonData = try JSONSerialization.data(withJSONObject: stepJson, options: .prettyPrinted)
+                if let jsonString = String(data: jsonData, encoding: .utf8) {
+                    self.webSocket?.send(data: jsonString)
+                }
+            } catch {
+                print("Error serializing data to JSON: \(error)")
+            }
         }
+        
         notifyListeners("steps", data: data)
     }
 }

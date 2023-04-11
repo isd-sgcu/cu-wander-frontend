@@ -1,6 +1,7 @@
 package com.isd_sgcu.background_pedometer.plugin;
 
 import android.os.Binder;
+import android.os.Build;
 import android.util.Log;
 import android.app.Notification;
 import android.app.NotificationChannel;
@@ -15,6 +16,9 @@ import android.hardware.SensorManager;
 import android.hardware.SensorEventListener;
 import android.os.IBinder;
 import androidx.core.app.NotificationCompat;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class PedometerService extends Service implements SensorEventListener {
     private int steps = 0;
@@ -109,8 +113,16 @@ public class PedometerService extends Service implements SensorEventListener {
             int dSteps = newSteps - steps;
             Log.v("Service", "onSensorChanged " + dSteps);
             // update to server (only when connection is available).
-            if (conn.send(String.valueOf(dSteps))) {
-                steps = newSteps;
+
+            JSONObject json = new JSONObject();
+
+            try {
+                json.put("step", dSteps);
+                if (conn.send(json.toString())) {
+                    steps = newSteps;
+                }
+            } catch (JSONException e) {
+                Log.e("Service", "JSON error: " + e.getMessage());
             }
 
             // update for local
@@ -141,12 +153,21 @@ public class PedometerService extends Service implements SensorEventListener {
         NotificationManager mNotificationManager = (NotificationManager) this
                 .getSystemService(Context.NOTIFICATION_SERVICE);
 
-        NotificationChannel mChannel = new NotificationChannel(CHANNEL_NAME, NOTIFICATION_TITLE, IMPORTANCE);
+        NotificationChannel mChannel = null;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            mChannel = new NotificationChannel(CHANNEL_NAME, NOTIFICATION_TITLE, IMPORTANCE);
+        }
 
-        mChannel.enableLights(true);
-        mChannel.setLightColor(Color.BLUE);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            mChannel.enableLights(true);
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            mChannel.setLightColor(Color.BLUE);
+        }
         if (mNotificationManager != null) {
-            mNotificationManager.createNotificationChannel(mChannel);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                mNotificationManager.createNotificationChannel(mChannel);
+            }
         } else {
             stopSelf();
         }
