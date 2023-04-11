@@ -45,7 +45,7 @@ public class PedometerServicePlugin: CAPPlugin {
     func fireSteps(_ steps: Int) {
         let data: [String: Any] = ["steps": steps]
         if(self.webSocket !== nil) {
-            self.webSocket?.send(data: String(describing: data))
+            self.webSocket?.send(data: String(describing: steps))
         }
         notifyListeners("steps", data: data)
     }
