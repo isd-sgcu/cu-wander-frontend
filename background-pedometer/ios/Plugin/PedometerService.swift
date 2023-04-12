@@ -23,9 +23,10 @@ class PedometerService: NSObject {
                 }
                 
                 if let localSteps = self?.localSteps {
-                    print("Local steps found \(String(describing: self?.localSteps))")
                     let dSteps = data.numberOfSteps.intValue - localSteps
                     self?.localSteps = data.numberOfSteps.intValue
+                    print("self?.localSteps \(String(describing: self?.localSteps))")
+                    print("dSteps \(String(describing: dSteps))")
                     self?.plugin?.fireSteps(dSteps)
                 }
             }
