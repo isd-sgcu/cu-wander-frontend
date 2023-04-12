@@ -1,7 +1,5 @@
 package com.isd_sgcu.background_pedometer.plugin;
 
-import android.os.Binder;
-import android.util.Log;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -11,15 +9,20 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
-import android.hardware.SensorManager;
 import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
+import android.os.Binder;
+import android.os.Build;
 import android.os.IBinder;
+import android.util.Log;
 import androidx.core.app.NotificationCompat;
-
 import java.time.Duration;
 import java.time.Instant;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class PedometerService extends Service implements SensorEventListener {
+
     private int steps = 0;
     private int localSteps = 0;
 
@@ -31,16 +34,17 @@ public class PedometerService extends Service implements SensorEventListener {
 
     private Instant lastSync = Instant.now();
 
-    private final static String CHANNEL_NAME = "pedometer_service_channel";
-    private final static String NOTIFICATION_TITLE = "CU Wander";
-    private final static int IMPORTANCE = NotificationManager.IMPORTANCE_MIN;
-    private final static int NOTIFICATION_ID = 312;
-    private final static int SENSOR_DELAY = SensorManager.SENSOR_DELAY_UI;
+    private static final String CHANNEL_NAME = "pedometer_service_channel";
+    private static final String NOTIFICATION_TITLE = "CU Wander";
+    private static final int IMPORTANCE = NotificationManager.IMPORTANCE_MIN;
+    private static final int NOTIFICATION_ID = 312;
+    private static final int SENSOR_DELAY = SensorManager.SENSOR_DELAY_UI;
 
     private final IBinder binder = new MyBinder();
     private PedometerServicePlugin plugin;
 
     public class MyBinder extends Binder {
+
         PedometerService getService() {
             return PedometerService.this;
         }
@@ -67,10 +71,7 @@ public class PedometerService extends Service implements SensorEventListener {
         super.onStartCommand(intent, flags, startId);
         Log.i("Service", "StartCommand");
 
-        conn = new WebSocketConnection(
-                intent.getStringExtra("token"),
-                intent.getStringExtra("wsAddress")
-        );
+        conn = new WebSocketConnection(intent.getStringExtra("token"), intent.getStringExtra("wsAddress"));
 
         return START_REDELIVER_INTENT;
     }
@@ -95,8 +96,7 @@ public class PedometerService extends Service implements SensorEventListener {
     }
 
     @Override
-    public void onAccuracyChanged(Sensor sensor, int accuracy) {
-    }
+    public void onAccuracyChanged(Sensor sensor, int accuracy) {}
 
     @Override
     public void onSensorChanged(SensorEvent event) {
@@ -115,15 +115,19 @@ public class PedometerService extends Service implements SensorEventListener {
             Log.v("Service", "onSensorChanged " + dSteps);
             // update to server (only when connection is available).
 
-            if (Duration.between(lastSync, Instant.now()).getSeconds() > 8) {
-                if (conn.send(String.valueOf(dSteps))) {
+            JSONObject json = new JSONObject();
+            try {
+                json.put("step", dSteps);
+                if (Duration.between(lastSync, Instant.now()).getSeconds() > 8 && conn.send(json.toString())) {
                     steps = newSteps;
                     lastSync = Instant.now();
                 }
+            } catch (JSONException e) {
+                Log.e("Service", "JSON error: " + e.getMessage());
             }
 
             // update for local
-            if(isPluginBounded()) {
+            if (isPluginBounded()) {
                 dSteps = newSteps - localSteps;
                 localSteps = newSteps;
                 plugin.fireSteps(dSteps);
@@ -135,27 +139,32 @@ public class PedometerService extends Service implements SensorEventListener {
         String channel = createChannel();
 
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this, channel)
-                .setSmallIcon(android.R.drawable.ic_menu_compass).setContentTitle(NOTIFICATION_TITLE);
+            .setSmallIcon(android.R.drawable.ic_menu_compass)
+            .setContentTitle(NOTIFICATION_TITLE);
 
         mBuilder.setVisibility(NotificationCompat.VISIBILITY_SECRET);
 
-        return mBuilder
-                .setPriority(IMPORTANCE)
-                .setCategory(Notification.CATEGORY_SERVICE)
-                .setNumber(0)
-                .build();
+        return mBuilder.setPriority(IMPORTANCE).setCategory(Notification.CATEGORY_SERVICE).setNumber(0).build();
     }
 
     private synchronized String createChannel() {
-        NotificationManager mNotificationManager = (NotificationManager) this
-                .getSystemService(Context.NOTIFICATION_SERVICE);
+        NotificationManager mNotificationManager = (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
 
-        NotificationChannel mChannel = new NotificationChannel(CHANNEL_NAME, NOTIFICATION_TITLE, IMPORTANCE);
+        NotificationChannel mChannel = null;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            mChannel = new NotificationChannel(CHANNEL_NAME, NOTIFICATION_TITLE, IMPORTANCE);
+        }
 
-        mChannel.enableLights(true);
-        mChannel.setLightColor(Color.BLUE);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            mChannel.enableLights(true);
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            mChannel.setLightColor(Color.BLUE);
+        }
         if (mNotificationManager != null) {
-            mNotificationManager.createNotificationChannel(mChannel);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                mNotificationManager.createNotificationChannel(mChannel);
+            }
         } else {
             stopSelf();
         }

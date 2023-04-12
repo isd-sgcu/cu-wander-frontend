@@ -7,7 +7,9 @@ class WebSocketConnection {
     private var webSocket: WebSocket?
     private var tryReconnect = true
     
-    private let RECONNECT_INTERVAL: TimeInterval = 15_000
+    private let RECONNECT_INTERVAL: TimeInterval = 15
+    private let MAX_RECONNECT_TRIES = 5
+    private var reconnectTries = 0
     
     init(authToken: String, wsAddress: String) {
         self.authToken = authToken
@@ -28,22 +30,63 @@ class WebSocketConnection {
         let socket = WebSocket(request: request)
         webSocket = socket
         
-        socket.onConnect = { [weak self] in
-            print("WebSocket connected")
-            self?.webSocket?.write(string: self?.authToken ?? "")
-        }
-        
-        socket.onDisconnect = { (error: Error?) in
-            print("WebSocket disconnected with error: \(String(describing: error))")
-            self.webSocket = nil
-            if self.tryReconnect {
-                self.scheduleReconnect()
+        socket.onEvent = { [weak self] (event: WebSocketEvent) in
+            switch event {
+            case .connected( _):
+                print("WebSocket connected")
+                self?.webSocket?.write(string: self?.authToken ?? "")
+                break
+            case .disconnected(let reason, _):
+                print("WebSocket disconnected with error: \(reason)")
+                self?.webSocket = nil
+                
+                self?.reconnectTries += 1
+                
+                if self?.tryReconnect ?? true && self!.MAX_RECONNECT_TRIES > self!.reconnectTries {
+                    self?.scheduleReconnect()
+                }
+                else {
+                    print("Max retries")
+                }
+                
+                break
+            case .text(let text):
+                print("WebSocket received text message: \(text)")
+                break
+        case .binary(let data):
+                print("Received data: \(data.count)")
+            case .ping(_):
+                break
+            case .pong(_):
+                break
+            case .viabilityChanged(_):
+                break
+            case .reconnectSuggested(_):
+                break
+            case .cancelled:
+                break
+            case .error(let error):
+                print("Websocket event error: \(String(describing: error))")
+                break
             }
         }
+
+//        socket.onConnect = { [weak self] in
+//            print("WebSocket connected")
+//            self?.webSocket?.write(string: self?.authToken ?? "")
+//        }
         
-        socket.onText = { (text: String) in
-            print("WebSocket received text message: \(text)")
-        }
+//        socket.onDisconnect = { (error: Error?) in
+//            print("WebSocket disconnected with error: \(String(describing: error))")
+//            self.webSocket = nil
+//            if self.tryReconnect {
+//                self.scheduleReconnect()
+//            }
+//        }
+        
+//        socket.onText = { (text: String) in
+//            print("WebSocket received text message: \(text)")
+//        }
         
         socket.connect()
     }
@@ -60,6 +103,7 @@ class WebSocketConnection {
             return false
         }
         
+        print("Input data in socket.write \(data)")
         socket.write(string: data)
         print("Sent data to WebSocket: \(data)")
         return true
