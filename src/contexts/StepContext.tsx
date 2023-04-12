@@ -30,19 +30,19 @@ const StepProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   const addStep = (delta: number) => {
-    setSteps(oldSteps => {
-      if(!oldSteps) return delta;
+    setSteps((oldSteps) => {
+      if (!oldSteps) return delta;
       const newSteps = oldSteps + delta;
       console.log(`newstep: ${newSteps}`);
       return newSteps;
     });
-  }
+  };
 
   if (!listening) {
     console.log("Register listening");
-    PedometerService.addListener('steps', ({ steps }: { steps: number}) => {
+    PedometerService.addListener("steps", ({ steps }: { steps: number }) => {
       addStep(steps);
-    })
+    });
 
     setListening(true);
   }
