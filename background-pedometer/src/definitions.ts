@@ -1,49 +1,48 @@
-import { PluginListenerHandle } from "@capacitor/core";
+import { PluginListenerHandle } from '@capacitor/core';
 
 export interface PedometerServicePlugin {
   /**
-    * Asking for permission
-    * return true only if user already have permission or user approve permission
-    */
+   * Asking for permission
+   * return true only if user already have permission or user approve permission
+   */
   requestPermission(): Promise<CallResponse<boolean>>;
 
   /**
-    * Start pedometer background service
-    * The service should be unable to start when permission is not granted
-    * The service should be connected to the websocket server
-    */
+   * Start pedometer background service
+   * The service should be unable to start when permission is not granted
+   * The service should be connected to the websocket server
+   */
   enable(option: EnableOption): Promise<CallResponse<void>>;
 
   /**
-    * Stop pedometer background service
-    */
+   * Stop pedometer background service
+   */
   disable(): Promise<void>;
 
   /**
-    * add listener to change in step.
-    */
+   * add listener to change in step.
+   */
   addListener(
-      eventName: 'steps',
-      callback: (event: SensorEvent) => void,
-  ): Promise<PluginListenerHandle> & PluginListenerHandle
+    eventName: 'steps',
+    callback: (event: SensorEvent) => void,
+  ): Promise<PluginListenerHandle> & PluginListenerHandle;
 }
 
-
 /**
-  * value indicated the response body
-  * errMsg contain error message 
-  * error can be check by checking whether `errMsg` is empty
-  */
+ * value indicated the response body
+ * errMsg contain error message
+ * error can be check by checking whether `errMsg` is empty
+ */
 export interface CallResponse<T> {
-    value: T;
-    errMsg: string;
+  value: T;
+  errMsg: string;
 }
 
 export interface EnableOption {
-    token: string;
-    wsAddress: string;
+  token: string;
+  wsAddress: string;
 }
 
 export interface SensorEvent {
-    steps: number;
+  steps: number;
 }
