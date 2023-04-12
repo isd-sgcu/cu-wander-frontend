@@ -8,6 +8,8 @@ class WebSocketConnection {
     private var tryReconnect = true
     
     private let RECONNECT_INTERVAL: TimeInterval = 15
+    private let MAX_RECONNECT_TRIES = 5
+    private var reconnectTries = 0
     
     init(authToken: String, wsAddress: String) {
         self.authToken = authToken
@@ -30,16 +32,23 @@ class WebSocketConnection {
         
         socket.onEvent = { [weak self] (event: WebSocketEvent) in
             switch event {
-            case .connected(let _):
+            case .connected( _):
                 print("WebSocket connected")
                 self?.webSocket?.write(string: self?.authToken ?? "")
                 break
-            case .disconnected(let reason, let _):
+            case .disconnected(let reason, _):
                 print("WebSocket disconnected with error: \(reason)")
                 self?.webSocket = nil
-                if self?.tryReconnect ?? true {
+                
+                self?.reconnectTries += 1
+                
+                if self?.tryReconnect ?? true && self!.MAX_RECONNECT_TRIES > self!.reconnectTries {
                     self?.scheduleReconnect()
                 }
+                else {
+                    print("Max retries")
+                }
+                
                 break
             case .text(let text):
                 print("WebSocket received text message: \(text)")
@@ -94,6 +103,7 @@ class WebSocketConnection {
             return false
         }
         
+        print("Input data in socket.write \(data)")
         socket.write(string: data)
         print("Sent data to WebSocket: \(data)")
         return true

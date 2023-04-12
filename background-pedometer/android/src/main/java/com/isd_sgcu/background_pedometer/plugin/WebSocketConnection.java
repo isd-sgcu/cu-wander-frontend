@@ -22,6 +22,10 @@ public class WebSocketConnection {
     private String wsAddress;
     private boolean tryReconnect = true;
 
+    private static final int MAX_RECONNECT_TRIES = 5;
+
+    private int reconnectTries = 0;
+
     private static final int RECONNECT_INTERVAL = 15_000;
 
     public WebSocketConnection(String authToken, String wsAddress) {
@@ -56,7 +60,8 @@ public class WebSocketConnection {
                 super.onFailure(webSocket, t, response);
                 Log.i("Connection", "Failed");
                 wsConn = null;
-                if (tryReconnect) {
+
+                if (tryReconnect && ++reconnectTries < MAX_RECONNECT_TRIES) {
                     scheduleReconnect();
                 }
             }
