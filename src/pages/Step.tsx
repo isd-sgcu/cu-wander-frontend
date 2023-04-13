@@ -1,15 +1,8 @@
-import { GoogleMap } from "@capacitor/google-maps";
 import { Geolocation } from "@capacitor/geolocation";
-import {
-  IonContent,
-  IonPage,
-  useIonViewDidLeave,
-  useIonViewWillEnter,
-} from "@ionic/react";
-import { useEffect, useRef, useState } from "react";
+import { IonContent, IonPage, useIonViewWillEnter } from "@ionic/react";
+import { useEffect, useState } from "react";
 // import { Pedometer, SensorEvent } from "pedometer-plugin";
 import { showTabBar } from "../utils/tab";
-import useFetch from "../utils/useFetch";
 // @ts-ignore
 import { PedometerService } from "background-pedometer";
 import { getAccessToken, useAuth } from "../contexts/AuthContext";
