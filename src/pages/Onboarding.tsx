@@ -6,11 +6,15 @@ import {
 } from "@ionic/react";
 import { Link } from "react-router-dom";
 import { hideTabBar } from "../utils/tab";
+import { CurrentVersion } from "../lib/version/utils/version";
+import { useDevice } from "../contexts/DeviceContext";
 
 const Onboarding: React.FC = () => {
   useIonViewWillEnter(() => {
     hideTabBar();
   });
+
+  const { device } = useDevice();
 
   return (
     <IonPage>
@@ -38,6 +42,18 @@ const Onboarding: React.FC = () => {
               มีบัญชีอยู่แล้ว{" "}
               <span className="font-bold underline">เข้าสู่ระบบ</span>
             </Link>
+          </div>
+          <div
+            className="absolute bottom-10 flex flex-col items-center"
+            onClick={() => {
+              window.open("https://airtable.com/shrppuCwJyTJVQrgH");
+            }}
+          >
+            <p className="underlined text-gray-500">ร้องเรียนปัญหา</p>
+            <p className="text-gray-300">
+              {device === "ios" && CurrentVersion["ios_version"]}
+              {device === "android" && CurrentVersion["android_version"]}
+            </p>
           </div>
         </div>
       </IonContent>
