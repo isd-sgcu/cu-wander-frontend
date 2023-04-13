@@ -1,7 +1,8 @@
 import axios, { AxiosError, AxiosResponse } from "axios";
 import React, { createContext, ReactNode, useContext, useState } from "react";
 import { useHistory } from "react-router";
-import { httpDelete, httpGet, httpPost } from "../utils/fetch";
+import { httpGet, httpPost } from "../utils/fetch";
+import { Preferences } from "@capacitor/preferences";
 import { useVersion } from "./VersionContext";
 
 // Define the interface for the authentication credentials
@@ -80,14 +81,14 @@ const AuthProvider = ({ children }: { children: ReactNode | ReactNode[] }) => {
       password: authCred.password,
     });
 
-    localStorage.setItem(
-      "token",
-      JSON.stringify({
+    await Preferences.set({
+      key: "token",
+      value: JSON.stringify({
         access_token: credData.access_token,
         refresh_token: credData.refresh_token,
         expries_in: +new Date() + credData.expires_in * 1000,
-      })
-    );
+      }),
+    });
 
     const userData = await getUserData();
 
@@ -100,44 +101,37 @@ const AuthProvider = ({ children }: { children: ReactNode | ReactNode[] }) => {
     userData: { [key: string]: string | number },
     redirect: string
   ): Promise<void> => {
-    try {
-      const { data: resData } = await httpPost("/auth/register", userData);
+    await httpPost("/auth/register", userData);
 
-      await httpPost("/auth/login", {
-        username: userData.username,
-        password: userData.password,
-      }).then(({ data: credData }) => {
-        localStorage.setItem(
-          "token",
-          JSON.stringify({
-            access_token: credData.access_token,
-            refresh_token: credData.refresh_token,
-            expries_in: +new Date() + credData.expires_in * 1000,
-          })
-        );
+    // can this snippet be replaced with login function?
+    const { data: credData } = await httpPost("/auth/login", {
+      username: userData.username,
+      password: userData.password,
+    });
 
-        getUserData();
-        history.push(redirect);
-      });
-    } catch (err) {
-      throw err;
-    }
+    await Preferences.set({
+      key: "token",
+      value: JSON.stringify({
+        access_token: credData.access_token,
+        refresh_token: credData.refresh_token,
+        expries_in: +new Date() + credData.expires_in * 1000,
+      }),
+    });
+
+    getUserData();
+    history.push(redirect);
   };
 
   const signOut = async (redirect: string) => {
-    try {
-      await httpGet("/auth/logout");
-    } catch (err) {
-      throw err;
-    }
-
-    localStorage.removeItem("token");
+    await Preferences.remove({ key: "token" });
     setUser(undefined);
     history.push(redirect);
   };
 
   const isLoggedIn = async () => {
-    const { access_token } = JSON.parse(localStorage.getItem("token") || "{}");
+    const { value: token } = await Preferences.get({ key: "token" });
+
+    const { access_token } = JSON.parse(token || "{}");
 
     if (access_token) {
       try {
@@ -151,8 +145,7 @@ const AuthProvider = ({ children }: { children: ReactNode | ReactNode[] }) => {
       }
     }
 
-    // invalid token
-    localStorage.removeItem("token");
+    await Preferences.remove({ key: "token" });
     return false;
   };
 
@@ -182,19 +175,19 @@ const renewAccessToken = async (refreshToken: string) => {
     return null;
   }
 
-  localStorage.setItem(
-    "token",
-    JSON.stringify({
+  await Preferences.set({
+    key: "token",
+    value: JSON.stringify({
       access_token: res.data.access_token,
       refresh_token: res.data.refresh_token,
       expries_in: +new Date() + res.data.expries_in * 1000,
-    })
-  );
+    }),
+  });
   return res.data.accessToken;
 };
 
 export const getAccessToken = async () => {
-  const token = localStorage.getItem("token");
+  const { value: token } = await Preferences.get({ key: "token" });
   if (!token) {
     return null;
   }

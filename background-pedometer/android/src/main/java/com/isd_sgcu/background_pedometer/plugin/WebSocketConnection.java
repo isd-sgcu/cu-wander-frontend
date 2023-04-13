@@ -3,12 +3,9 @@ package com.isd_sgcu.background_pedometer.plugin;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-
 import java.util.concurrent.TimeUnit;
-
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -20,7 +17,7 @@ public class WebSocketConnection {
     private WebSocket wsConn;
     private String authToken;
     private String wsAddress;
-    private boolean tryReconnect = true;
+    private boolean tryReconnect;
 
     private static final int MAX_RECONNECT_TRIES = 5;
 
@@ -35,45 +32,50 @@ public class WebSocketConnection {
     }
 
     private void connect() {
+        // there's ongoing connection
+        if (wsConn != null) {
+            return;
+        }
+
         Log.i("Connection", String.format("Connecting with %s, %s", authToken, wsAddress));
-        OkHttpClient client = new OkHttpClient.Builder()
-                .readTimeout(0,  TimeUnit.MILLISECONDS)
-                .build();
+        OkHttpClient client = new OkHttpClient.Builder().readTimeout(0, TimeUnit.MILLISECONDS).build();
 
-        Request request = new Request.Builder()
-                .url(wsAddress)
-                .build();
+        Request request = new Request.Builder().url(wsAddress).build();
 
-        client.newWebSocket(request, new WebSocketListener() {
-            @Override
-            public void onClosed(@NonNull WebSocket webSocket, int code, @NonNull String reason) {
-                super.onClosed(webSocket, code, reason);
-                Log.i("Connection", "Closed");
-                wsConn = null;
-                if (tryReconnect) {
-                    scheduleReconnect();
+        tryReconnect = true;
+        client.newWebSocket(
+            request,
+            new WebSocketListener() {
+                @Override
+                public void onClosed(@NonNull WebSocket webSocket, int code, @NonNull String reason) {
+                    super.onClosed(webSocket, code, reason);
+                    Log.i("Connection", "Closed");
+                    wsConn = null;
+                    if (tryReconnect) {
+                        scheduleReconnect();
+                    }
+                }
+
+                @Override
+                public void onFailure(@NonNull WebSocket webSocket, @NonNull Throwable t, @Nullable Response response) {
+                    super.onFailure(webSocket, t, response);
+                    Log.i("Connection", "Failed");
+                    wsConn = null;
+
+                    if (tryReconnect && ++reconnectTries < MAX_RECONNECT_TRIES) {
+                        scheduleReconnect();
+                    }
+                }
+
+                @Override
+                public void onOpen(@NonNull WebSocket webSocket, @NonNull Response response) {
+                    super.onOpen(webSocket, response);
+                    Log.i("Connection", "Opened");
+                    webSocket.send(authToken);
+                    wsConn = webSocket;
                 }
             }
-
-            @Override
-            public void onFailure(@NonNull WebSocket webSocket, @NonNull Throwable t, @Nullable Response response) {
-                super.onFailure(webSocket, t, response);
-                Log.i("Connection", "Failed");
-                wsConn = null;
-
-                if (tryReconnect && ++reconnectTries < MAX_RECONNECT_TRIES) {
-                    scheduleReconnect();
-                }
-            }
-
-            @Override
-            public void onOpen(@NonNull WebSocket webSocket, @NonNull Response response) {
-                super.onOpen(webSocket, response);
-                Log.i("Connection", "Opened");
-                webSocket.send(authToken);
-                wsConn = webSocket;
-            }
-        });
+        );
     }
 
     private void scheduleReconnect() {
@@ -81,7 +83,7 @@ public class WebSocketConnection {
     }
 
     public boolean send(String data) {
-        if(wsConn == null) {
+        if (wsConn == null) {
             return false;
         }
         Log.v("Connection", "Sending " + data);
