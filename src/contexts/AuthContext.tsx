@@ -101,55 +101,37 @@ const AuthProvider = ({ children }: { children: ReactNode | ReactNode[] }) => {
     userData: { [key: string]: string | number },
     redirect: string
   ): Promise<void> => {
-    try {
-      const { data: resData } = await httpPost("/auth/register", userData);
+    await httpPost("/auth/register", userData);
 
-      await httpPost("/auth/login", {
-        username: userData.username,
-        password: userData.password,
-      })
-        // .then(({ data: credData }) => {
-        //   localStorage.setItem(
-        //     "token",
-        //     JSON.stringify({
-        //       access_token: credData.access_token,
-        //       refresh_token: credData.refresh_token,
-        //       expries_in: +new Date() + credData.expires_in * 1000,
-        //     })
-        //   );
-        .then(async ({ data: credData }) => {
-          await Preferences.set({
-            key: "token",
-            value: JSON.stringify({
-              access_token: credData.access_token,
-              refresh_token: credData.refresh_token,
-              expries_in: +new Date() + credData.expires_in * 1000,
-            }),
-          });
+    // can this snippet be replaced with login function?
+    const { data: credData } = await httpPost("/auth/login", {
+      username: userData.username,
+      password: userData.password,
+    });
 
-          getUserData();
-          history.push(redirect);
-        });
-    } catch (err) {
-      throw err;
-    }
+    await Preferences.set({
+      key: "token",
+      value: JSON.stringify({
+        access_token: credData.access_token,
+        refresh_token: credData.refresh_token,
+        expries_in: +new Date() + credData.expires_in * 1000,
+      }),
+    });
+
+    getUserData();
+    history.push(redirect);
   };
 
   const signOut = async (redirect: string) => {
-    // localStorage.removeItem("token");
     await Preferences.remove({ key: "token" });
     setUser(undefined);
     history.push(redirect);
   };
 
-  // const getToken = async () => {
-  //   const { access_token } = await Preferences.get({ key: "token" });
-  //   return access_token;
-  // };
-
   const isLoggedIn = async () => {
-    // const { access_token } = JSON.parse(localStorage.getItem("token") || "{}");
-    const { access_token }: any = await Preferences.get({ key: "token" });
+    const { value: token } = await Preferences.get({ key: "token" });
+
+    const { access_token } = JSON.parse(token || "{}");
 
     if (access_token) {
       try {
@@ -163,8 +145,6 @@ const AuthProvider = ({ children }: { children: ReactNode | ReactNode[] }) => {
       }
     }
 
-    // invalid token
-    // localStorage.removeItem("token");
     await Preferences.remove({ key: "token" });
     return false;
   };
@@ -195,14 +175,6 @@ const renewAccessToken = async (refreshToken: string) => {
     return null;
   }
 
-  // localStorage.setItem(
-  //   "token",
-  //   JSON.stringify({
-  //     access_token: res.data.access_token,
-  //     refresh_token: res.data.refresh_token,
-  //     expries_in: +new Date() + res.data.expries_in * 1000,
-  //   })
-  // );
   await Preferences.set({
     key: "token",
     value: JSON.stringify({
@@ -215,8 +187,7 @@ const renewAccessToken = async (refreshToken: string) => {
 };
 
 export const getAccessToken = async () => {
-  // const token = localStorage.getItem("token");
-  const { token }: any = await Preferences.get({ key: "token" });
+  const { value: token } = await Preferences.get({ key: "token" });
   if (!token) {
     return null;
   }
