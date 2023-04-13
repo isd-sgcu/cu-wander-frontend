@@ -18,7 +18,8 @@ interface InputProps {
     | "passwordIncorrect"
     | "formSubmitFailed"
     | "invalidAverageStep"
-    | "invalidHeartRate";
+    | "invalidHeartRate"
+    | "somethingWrong";
   children?: React.ReactNode;
 }
 
