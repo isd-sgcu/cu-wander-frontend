@@ -1,4 +1,4 @@
-import axios, { AxiosResponse } from "axios";
+import axios, { AxiosError, AxiosResponse } from "axios";
 import React, { createContext, ReactNode, useContext, useState } from "react";
 import { useHistory } from "react-router";
 import { httpDelete, httpGet, httpPost } from "../utils/fetch";
@@ -52,7 +52,7 @@ const AuthProvider = ({ children }: { children: ReactNode | ReactNode[] }) => {
   const history = useHistory();
   const { checkUpdate } = useVersion();
 
-  const getUserData = async (): Promise<UserData | null> => {
+  const getUserData = async (): Promise<UserData> => {
     await checkUpdate();
 
     try {
@@ -75,34 +75,24 @@ const AuthProvider = ({ children }: { children: ReactNode | ReactNode[] }) => {
     authCred: AuthCredentials,
     redirect: string
   ): Promise<void> => {
-    try {
-      const userData = await httpPost("/auth/login", {
-        username: authCred.username,
-        password: authCred.password,
+    const { data: credData, status } = await httpPost("/auth/login", {
+      username: authCred.username,
+      password: authCred.password,
+    });
+
+    localStorage.setItem(
+      "token",
+      JSON.stringify({
+        access_token: credData.access_token,
+        refresh_token: credData.refresh_token,
+        expries_in: +new Date() + credData.expires_in * 1000,
       })
-        .then(({ data: credData }) => {
-          localStorage.setItem(
-            "token",
-            JSON.stringify({
-              access_token: credData.access_token,
-              refresh_token: credData.refresh_token,
-              expries_in: +new Date() + credData.expires_in * 1000,
-            })
-          );
-        })
-        .then(async () => {
-          return await getUserData();
-        });
+    );
 
-      if (!userData) {
-        return;
-      }
+    const userData = await getUserData();
 
-      setUser(userData);
-      history.replace(redirect);
-    } catch (err) {
-      throw err;
-    }
+    setUser(userData);
+    history.replace(redirect);
   };
 
   // Define the signUp function
