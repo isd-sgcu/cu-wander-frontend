@@ -1,15 +1,8 @@
-import { GoogleMap } from "@capacitor/google-maps";
 import { Geolocation } from "@capacitor/geolocation";
-import {
-  IonContent,
-  IonPage,
-  useIonViewDidLeave,
-  useIonViewWillEnter,
-} from "@ionic/react";
-import { useEffect, useRef, useState } from "react";
+import { IonContent, IonPage, useIonViewWillEnter } from "@ionic/react";
+import { useEffect, useState } from "react";
 // import { Pedometer, SensorEvent } from "pedometer-plugin";
 import { showTabBar } from "../utils/tab";
-import useFetch from "../utils/useFetch";
 // @ts-ignore
 import { PedometerService } from "background-pedometer";
 import { getAccessToken, useAuth } from "../contexts/AuthContext";
@@ -172,12 +165,12 @@ const Step: React.FC = () => {
                 </span>
                 <span>กิโลเมตร</span>
               </div>
-              <div className="rounded-full w-full border-[2px] space-x-1.5 py-0.5">
+              {/* <div className="rounded-full w-full border-[2px] space-x-1.5 py-0.5">
                 <span className="font-semibold text-lg">
-                  -{/* {(totalTime / 60).toLocaleString("en-US")} */}
+                  {(totalTime / 60).toLocaleString("en-US")}
                 </span>
                 <span>นาที</span>
-              </div>
+              </div> */}
               <div className="rounded-full w-full border-[2px] space-x-1.5 py-0.5">
                 <span className="font-semibold text-lg">
                   {Math.floor(steps! * 0.04) < 1000

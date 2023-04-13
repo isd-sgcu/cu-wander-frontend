@@ -1,6 +1,9 @@
+// @ts-ignore
 import { PedometerService } from "background-pedometer";
 import { createContext, useContext, useState } from "react";
 import { httpGet } from "../utils/fetch";
+import { Capacitor } from "@capacitor/core";
+import { useDevice } from "./DeviceContext";
 
 type StepContextValue = {
   steps: number;
@@ -17,6 +20,7 @@ const StepContext = createContext<StepContextValue>({
 const StepProvider = ({ children }: { children: React.ReactNode }) => {
   const [steps, setSteps] = useState(0);
   const [listening, setListening] = useState(false);
+  const { device } = useDevice();
   const getUserStep = async () => {
     try {
       const {
@@ -39,11 +43,12 @@ const StepProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   if (!listening) {
-    console.log("Register listening");
-    PedometerService.addListener("steps", ({ steps }: { steps: number }) => {
-      addStep(steps);
-    });
-
+    if (device === "android" || device === "ios") {
+      console.log("Register listening");
+      PedometerService.addListener("steps", ({ steps }: { steps: number }) => {
+        addStep(steps);
+      });
+    }
     setListening(true);
   }
 

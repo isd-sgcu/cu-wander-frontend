@@ -10,6 +10,7 @@ import { useHistory } from "react-router-dom";
 import Input from "../components/Input";
 import { useAuth } from "../contexts/AuthContext";
 import { hideTabBar } from "../utils/tab";
+import { AxiosError } from "axios";
 
 const Signin: React.FC = () => {
   useIonViewWillEnter(() => {
@@ -21,7 +22,13 @@ const Signin: React.FC = () => {
   const { logIn } = useAuth();
 
   const [submitState, setSubmitState] = useState<
-    "" | "submitting" | "submitted" | "formNotComplete" | "passwordIncorrect"
+    | ""
+    | "submitting"
+    | "submitted"
+    | "formNotComplete"
+    | "passwordIncorrect"
+    | "somethingWrong"
+    | "serviceDown"
   >("");
 
   const submitHandler = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -45,8 +52,19 @@ const Signin: React.FC = () => {
         "/step"
       );
     } catch (e: unknown) {
-      setSubmitState("passwordIncorrect");
-      return;
+      const { response } = e as AxiosError;
+      switch (response?.status) {
+        case 400:
+        case 401:
+          setSubmitState("passwordIncorrect");
+          break;
+        case 503:
+          setSubmitState("serviceDown");
+          break;
+        default:
+          setSubmitState("somethingWrong");
+          break;
+      }
     }
   };
 
@@ -96,6 +114,9 @@ const Signin: React.FC = () => {
               <p>
                 {submitState === "formNotComplete" && "กรุณากรอกข้อมูลให้ครบ"}
                 {submitState === "passwordIncorrect" && "รหัสผ่านไม่ถูกต้อง"}
+                {submitState === "somethingWrong" && "เกิดข้อผิดพลาด"}
+                {submitState === "serviceDown" &&
+                  "เซิร์ฟเวอร์ไม่ตอบสนอง กรุณาลองใหม่ในภายหลัง"}
               </p>
             </div>
             <button

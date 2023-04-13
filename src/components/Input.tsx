@@ -18,8 +18,15 @@ interface InputProps {
     | "passwordIncorrect"
     | "formSubmitFailed"
     | "invalidAverageStep"
-    | "invalidHeartRate";
+    | "invalidHeartRate"
+    | "somethingWrong"
+    | "serviceDown"
+    | "usernameEmailTaken";
   children?: React.ReactNode;
+  ref?: React.RefObject<HTMLInputElement>;
+  value?: string;
+  onChange?: (value: string) => void;
+  disabled?: boolean;
 }
 
 const Input: React.FC<InputProps> = ({
@@ -30,8 +37,14 @@ const Input: React.FC<InputProps> = ({
   required = false,
   submitState,
   children,
+  ref,
+  onChange,
+  disabled = false,
+  value,
 }) => {
-  const [value, setValue] = useState<string>("");
+  const [internalState, setInternalState] = useState<string>("");
+
+  const inputValue = value || internalState;
 
   return (
     <div className="space-y-2 flex flex-col w-full">
@@ -46,16 +59,18 @@ const Input: React.FC<InputProps> = ({
         <select
           name={name}
           className={`placeholder:text-gray-400 placeholder:font-normal placeholder:text-sm font-semibold outline-none bg-white rounded-lg w-full px-5 py-2.5 ${
-            !value && "text-gray-400 font-normal"
+            !inputValue && "text-gray-400 font-normal"
           } ${
             required
               ? `${
-                  !value && submitState ? "outline-[1.5px] outline-red-400" : ""
+                  !inputValue && submitState
+                    ? "outline-[1.5px] outline-red-400"
+                    : ""
                 }`
               : ``
           }`}
-          value={value}
-          onChange={(e) => setValue(e.target.value)}
+          value={inputValue}
+          onChange={(e) => setInternalState(e.target.value)}
         >
           <option value="" disabled defaultValue="" hidden>
             {placeholder}
@@ -67,12 +82,19 @@ const Input: React.FC<InputProps> = ({
           name={name}
           type={type}
           placeholder={placeholder}
-          value={value}
-          onChange={(e) => setValue(e.target.value)}
+          value={inputValue}
+          ref={ref}
+          disabled={disabled}
+          onChange={(e) => {
+            setInternalState(e.target.value);
+            if (onChange) onChange(e.target.value);
+          }}
           className={`placeholder:text-gray-400 placeholder:font-normal placeholder:text-sm font-semibold outline-none bg-white rounded-lg w-full px-5 py-2.5 ${
             required
               ? `${
-                  !value && submitState ? "outline-[1.5px] outline-red-400" : ""
+                  !internalState && submitState
+                    ? "outline-[1.5px] outline-red-400"
+                    : ""
                 }`
               : ``
           } ${
@@ -83,7 +105,9 @@ const Input: React.FC<InputProps> = ({
                     : ""
                 }`
               : ""
-          }`}
+          }
+          disabled:bg-gray-200
+          `}
         />
       )}
     </div>

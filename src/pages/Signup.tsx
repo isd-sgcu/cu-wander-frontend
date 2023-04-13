@@ -6,10 +6,13 @@ import {
   useIonViewWillEnter,
 } from "@ionic/react";
 import React, { useRef, useState } from "react";
+import { IonIcon } from "@ionic/react";
+import { checkmarkOutline, closeOutline } from "ionicons/icons";
 import { useHistory } from "react-router-dom";
 import Input from "../components/Input";
 import { useAuth } from "../contexts/AuthContext";
 import { hideTabBar } from "../utils/tab";
+import { AxiosError } from "axios";
 
 const Signup: React.FC = () => {
   useIonViewWillEnter(() => {
@@ -19,6 +22,11 @@ const Signup: React.FC = () => {
   const history = useHistory();
 
   const formRef = useRef<HTMLFormElement>(null);
+  const [password, setPassword] = useState<string>();
+  const [confirmPassword, setConfirmPassword] = useState<string>();
+
+  const isPasswordValid = password && password?.length >= 8;
+  const isPasswordMatch = password && confirmPassword === password;
 
   const [submitState, setSubmitState] = useState<
     | ""
@@ -31,6 +39,7 @@ const Signup: React.FC = () => {
     | "formSubmitFailed"
     | "invalidHeartRate"
     | "invalidAverageStep"
+    | "usernameEmailTaken"
   >("");
 
   const { signUp } = useAuth();
@@ -57,14 +66,9 @@ const Signup: React.FC = () => {
     if (
       !target.firstname.value ||
       !target.lastname.value ||
-      // !target.studentid.value ||
-      // !target.faculty.value ||
-      // !target.year.value ||
       !target.password.value ||
       !target.confirmPassword.value ||
-      // !target.heartRate.value ||
-      !target.averageStep.value ||
-      !target.personalDisease.value
+      !target.averageStep.value
     ) {
       setSubmitState("formNotComplete");
       return;
@@ -79,7 +83,10 @@ const Signup: React.FC = () => {
     }
 
     // check email
-    if (!target.email.value || !target.email.value.includes("@")) {
+    if (
+      !target.email.value ||
+      !target.email.value.includes("@student.chula.ac.th")
+    ) {
       setSubmitState("invalidEmail");
       return;
     }
@@ -112,7 +119,29 @@ const Signup: React.FC = () => {
         "/step"
       );
     } catch (e: unknown) {
-      console.error(e);
+      const { response } = e as AxiosError;
+      switch (response?.status) {
+        case 400:
+          {
+            const reasons = response?.data as {
+              failed_field: string;
+              reason: string;
+              message: string;
+            }[];
+            const reason = reasons[0];
+            if (reason.failed_field === "email") {
+              setSubmitState("invalidStudentId");
+            }
+          }
+          break;
+        case 409:
+          setSubmitState("usernameEmailTaken");
+          break;
+        default: {
+          setSubmitState("formSubmitFailed");
+          break;
+        }
+      }
       setSubmitState("invalidStudentId");
       return;
     }
@@ -143,7 +172,6 @@ const Signup: React.FC = () => {
     "สำนักวิชาทรัพยากรการเกษตร",
     "สถาบันนวัตกรรมบูรณาการแห่งจุฬาฯ",
   ];
-
   return (
     <IonPage>
       <IonHeader></IonHeader>
@@ -171,7 +199,7 @@ const Signup: React.FC = () => {
                   name="username"
                   type="text"
                   label="ชื่อผู้ใช้งาน"
-                  placeholder="Ex. กอไก่กุ๊กกุ๊ก" // ต้องมีเพศมั้ยนะ
+                  placeholder="username" // ต้องมีเพศมั้ยนะ
                   required
                   submitState={submitState}
                 />
@@ -180,7 +208,7 @@ const Signup: React.FC = () => {
                     name="firstname"
                     type="text"
                     label="ชื่อจริง"
-                    placeholder="Ex. กอไก่กุ๊กกุ๊ก" // ต้องมีเพศมั้ยนะ
+                    placeholder="กอไก่กุ๊กกุ๊ก" // ต้องมีเพศมั้ยนะ
                     required
                     submitState={submitState}
                   />
@@ -188,7 +216,7 @@ const Signup: React.FC = () => {
                     name="lastname"
                     type="text"
                     label="นามสกุล"
-                    placeholder="Ex. ออกลูกเป็นไข่" // ต้องมีเพศมั้ยนะ
+                    placeholder="ออกลูกเป็นไข่" // ต้องมีเพศมั้ยนะ
                     required
                     submitState={submitState}
                   />
@@ -198,7 +226,7 @@ const Signup: React.FC = () => {
                   name="studentid"
                   type="text"
                   label="เลขประจำตัวนิสิต"
-                  placeholder="Ex. 6538068821"
+                  placeholder="6538068821"
                   required
                   submitState={submitState}
                 /> */}
@@ -246,7 +274,7 @@ const Signup: React.FC = () => {
                   name="personalDisease"
                   type="text"
                   label="โรคประจำตัว"
-                  placeholder="Ex. แพ้อาหารทะเล"
+                  placeholder="แพ้อาหารทะเล"
                   submitState={submitState}
                 />
                 <div className="flex space-x-3">
@@ -254,14 +282,15 @@ const Signup: React.FC = () => {
                     name="heartRate"
                     type="text"
                     label="อัตราการเต้นหัวใจเฉลี่ย (กรอกข้อมุลเป็นตัวเลข)"
-                    placeholder="Ex. 86 BPM"
+                    placeholder="86 BPM"
                     submitState={submitState}
                   />
                   <Input
                     name="averageStep"
                     type="text"
-                    label="ก้าวเฉลี่ยต่อเดือน* (กรอกข้อมุลเป็นตัวเลข)"
-                    placeholder="Ex. 1,000,000 ก้าว"
+                    required
+                    label="ก้าวเฉลี่ยต่อเดือน (กรอกข้อมุลเป็นตัวเลข)"
+                    placeholder="1,000,000 ก้าว"
                     submitState={submitState}
                   />
                 </div>
@@ -272,16 +301,49 @@ const Signup: React.FC = () => {
                   label="รหัสผ่าน"
                   placeholder="รหัสผ่าน"
                   required
+                  value={password}
+                  onChange={setPassword}
                   submitState={submitState}
                 />
+                <div className="flex px-3 items-center space-x-2">
+                  {isPasswordValid ? (
+                    <IonIcon
+                      icon={checkmarkOutline}
+                      className="w-6 h-6 text-green-400"
+                    />
+                  ) : (
+                    <IonIcon
+                      icon={closeOutline}
+                      className="w-6 h-6 text-red-400"
+                    />
+                  )}
+                  <p className="text-sm">รหัสผ่านต้องเกิน 8 ตัว</p>
+                </div>
                 <Input
                   name="confirmPassword"
                   type="password"
                   label="ยืนยันรหัสผ่าน"
                   placeholder="ยืนยันรหัสผ่าน"
+                  disabled={!isPasswordValid}
+                  value={confirmPassword}
+                  onChange={setConfirmPassword}
                   required
                   submitState={submitState}
                 />
+                <div className="flex px-3 items-center space-x-2">
+                  {isPasswordMatch ? (
+                    <IonIcon
+                      icon={checkmarkOutline}
+                      className="w-6 h-6 text-green-400"
+                    />
+                  ) : (
+                    <IonIcon
+                      icon={closeOutline}
+                      className="w-6 h-6 text-red-400"
+                    />
+                  )}
+                  <p className="text-sm">ต้องเหมือนกับรหัสผ่าน</p>
+                </div>
               </div>
             </div>
           </div>
@@ -297,12 +359,15 @@ const Signup: React.FC = () => {
                   "กรอกข้อมูลอัตราการเต้นหัวใจเป็นตัวเลขเท่านั้น"}
                 {submitState === "formSubmitFailed" &&
                   "ข้อมูลไม่ถูกต้อง กรุณาตรวจสอบข้อมูลอีกครั้ง"}
+                {submitState === "usernameEmailTaken" &&
+                  "ชื่อผู้ใช้หรืออีเมลนี้ถูกใช้งานแล้ว"}
               </p>
             </div>
             <button
               onClick={() => setSubmitState("submitting")}
               type="submit"
-              className="bg-green-500 text-white w-full rounded-xl grid place-content-center font-medium py-2.5"
+              disabled={!isPasswordMatch}
+              className="bg-green-500 text-white w-full rounded-xl grid place-content-center font-medium py-2.5 disabled:bg-gray-300"
             >
               ต่อไป
             </button>
