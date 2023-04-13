@@ -172,12 +172,12 @@ const Step: React.FC = () => {
                 </span>
                 <span>กิโลเมตร</span>
               </div>
-              <div className="rounded-full w-full border-[2px] space-x-1.5 py-0.5">
+              {/* <div className="rounded-full w-full border-[2px] space-x-1.5 py-0.5">
                 <span className="font-semibold text-lg">
-                  -{/* {(totalTime / 60).toLocaleString("en-US")} */}
+                  {(totalTime / 60).toLocaleString("en-US")}
                 </span>
                 <span>นาที</span>
-              </div>
+              </div> */}
               <div className="rounded-full w-full border-[2px] space-x-1.5 py-0.5">
                 <span className="font-semibold text-lg">
                   {Math.floor(steps! * 0.04) < 1000
