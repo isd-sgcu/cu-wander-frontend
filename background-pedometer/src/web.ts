@@ -6,8 +6,22 @@ export class PedometerServiceWeb
   extends WebPlugin
   implements PedometerServicePlugin
 {
-  async echo(options: { value: string }): Promise<{ value: string }> {
-    console.log('ECHO', options);
-    return options;
+  async requestPermission(): Promise<{
+    value: boolean;
+    errMsg: string;
+  }> {
+    return { value: true, errMsg: '' };
+  }
+
+  async enable(option: {
+    token: string;
+    wsAddress: string;
+  }): Promise<{ value: void; errMsg: string }> {
+    console.log('enable', option);
+    return { value: undefined, errMsg: '' };
+  }
+
+  async disable(): Promise<void> {
+    console.log('disable');
   }
 }
