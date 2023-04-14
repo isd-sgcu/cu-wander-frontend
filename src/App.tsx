@@ -62,10 +62,10 @@ const App: React.FC = () => (
       <ModalContext>
         {/* router */}
         <IonReactRouter>
-          <StepProvider>
-            <AuthProvider>
-              <DeviceProvider>
-                <VersionProvider>
+          <AuthProvider>
+            <DeviceProvider>
+              <VersionProvider>
+                <StepProvider>
                   <IonTabs>
                     {/* page's router */}
                     <IonRouterOutlet>
@@ -148,10 +148,10 @@ const App: React.FC = () => (
                       </IonTabButton>
                     </IonTabBar>
                   </IonTabs>
-                </VersionProvider>
-              </DeviceProvider>
-            </AuthProvider>
-          </StepProvider>
+                </StepProvider>
+              </VersionProvider>
+            </DeviceProvider>
+          </AuthProvider>
         </IonReactRouter>
       </ModalContext>
     </CouponContext>

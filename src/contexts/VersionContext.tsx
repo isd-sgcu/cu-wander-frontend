@@ -8,8 +8,10 @@ import { useDevice } from "./DeviceContext";
 type Version = "android_version" | "ios_version";
 
 const VersionContext = createContext<{
+  version: string;
   checkUpdate: () => void;
 }>({
+  version: "",
   checkUpdate: () => {},
 });
 
@@ -36,10 +38,6 @@ const VersionProvider = ({ children }: { children: React.ReactNode }) => {
     try {
       const res = await httpGet<Record<Version, string>>("/version");
       const latestVersion = res.data[versionKey];
-      console.log("latestVersion", latestVersion);
-      console.log("device", device);
-      console.log("versionKey", versionKey);
-      console.log("currentVersion", currentVersion);
       if (currentVersion) {
         const shouldUpdate = compareVersions(currentVersion, latestVersion) < 0;
         if (shouldUpdate) history.replace("/upgraderequired");
@@ -62,7 +60,7 @@ const VersionProvider = ({ children }: { children: React.ReactNode }) => {
   }
 
   return (
-    <VersionContext.Provider value={{ checkUpdate }}>
+    <VersionContext.Provider value={{ version: currentVersion, checkUpdate }}>
       {children}
     </VersionContext.Provider>
   );

@@ -7,6 +7,7 @@ import useWebSocket, { ReadyState } from "react-use-websocket";
 import { getAccessToken } from "./AuthContext";
 import { useAuth } from "./AuthContext";
 import { WebSocketLike } from "react-use-websocket/dist/lib/types";
+import { useVersion } from "./VersionContext";
 
 type StepContextValue = {
   steps: number;
@@ -28,6 +29,7 @@ const StepProvider = ({ children }: { children: React.ReactNode }) => {
   const [steps, setSteps] = useState(0);
   const [listening, setListening] = useState(false);
   const { user } = useAuth();
+  const { version } = useVersion();
   const wsURL = `${process.env.REACT_APP_WEBSOCKET_URL}/ws`;
   const { readyState, sendJsonMessage, sendMessage, getWebSocket } =
     useWebSocket(
@@ -38,7 +40,10 @@ const StepProvider = ({ children }: { children: React.ReactNode }) => {
         retryOnError: true,
         onOpen: async () => {
           const token = await getAccessToken();
-          sendMessage(token);
+          sendJsonMessage({
+            token,
+            version,
+          });
           console.log(`Websocket connected connected at ${wsURL}`);
         },
         onClose: () => {
