@@ -41,6 +41,7 @@ specifiers:
   react-router: ^5.2.0
   react-router-dom: ^5.2.0
   react-scripts: 5.0.1
+  react-use-websocket: ^4.3.1
   tailwindcss: ^3.2.4
   typescript: ^4.1.3
   web-vitals: ^0.2.4
@@ -94,6 +95,7 @@ dependencies:
   react-dom: 18.2.0_react@18.2.0
   react-router: 5.3.4_react@18.2.0
   react-router-dom: 5.3.4_react@18.2.0
+  react-use-websocket: 4.3.1_biqbaboplfbrettd7655fr4n2y
   typescript: 4.9.5
   web-vitals: 0.2.4
   workbox-background-sync: 5.1.4
@@ -9937,6 +9939,16 @@ packages:
       - webpack-hot-middleware
       - webpack-plugin-serve
     dev: true
+
+  /react-use-websocket/4.3.1_biqbaboplfbrettd7655fr4n2y:
+    resolution: {integrity: sha512-zHPLWrgcqydJaak2O5V9hiz4q2dwkwqNQqpgFVmSuPxLZdsZlnDs8DVHy3WtHH+A6ms/8aHIyX7+7ulOcrnR0Q==}
+    peerDependencies:
+      react: '>= 18.0.0'
+      react-dom: '>= 18.0.0'
+    dependencies:
+      react: 18.2.0
+      react-dom: 18.2.0_react@18.2.0
+    dev: false
 
   /react/18.2.0:
     resolution: {integrity: sha512-/3IjMdb2L9QbBdWiW5e3P2/npwMBaU9mHCSCUzNln0ZCYbcfTsGbTJrU/kGemdH2IWmB2ioZ+zkxtmq6g09fGQ==}
