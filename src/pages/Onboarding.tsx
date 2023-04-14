@@ -4,10 +4,12 @@ import {
   IonPage,
   useIonViewWillEnter,
 } from "@ionic/react";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import { hideTabBar } from "../utils/tab";
 import { CurrentVersion } from "../lib/version/utils/version";
 import { useDevice } from "../contexts/DeviceContext";
+import { Preferences } from "@capacitor/preferences";
+import { useEffect } from "react";
 
 const Onboarding: React.FC = () => {
   useIonViewWillEnter(() => {
@@ -15,6 +17,16 @@ const Onboarding: React.FC = () => {
   });
 
   const { device } = useDevice();
+
+  const history = useHistory();
+
+  useEffect(() => {
+    const checkToken = async () => {
+      const { value } = await Preferences.get({ key: "token" });
+      if (value) history.replace("/step");
+    };
+    checkToken();
+  }, []);
 
   return (
     <IonPage>
