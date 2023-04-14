@@ -5,11 +5,11 @@ import * as serviceWorkerRegistration from "./serviceWorkerRegistration";
 import reportWebVitals from "./reportWebVitals";
 import * as Sentry from "@sentry/capacitor";
 
-Sentry.init({
-  dsn: process.env.REACT_APP_SENTRY_DSN,
-});
+// Sentry.init({
+//   dsn: process.env.REACT_APP_SENTRY_DSN,
+// });
 
-Sentry.captureException("Test Captured Exception");
+// Sentry.captureException("Test Captured Exception");
 
 const container = document.getElementById("root");
 const root = createRoot(container!);
