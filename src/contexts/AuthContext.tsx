@@ -1,9 +1,10 @@
-import axios, { AxiosError, AxiosResponse } from "axios";
-import React, { createContext, ReactNode, useContext, useState } from "react";
+import axios, { AxiosResponse } from "axios";
+import { createContext, ReactNode, useContext, useState } from "react";
 import { useHistory } from "react-router";
 import { httpGet, httpPost } from "../utils/fetch";
 import { Preferences } from "@capacitor/preferences";
 import { useVersion } from "./VersionContext";
+import { useStep } from "./StepContext";
 
 // Define the interface for the authentication credentials
 interface AuthCredentials {
@@ -52,6 +53,7 @@ const AuthProvider = ({ children }: { children: ReactNode | ReactNode[] }) => {
   const [user, setUser] = useState<UserData>();
   const history = useHistory();
   const { checkUpdate } = useVersion();
+  const { getWebSocket } = useStep();
 
   const getUserData = async (): Promise<UserData> => {
     await checkUpdate();
@@ -124,6 +126,8 @@ const AuthProvider = ({ children }: { children: ReactNode | ReactNode[] }) => {
 
   const signOut = async (redirect: string) => {
     await Preferences.remove({ key: "token" });
+    const ws = getWebSocket();
+    if (ws) ws.close();
     setUser(undefined);
     history.push(redirect);
   };

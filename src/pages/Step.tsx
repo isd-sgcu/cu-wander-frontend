@@ -1,35 +1,21 @@
 import { Geolocation } from "@capacitor/geolocation";
 import { IonContent, IonPage, useIonViewWillEnter } from "@ionic/react";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 // import { Pedometer, SensorEvent } from "pedometer-plugin";
 import { showTabBar } from "../utils/tab";
 // @ts-ignore
 import { PedometerService } from "background-pedometer";
 import { getAccessToken, useAuth } from "../contexts/AuthContext";
-import { httpGet } from "../utils/fetch";
 import { useStep } from "../contexts/StepContext";
-import { useDevice } from "../contexts/DeviceContext";
+import { ReadyState } from "react-use-websocket";
+import { ModalState } from "../contexts/ModalContext";
 
 const Step: React.FC = () => {
   const { user } = useAuth();
 
-  // data scheme
-  const totalSteps = 10500; // count of steps
-  const stepsGoal = 20000;
-  const totalDistances = 8000; // count of distances in meters
-  const totalTime = 2400; // count of time in seconds
-  const totalCalories = 500; // count of calories
+  const { steps, getUserStep, connectionState } = useStep();
 
-  const { steps, getUserStep } = useStep();
-
-  useEffect(() => {}, []);
-
-  useEffect(() => {
-    console.log(user);
-  }, []);
-
-  // mockup map
-  const [map, setMap] = useState();
+  const { showModalHandler, setPromptModal } = useContext(ModalState);
 
   // google map
   // let newMap;
@@ -66,22 +52,16 @@ const Step: React.FC = () => {
     console.log("Current position:", coordinates);
   };
 
-  const { device } = useDevice();
-
   useIonViewWillEnter(async () => {
     showTabBar();
     PedometerService.requestPermission()
       .then(async (res: any) => {
-        console.log(`Resolved! ${res}`);
         if (res.value) {
           const token = await getAccessToken();
           PedometerService.enable({
-            token: token, // Get token from localstorage / cookie / etc.
-            // expected wsAddress to be in this format
-            // wss://<url>[:<port>]/<version>
-            wsAddress: `${process.env.REACT_APP_WEBSOCKET_URL}/ws`, // Read from env, etc.
+            token: token,
+            wsAddress: `${process.env.REACT_APP_WEBSOCKET_URL}/ws`,
           });
-          console.log("Connected to websocket");
         }
       })
       .catch((err: any) => {
@@ -104,6 +84,56 @@ const Step: React.FC = () => {
     const nearestPowerOf10 = 10 ** exponent;
     return nearestPowerOf10;
   }
+
+  const getConnectionColor = (state: ReadyState) => {
+    switch (state) {
+      case ReadyState.CONNECTING:
+        return "bg-yellow-400";
+      case ReadyState.OPEN:
+        return "bg-green-400";
+      case ReadyState.CLOSING:
+        return "bg-yellow-400";
+      case ReadyState.UNINSTANTIATED:
+        return "bg-gray-400";
+      default:
+        return "bg-red-400";
+    }
+  };
+
+  useEffect(() => {
+    if (
+      connectionState === ReadyState.CLOSED ||
+      connectionState === ReadyState.UNINSTANTIATED
+    ) {
+      showModalHandler({
+        title: "การเชื่อมต่อเซิร์ฟเวอร์ขัดข้อง",
+        subtitle: "โปรดกดเชื่อมต่อเพื่อเชื่อมต่ออีกครั้ง",
+        body: (
+          <p className="text-sm text-gray-600">
+            หากปัญหายังคงอยู่ โปรดกดปุ่มร้องเรียนปัญหา
+          </p>
+        ),
+        type: "multiple",
+        choices: [
+          {
+            title: "ร้องเรียนปัญหา",
+            primary: false,
+            action() {
+              window.open("https://airtable.com/shrppuCwJyTJVQrgH");
+            },
+          },
+          {
+            title: "เชื่อมต่อ",
+            primary: true,
+            action() {
+              setPromptModal(false);
+              window.location.reload();
+            },
+          },
+        ],
+      });
+    }
+  }, []);
 
   return (
     <IonPage>
@@ -134,9 +164,16 @@ const Step: React.FC = () => {
             <div className="pt-2">
               <div className="flex justify-between items-end">
                 <div className="flex items-center space-x-1.5">
-                  <span className="text-4xl font-bold">
-                    {steps?.toLocaleString("en-US")}
-                  </span>
+                  <div className="relative">
+                    <span className="text-4xl font-bold">
+                      {steps?.toLocaleString("en-US")}
+                    </span>
+                    <div
+                      className={`absolute top-[-6px] right-[-6px] w-2 h-2 rounded-full ${getConnectionColor(
+                        connectionState
+                      )}`}
+                    />
+                  </div>
                   <span className="opacity-90">ก้าว</span>
                 </div>
                 {/* <span className="text-[#bababa] text-xs">

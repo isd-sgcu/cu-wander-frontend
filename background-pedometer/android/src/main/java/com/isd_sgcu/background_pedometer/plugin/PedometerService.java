@@ -30,10 +30,6 @@ public class PedometerService extends Service implements SensorEventListener {
     Sensor stepCounterSensor;
     Sensor stepDetectorSensor;
 
-    WebSocketConnection conn;
-
-    private Instant lastSync = Instant.now();
-
     private static final String CHANNEL_NAME = "pedometer_service_channel";
     private static final String NOTIFICATION_TITLE = "CU Wander";
     private static final int IMPORTANCE = NotificationManager.IMPORTANCE_MIN;
@@ -71,8 +67,6 @@ public class PedometerService extends Service implements SensorEventListener {
         super.onStartCommand(intent, flags, startId);
         Log.i("Service", "StartCommand");
 
-        conn = new WebSocketConnection(intent.getStringExtra("token"), intent.getStringExtra("wsAddress"));
-
         return START_REDELIVER_INTENT;
     }
 
@@ -86,8 +80,6 @@ public class PedometerService extends Service implements SensorEventListener {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        conn.disconnect();
-        conn = null;
 
         plugin.setService(null);
         setPlugin(null);
@@ -113,18 +105,6 @@ public class PedometerService extends Service implements SensorEventListener {
             int newSteps = (int) event.values[0];
             int dSteps = newSteps - steps;
             Log.v("Service", "onSensorChanged " + dSteps);
-            // update to server (only when connection is available).
-
-            JSONObject json = new JSONObject();
-            try {
-                json.put("step", dSteps);
-                if (Duration.between(lastSync, Instant.now()).getSeconds() > 8 && conn.send(json.toString())) {
-                    steps = newSteps;
-                    lastSync = Instant.now();
-                }
-            } catch (JSONException e) {
-                Log.e("Service", "JSON error: " + e.getMessage());
-            }
 
             // update for local
             if (isPluginBounded()) {
