@@ -1,25 +1,29 @@
-import { createContext, useContext } from "react";
-import { useDeviceSelectors } from "react-device-detect";
+import { createContext, useContext, useEffect, useState } from "react";
+import { Device } from "@capacitor/device";
 import { useHistory } from "react-router";
 
 type DeviceContextValue = {
-  device: string;
+  device: "ios" | "android" | "web";
 };
 
 const DeviceContext = createContext<DeviceContextValue>({
-  device: "",
+  device: "ios",
 });
 
 const DeviceProvider = ({ children }: { children: React.ReactNode }) => {
   const history = useHistory();
-  const [selectors] = useDeviceSelectors(window.navigator.userAgent);
-  const { osName, isMobile } = selectors as {
-    osName: string;
-    isMobile: boolean;
-  };
-  // const device = osName.toLowerCase();
 
-  const device = "android";
+  const [device, setDevice] = useState<DeviceContextValue["device"]>("ios");
+
+  useEffect(() => {
+    const getDevice = async () => {
+      const { platform } = await Device.getInfo();
+      setDevice(platform);
+    };
+    getDevice();
+  }, []);
+
+  const isMobile = device === "ios" || device === "android";
 
   if (!isMobile && process.env.REACT_APP_DEBUG !== "true") {
     history.push("/notsupport");

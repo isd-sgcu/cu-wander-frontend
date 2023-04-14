@@ -3,13 +3,13 @@ import { createRoot } from "react-dom/client";
 import App from "./App";
 import * as serviceWorkerRegistration from "./serviceWorkerRegistration";
 import reportWebVitals from "./reportWebVitals";
-import * as Sentry from "@sentry/capacitor";
+import * as Sentry from "@sentry/react";
 
-// Sentry.init({
-//   dsn: process.env.REACT_APP_SENTRY_DSN,
-// });
-
-// Sentry.captureException("Test Captured Exception");
+Sentry.init({
+  dsn: process.env.REACT_APP_SENTRY_DSN,
+  enabled: process.env.NODE_ENV === "production",
+  tracesSampleRate: 0.25,
+});
 
 const container = document.getElementById("root");
 const root = createRoot(container!);

@@ -24,7 +24,7 @@ const UpgradeRequired: React.FC = () => {
         className="max-w-sm mb-8"
       />
       <h2 className="text-3xl font-bold text-white mb-4">Update Required</h2>
-      <p className="text-white text-center max-w-md mb-8">
+      <p className="text-white text-center max-w-md mb-8 px-5">
         A new version of the app is available. Please update to continue using
         the app.
       </p>

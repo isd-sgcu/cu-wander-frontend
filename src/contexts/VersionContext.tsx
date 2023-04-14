@@ -5,64 +5,53 @@ import { compareVersions } from "../lib/version/utils/compare-version";
 import { CurrentVersion } from "../lib/version/utils/version";
 import { useDevice } from "./DeviceContext";
 
-interface IVersion {
-  android_version: string;
-  ios_version: string;
-}
+type Version = "android_version" | "ios_version";
 
-type VersionContextValue = {
-  isLoading: boolean;
-  checkUpdate: () => Promise<void>;
-};
-
-const VersionContext = createContext<VersionContextValue>({
-  isLoading: false,
-  checkUpdate: async () => {},
+const VersionContext = createContext<{
+  checkUpdate: () => void;
+}>({
+  checkUpdate: () => {},
 });
 
 const VersionProvider = ({ children }: { children: React.ReactNode }) => {
   const history = useHistory();
   const { device } = useDevice();
   const [isLoading, setLoading] = useState(true);
-  const [shouldUpdate, setShouldUpdate] = useState(false);
-  const [versionKey, setVersionKey] = useState("");
 
-  const currentVersion = CurrentVersion[versionKey as keyof IVersion];
+  const getVersionKey = (device: "ios" | "android" | "web"): Version => {
+    switch (device) {
+      case "ios":
+        return "ios_version";
+      default:
+        return "android_version";
+    }
+  };
+
+  const versionKey = getVersionKey(device);
+
+  const currentVersion = CurrentVersion[getVersionKey(device)];
 
   const checkUpdate = async () => {
     setLoading(true);
     try {
-      const res = await httpGet<IVersion>("/version");
-      const latestVersion = res.data[versionKey as keyof IVersion];
-      console.log(currentVersion);
+      const res = await httpGet<Record<Version, string>>("/version");
+      const latestVersion = res.data[versionKey];
+      console.log("latestVersion", latestVersion);
+      console.log("device", device);
+      console.log("versionKey", versionKey);
+      console.log("currentVersion", currentVersion);
       if (currentVersion) {
-        console.log(currentVersion, compareVersions);
         const shouldUpdate = compareVersions(currentVersion, latestVersion) < 0;
-        setShouldUpdate(shouldUpdate);
+        if (shouldUpdate) history.replace("/upgraderequired");
       }
     } catch (error) {
       console.error(error);
     }
     setLoading(false);
   };
-
-  useEffect(() => {
-    switch (device) {
-      case "ios":
-        setVersionKey("ios_version");
-        break;
-      case "andriod":
-        setVersionKey("android_version");
-        break;
-      default:
-        setVersionKey("android_version");
-        break;
-    }
-  }, [device, shouldUpdate]);
-
   useEffect(() => {
     checkUpdate();
-  }, [versionKey]);
+  }, []);
 
   if (isLoading) {
     return (
@@ -72,12 +61,8 @@ const VersionProvider = ({ children }: { children: React.ReactNode }) => {
     );
   }
 
-  if (shouldUpdate) {
-    history.push("/upgraderequired");
-  }
-
   return (
-    <VersionContext.Provider value={{ isLoading, checkUpdate }}>
+    <VersionContext.Provider value={{ checkUpdate }}>
       {children}
     </VersionContext.Provider>
   );

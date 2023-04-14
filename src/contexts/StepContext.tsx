@@ -27,7 +27,6 @@ const StepContext = createContext<StepContextValue>({
 const StepProvider = ({ children }: { children: React.ReactNode }) => {
   const [steps, setSteps] = useState(0);
   const [listening, setListening] = useState(false);
-  const { device } = useDevice();
   const { user } = useAuth();
   const wsURL = `${process.env.REACT_APP_WEBSOCKET_URL}/ws`;
   const { readyState, sendJsonMessage, sendMessage, getWebSocket } =
