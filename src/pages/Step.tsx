@@ -5,15 +5,18 @@ import { useContext, useEffect, useState } from "react";
 import { showTabBar } from "../utils/tab";
 // @ts-ignore
 import { PedometerService } from "background-pedometer";
-import { getAccessToken, useAuth } from "../contexts/AuthContext";
 import { useStep } from "../contexts/StepContext";
 import { ReadyState } from "react-use-websocket";
 import { ModalState } from "../contexts/ModalContext";
 
 const Step: React.FC = () => {
-  const { user } = useAuth();
-
-  const { steps, getUserStep, connectionState } = useStep();
+  const {
+    steps,
+    getUserStep,
+    connectionState,
+    pedometerEnabled,
+    setPedometerEnabled,
+  } = useStep();
 
   const { showModalHandler, setPromptModal } = useContext(ModalState);
 
@@ -54,20 +57,7 @@ const Step: React.FC = () => {
 
   useIonViewWillEnter(async () => {
     showTabBar();
-    PedometerService.requestPermission()
-      .then(async (res: any) => {
-        if (res.value) {
-          const token = await getAccessToken();
-          PedometerService.enable({
-            token: token,
-            wsAddress: `${process.env.REACT_APP_WEBSOCKET_URL}/ws`,
-          });
-        }
-      })
-      .catch((err: any) => {
-        console.log(`Pedometer service connection error ${err}`);
-      });
-
+    enablePedometer();
     getUserStep();
   });
 
@@ -84,6 +74,22 @@ const Step: React.FC = () => {
     const nearestPowerOf10 = 10 ** exponent;
     return nearestPowerOf10;
   }
+
+  const enablePedometer = async () => {
+    if (pedometerEnabled) return;
+    const { value } = await PedometerService.requestPermission();
+    if (value) {
+      try {
+        await PedometerService.enable({
+          token: "",
+          wsAddress: `${process.env.REACT_APP_WEBSOCKET_URL}/ws`,
+        });
+        setPedometerEnabled(true);
+      } catch (e: any) {
+        console.log("Pedometer service already enabled");
+      }
+    }
+  };
 
   const getConnectionColor = (state: ReadyState) => {
     switch (state) {

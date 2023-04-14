@@ -9,6 +9,7 @@ Sentry.init({
   dsn: process.env.REACT_APP_SENTRY_DSN,
   enabled: process.env.NODE_ENV === "production",
   tracesSampleRate: 0.25,
+  ignoreErrors: ["Pedometer service is already running"],
 });
 
 const container = document.getElementById("root");

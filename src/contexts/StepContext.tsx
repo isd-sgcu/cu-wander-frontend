@@ -10,6 +10,8 @@ import { WebSocketLike } from "react-use-websocket/dist/lib/types";
 import { useVersion } from "./VersionContext";
 
 type StepContextValue = {
+  pedometerEnabled: boolean;
+  setPedometerEnabled: (enabled: boolean) => void;
   steps: number;
   getUserStep: () => Promise<void>;
   addStep: (delta: number) => void;
@@ -18,6 +20,8 @@ type StepContextValue = {
 };
 
 const StepContext = createContext<StepContextValue>({
+  pedometerEnabled: false,
+  setPedometerEnabled: () => {},
   steps: 0,
   getUserStep: async () => {},
   addStep: () => {},
@@ -28,30 +32,30 @@ const StepContext = createContext<StepContextValue>({
 const StepProvider = ({ children }: { children: React.ReactNode }) => {
   const [steps, setSteps] = useState(0);
   const [listening, setListening] = useState(false);
+  const [pedometerEnabled, setPedometerEnabled] = useState(false);
   const { user } = useAuth();
   const { version } = useVersion();
   const wsURL = `${process.env.REACT_APP_WEBSOCKET_URL}/ws`;
-  const { readyState, sendJsonMessage, sendMessage, getWebSocket } =
-    useWebSocket(
-      wsURL,
-      {
-        reconnectAttempts: 5,
-        reconnectInterval: 3000,
-        retryOnError: true,
-        onOpen: async () => {
-          const token = await getAccessToken();
-          sendJsonMessage({
-            token,
-            version,
-          });
-          console.log(`Websocket connected connected at ${wsURL}`);
-        },
-        onClose: () => {
-          console.log(`Websocket disconnected at ${wsURL}`);
-        },
+  const { readyState, sendJsonMessage, getWebSocket } = useWebSocket(
+    wsURL,
+    {
+      reconnectAttempts: 5,
+      reconnectInterval: 3000,
+      retryOnError: true,
+      onOpen: async () => {
+        const token = await getAccessToken();
+        sendJsonMessage({
+          token,
+          version,
+        });
+        console.log(`Websocket connected connected at ${wsURL}`);
       },
-      user !== undefined
-    );
+      onClose: () => {
+        console.log(`Websocket disconnected at ${wsURL}`);
+      },
+    },
+    user !== undefined
+  );
   const getUserStep = async () => {
     try {
       const {
@@ -83,6 +87,8 @@ const StepProvider = ({ children }: { children: React.ReactNode }) => {
   return (
     <StepContext.Provider
       value={{
+        pedometerEnabled,
+        setPedometerEnabled,
         steps,
         getUserStep,
         addStep,
