@@ -7,6 +7,7 @@ import { showTabBar } from "../utils/tab";
 import { CouponState } from "../contexts/CouponContext";
 import useCouponPagination from "../utils/usePagination";
 import clsx from "clsx";
+import { useDevice } from "../contexts/DeviceContext";
 
 interface RedeemCouponType {
   template_coupon_id: string;
@@ -29,10 +30,14 @@ export default function Coupon() {
   } = useCouponPagination({
     keyword: searchPhrase,
   });
+  const { device } = useDevice();
+
   return (
     <IonPage>
       <div
-        className="absolute left-10 right-10 top-[64px] h-12 flex items-center bg-white rounded-full font-noto text-black px-2 shadow-lg z-50"
+        className={`absolute left-10 right-10 ${
+          device === "ios" ? "top-[110px]" : "top-[64px]"
+        } h-12 flex items-center bg-white rounded-full font-noto text-black px-2 shadow-lg z-50`}
         onClick={() => {
           setShowModal(false);
         }}
