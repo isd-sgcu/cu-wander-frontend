@@ -92,7 +92,7 @@ add listener to change in step.
 #### CallResponse
 
 value indicated the response body
-errMsg contain error message 
+errMsg contain error message
 error can be check by checking whether `errMsg` is empty
 
 | Prop         | Type                |

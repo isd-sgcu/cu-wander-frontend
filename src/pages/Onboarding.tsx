@@ -8,8 +8,8 @@ import { Link, useHistory } from "react-router-dom";
 import { hideTabBar } from "../utils/tab";
 import { CurrentVersion } from "../lib/version/utils/version";
 import { useDevice } from "../contexts/DeviceContext";
-import { Preferences } from "@capacitor/preferences";
 import { useEffect } from "react";
+import { Preferences } from "@capacitor/preferences";
 
 const Onboarding: React.FC = () => {
   useIonViewWillEnter(() => {
@@ -17,7 +17,6 @@ const Onboarding: React.FC = () => {
   });
 
   const { device } = useDevice();
-
   const history = useHistory();
 
   useEffect(() => {
