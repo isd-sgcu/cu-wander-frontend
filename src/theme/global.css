@@ -17,13 +17,13 @@ ion-toolbar {
 }
 
 ion-button {
-  --background: transparent;
+  --background: #fff;
 }
 
 ion-content {
-  --background: transparent;
+  --background: #fff;
 }
 
 body {
-  background: transparent;
+  background: #fff;
 }
