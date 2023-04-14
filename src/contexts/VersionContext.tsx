@@ -26,6 +26,7 @@ const VersionProvider = ({ children }: { children: React.ReactNode }) => {
   const [isLoading, setLoading] = useState(true);
   const [shouldUpdate, setShouldUpdate] = useState(false);
   const [versionKey, setVersionKey] = useState("");
+
   const currentVersion = CurrentVersion[versionKey as keyof IVersion];
 
   const checkUpdate = async () => {
@@ -33,7 +34,9 @@ const VersionProvider = ({ children }: { children: React.ReactNode }) => {
     try {
       const res = await httpGet<IVersion>("/version");
       const latestVersion = res.data[versionKey as keyof IVersion];
+      console.log(currentVersion);
       if (currentVersion) {
+        console.log(currentVersion, compareVersions);
         const shouldUpdate = compareVersions(currentVersion, latestVersion) < 0;
         setShouldUpdate(shouldUpdate);
       }
@@ -52,7 +55,7 @@ const VersionProvider = ({ children }: { children: React.ReactNode }) => {
         setVersionKey("android_version");
         break;
       default:
-        setVersionKey("browser");
+        setVersionKey("android_version");
         break;
     }
   }, [device, shouldUpdate]);

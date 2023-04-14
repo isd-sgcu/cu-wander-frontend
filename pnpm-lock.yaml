@@ -5,12 +5,14 @@ specifiers:
   '@capacitor/app': 4.1.1
   '@capacitor/cli': 4.6.3
   '@capacitor/core': ^4.7.1
+  '@capacitor/device': ^4.1.0
   '@capacitor/geolocation': ^4.1.0
   '@capacitor/google-maps': ^4.5.0
   '@capacitor/haptics': 4.1.0
   '@capacitor/ios': 4.6.3
   '@capacitor/keyboard': 4.1.1
   '@capacitor/preferences': ^4.0.2
+  '@capacitor/splash-screen': ^4.2.0
   '@capacitor/status-bar': 4.1.1
   '@ionic/cli': ^7.0.0
   '@ionic/lab': 3.2.15
@@ -62,12 +64,14 @@ dependencies:
   '@capacitor/android': 4.6.3_@capacitor+core@4.7.3
   '@capacitor/app': 4.1.1_@capacitor+core@4.7.3
   '@capacitor/core': 4.7.3
+  '@capacitor/device': 4.1.0_@capacitor+core@4.7.3
   '@capacitor/geolocation': 4.1.0_@capacitor+core@4.7.3
   '@capacitor/google-maps': 4.5.0_@capacitor+core@4.7.3
   '@capacitor/haptics': 4.1.0_@capacitor+core@4.7.3
   '@capacitor/ios': 4.6.3_@capacitor+core@4.7.3
   '@capacitor/keyboard': 4.1.1_@capacitor+core@4.7.3
   '@capacitor/preferences': 4.0.2_@capacitor+core@4.7.3
+  '@capacitor/splash-screen': 4.2.0_@capacitor+core@4.7.3
   '@capacitor/status-bar': 4.1.1_@capacitor+core@4.7.3
   '@ionic/cli': 7.0.1
   '@ionic/react': 6.7.2_biqbaboplfbrettd7655fr4n2y
@@ -1555,6 +1559,14 @@ packages:
       tslib: 2.5.0
     dev: false
 
+  /@capacitor/device/4.1.0_@capacitor+core@4.7.3:
+    resolution: {integrity: sha512-BlcYb6e6m+vC1SxeyUDIUGfuNXdKEcpFPDCs/kxk2SByFc/BkvXeoy4NjY4qmTderGELofX9bta5Iy9JV7rGUg==}
+    peerDependencies:
+      '@capacitor/core': ^4.0.0
+    dependencies:
+      '@capacitor/core': 4.7.3
+    dev: false
+
   /@capacitor/geolocation/4.1.0_@capacitor+core@4.7.3:
     resolution: {integrity: sha512-hfI4MUcu1zcJPTvm0g6V3telTGwq9sCU8EnY4hFJpLedbIQeWPthCOSbFtNHAU5mVaAP1Zls3x6TsXL8TX08EA==}
     peerDependencies:
@@ -1600,6 +1612,14 @@ packages:
 
   /@capacitor/preferences/4.0.2_@capacitor+core@4.7.3:
     resolution: {integrity: sha512-HgcRkMdVHSIV3TeQLZFmCaCeMWQ25wLyZZ7dA2f8Rw81Q1Nroxsi7HxTEGNqrWKSN9PNKBJD8vChr6eB2GNtZg==}
+    peerDependencies:
+      '@capacitor/core': ^4.0.0
+    dependencies:
+      '@capacitor/core': 4.7.3
+    dev: false
+
+  /@capacitor/splash-screen/4.2.0_@capacitor+core@4.7.3:
+    resolution: {integrity: sha512-XtGqM7J/yVEl/tKksKa7l1B6IDzhq4JJkadRuT8ohf/N7fD/1z45+id/4twM2Vnsxazh1fur2gq8rma7HaXMEw==}
     peerDependencies:
       '@capacitor/core': ^4.0.0
     dependencies:

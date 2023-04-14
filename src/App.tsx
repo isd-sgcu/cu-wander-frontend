@@ -62,8 +62,8 @@ const App: React.FC = () => (
       <ModalContext>
         {/* router */}
         <IonReactRouter>
-          <AuthProvider>
-            <StepProvider>
+          <StepProvider>
+            <AuthProvider>
               <DeviceProvider>
                 <VersionProvider>
                   <IonTabs>
@@ -150,8 +150,8 @@ const App: React.FC = () => (
                   </IonTabs>
                 </VersionProvider>
               </DeviceProvider>
-            </StepProvider>
-          </AuthProvider>
+            </AuthProvider>
+          </StepProvider>
         </IonReactRouter>
       </ModalContext>
     </CouponContext>
