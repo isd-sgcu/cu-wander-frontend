@@ -61,14 +61,6 @@ const VersionProvider = ({ children }: { children: React.ReactNode }) => {
     checkUpdate();
   }, [versionKey]);
 
-  if (isLoading) {
-    return (
-      <>
-        <div>Loading...</div>
-      </>
-    );
-  }
-
   if (shouldUpdate) {
     history.push("/upgraderequired");
   }

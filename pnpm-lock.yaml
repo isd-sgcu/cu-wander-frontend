@@ -11,6 +11,7 @@ specifiers:
   '@capacitor/ios': 4.6.3
   '@capacitor/keyboard': 4.1.1
   '@capacitor/preferences': ^4.0.2
+  '@capacitor/splash-screen': ^4.2.0
   '@capacitor/status-bar': 4.1.1
   '@ionic/cli': ^7.0.0
   '@ionic/lab': 3.2.15
@@ -68,6 +69,7 @@ dependencies:
   '@capacitor/ios': 4.6.3_@capacitor+core@4.7.3
   '@capacitor/keyboard': 4.1.1_@capacitor+core@4.7.3
   '@capacitor/preferences': 4.0.2_@capacitor+core@4.7.3
+  '@capacitor/splash-screen': 4.2.0_@capacitor+core@4.7.3
   '@capacitor/status-bar': 4.1.1_@capacitor+core@4.7.3
   '@ionic/cli': 7.0.1
   '@ionic/react': 6.7.2_biqbaboplfbrettd7655fr4n2y
@@ -1600,6 +1602,14 @@ packages:
 
   /@capacitor/preferences/4.0.2_@capacitor+core@4.7.3:
     resolution: {integrity: sha512-HgcRkMdVHSIV3TeQLZFmCaCeMWQ25wLyZZ7dA2f8Rw81Q1Nroxsi7HxTEGNqrWKSN9PNKBJD8vChr6eB2GNtZg==}
+    peerDependencies:
+      '@capacitor/core': ^4.0.0
+    dependencies:
+      '@capacitor/core': 4.7.3
+    dev: false
+
+  /@capacitor/splash-screen/4.2.0_@capacitor+core@4.7.3:
+    resolution: {integrity: sha512-XtGqM7J/yVEl/tKksKa7l1B6IDzhq4JJkadRuT8ohf/N7fD/1z45+id/4twM2Vnsxazh1fur2gq8rma7HaXMEw==}
     peerDependencies:
       '@capacitor/core': ^4.0.0
     dependencies:

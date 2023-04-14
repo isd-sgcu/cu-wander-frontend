@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Route, Redirect } from "react-router-dom";
 import { useAuth } from "../../../contexts/AuthContext";
+import { SplashScreen } from "@capacitor/splash-screen";
 
 const PublicRoute = ({ component: Component, restricted, ...rest }: any) => {
   const { isLoggedIn } = useAuth();
