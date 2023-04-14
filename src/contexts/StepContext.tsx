@@ -43,12 +43,9 @@ const StepProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   if (!listening) {
-    if (device === "android" || device === "ios") {
-      console.log("Register listening");
-      PedometerService.addListener("steps", ({ steps }: { steps: number }) => {
-        addStep(steps);
-      });
-    }
+    PedometerService.addListener("steps", ({ steps }: { steps: number }) => {
+      addStep(steps);
+    });
     setListening(true);
   }
 
