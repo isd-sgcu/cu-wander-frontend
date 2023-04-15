@@ -43,7 +43,7 @@ specifiers:
   react-router: ^5.2.0
   react-router-dom: ^5.2.0
   react-scripts: 5.0.1
-  react-use-websocket: ^4.3.1
+  react-use-websocket: 3.0.0
   tailwindcss: ^3.2.4
   typescript: ^4.1.3
   web-vitals: ^0.2.4
@@ -99,7 +99,7 @@ dependencies:
   react-dom: 18.2.0_react@18.2.0
   react-router: 5.3.4_react@18.2.0
   react-router-dom: 5.3.4_react@18.2.0
-  react-use-websocket: 4.3.1_biqbaboplfbrettd7655fr4n2y
+  react-use-websocket: 3.0.0_biqbaboplfbrettd7655fr4n2y
   typescript: 4.9.5
   web-vitals: 0.2.4
   workbox-background-sync: 5.1.4
@@ -9960,11 +9960,11 @@ packages:
       - webpack-plugin-serve
     dev: true
 
-  /react-use-websocket/4.3.1_biqbaboplfbrettd7655fr4n2y:
-    resolution: {integrity: sha512-zHPLWrgcqydJaak2O5V9hiz4q2dwkwqNQqpgFVmSuPxLZdsZlnDs8DVHy3WtHH+A6ms/8aHIyX7+7ulOcrnR0Q==}
+  /react-use-websocket/3.0.0_biqbaboplfbrettd7655fr4n2y:
+    resolution: {integrity: sha512-BInlbhXYrODBPKIplDAmI0J1VPM+1KhCLN09o+dzgQ8qMyrYs4t5kEYmCrTqyRuMTmpahylHFZWQXpfYyDkqOw==}
     peerDependencies:
-      react: '>= 18.0.0'
-      react-dom: '>= 18.0.0'
+      react: '>= 16.8.0'
+      react-dom: '>= 16.8.0'
     dependencies:
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0

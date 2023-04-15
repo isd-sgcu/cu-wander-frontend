@@ -1,69 +1,45 @@
 // @ts-ignore
 import { PedometerService } from "background-pedometer";
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import { httpGet } from "../utils/fetch";
-import { useDevice } from "./DeviceContext";
-import useWebSocket, { ReadyState } from "react-use-websocket";
+import useWebSocket from "react-use-websocket";
 import { getAccessToken } from "./AuthContext";
 import { useAuth } from "./AuthContext";
 import { WebSocketLike } from "react-use-websocket/dist/lib/types";
 import { useVersion } from "./VersionContext";
+import { useStepWebSocket } from "../hooks/useStepWebSocket";
 
 type StepContextValue = {
   pedometerEnabled: boolean;
   setPedometerEnabled: (enabled: boolean) => void;
   steps: number;
-  addStep: (delta: number) => void;
   getUserStep: () => void;
   getWebSocket: () => WebSocketLike | null;
-  connectionState: ReadyState;
+  connectionState?:
+    | "connecting"
+    | "connected"
+    | "disconnected"
+    | "uninstantiated"
+    | "error"
+    | "reconnecting";
 };
 
 const StepContext = createContext<StepContextValue>({
   pedometerEnabled: false,
   setPedometerEnabled: () => {},
   steps: 0,
-  addStep: () => {},
   getUserStep: () => {},
   getWebSocket: () => null,
-  connectionState: ReadyState.UNINSTANTIATED,
+  connectionState: "uninstantiated",
 });
 
 const StepProvider = ({ children }: { children: React.ReactNode }) => {
+  const MAX_RECONNECT_ATTEMPTS = 5;
+
   const [steps, setSteps] = useState(0);
   const [listening, setListening] = useState(false);
   const [pedometerEnabled, setPedometerEnabled] = useState(false);
-  const { user } = useAuth();
-  const { version } = useVersion();
-  const wsURL = `${process.env.REACT_APP_WEBSOCKET_URL}/ws`;
-  const { readyState, sendMessage, sendJsonMessage, getWebSocket } =
-    useWebSocket(
-      wsURL,
-      {
-        reconnectAttempts: 5,
-        reconnectInterval: 3000,
-        retryOnError: true,
-        onOpen: async () => {
-          const token = await getAccessToken();
-          const loginMessage = JSON.stringify({
-            token,
-            version,
-          });
-          console.log("Sending token and version", loginMessage);
-          sendMessage(loginMessage);
-          console.log("Update steps");
-          await getUserStep();
-          console.log(`Websocket connected at ${wsURL}`);
-        },
-        onClose: () => {
-          console.log(`Websocket disconnected at ${wsURL}`);
-        },
-        onError: (err) => {
-          console.log(err);
-        },
-      },
-      user !== undefined
-    );
+  const [delta, setDelta] = useState<number>();
   const getUserStep = async () => {
     try {
       const {
@@ -85,21 +61,36 @@ const StepProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
+  const { user } = useAuth();
+  const { version } = useVersion();
+  const wsURL = `${process.env.REACT_APP_WEBSOCKET_URL}/ws`;
+  const { connectionState, sendJsonMessage, getWebSocket } = useStepWebSocket({
+    wsURL,
+    user,
+    version,
+    getAccessToken,
+    getUserStep,
+  });
+
   const addStep = (delta: number) => {
-    setSteps((oldSteps) => {
-      if (!oldSteps) return delta;
-      const newSteps = oldSteps + delta;
-      return newSteps;
-    });
-    if (delta > 0) sendJsonMessage({ step: delta });
+    setSteps((oldSteps) => oldSteps + delta);
+    setDelta(delta);
   };
 
   if (!listening) {
+    console.log("Adding listener");
     PedometerService.addListener("steps", ({ steps }: { steps: number }) => {
       addStep(steps);
     });
     setListening(true);
   }
+
+  useEffect(() => {
+    if (delta && delta > 0 && connectionState === "connected") {
+      console.log("Sending step to server", delta);
+      sendJsonMessage({ step: delta });
+    }
+  }, [steps]);
 
   return (
     <StepContext.Provider
@@ -107,10 +98,9 @@ const StepProvider = ({ children }: { children: React.ReactNode }) => {
         pedometerEnabled,
         setPedometerEnabled,
         steps,
-        addStep,
         getUserStep,
         getWebSocket,
-        connectionState: readyState,
+        connectionState,
       }}
     >
       {children}

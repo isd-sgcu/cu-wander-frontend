@@ -5,6 +5,7 @@ import { httpGet, httpPost } from "../utils/fetch";
 import { Preferences } from "@capacitor/preferences";
 import { useVersion } from "./VersionContext";
 import { useStep } from "./StepContext";
+import { PedometerService } from "background-pedometer";
 
 // Define the interface for the authentication credentials
 interface AuthCredentials {
@@ -128,6 +129,7 @@ const AuthProvider = ({ children }: { children: ReactNode | ReactNode[] }) => {
     await Preferences.remove({ key: "token" });
     const ws = getWebSocket();
     if (ws) ws.close();
+    await PedometerService.disable();
     setUser(undefined);
     history.push(redirect);
   };

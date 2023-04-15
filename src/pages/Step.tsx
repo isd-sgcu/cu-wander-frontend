@@ -83,15 +83,23 @@ const Step: React.FC = () => {
     }
   };
 
-  const getConnectionColor = (state: ReadyState) => {
+  const getConnectionColor = (
+    state?:
+      | "uninstantiated"
+      | "connecting"
+      | "connected"
+      | "disconnected"
+      | "error"
+      | "reconnecting"
+  ) => {
     switch (state) {
-      case ReadyState.CONNECTING:
+      case "connecting":
+      case "reconnecting":
         return "bg-yellow-400";
-      case ReadyState.OPEN:
+      case "connected":
         return "bg-green-400";
-      case ReadyState.CLOSING:
-        return "bg-yellow-400";
-      case ReadyState.UNINSTANTIATED:
+      case "disconnected":
+      case "uninstantiated":
         return "bg-gray-400";
       default:
         return "bg-red-400";
@@ -99,10 +107,7 @@ const Step: React.FC = () => {
   };
 
   useEffect(() => {
-    if (
-      connectionState === ReadyState.CLOSED ||
-      connectionState === ReadyState.UNINSTANTIATED
-    ) {
+    if (connectionState === "disconnected") {
       showModalHandler({
         title: "การเชื่อมต่อเซิร์ฟเวอร์ขัดข้อง",
         subtitle: "โปรดกดเชื่อมต่อเพื่อเชื่อมต่ออีกครั้ง",
@@ -131,7 +136,7 @@ const Step: React.FC = () => {
         ],
       });
     }
-  }, []);
+  }, [connectionState]);
 
   return (
     <IonPage>
