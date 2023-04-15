@@ -10,13 +10,8 @@ import { ReadyState } from "react-use-websocket";
 import { ModalState } from "../contexts/ModalContext";
 
 const Step: React.FC = () => {
-  const {
-    steps,
-    getUserStep,
-    connectionState,
-    pedometerEnabled,
-    setPedometerEnabled,
-  } = useStep();
+  const { steps, connectionState, pedometerEnabled, setPedometerEnabled } =
+    useStep();
 
   const { showModalHandler, setPromptModal } = useContext(ModalState);
 
@@ -57,11 +52,8 @@ const Step: React.FC = () => {
 
   useIonViewWillEnter(async () => {
     showTabBar();
-    enablePedometer();
-    getUserStep();
+    await enablePedometer();
   });
-
-  printCurrentPosition();
 
   function ceilToTen(num: number) {
     let exponent = Math.floor(Math.log10(num));

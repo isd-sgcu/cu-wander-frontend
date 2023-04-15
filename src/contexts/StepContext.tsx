@@ -13,8 +13,8 @@ type StepContextValue = {
   pedometerEnabled: boolean;
   setPedometerEnabled: (enabled: boolean) => void;
   steps: number;
-  getUserStep: () => Promise<void>;
   addStep: (delta: number) => void;
+  getUserStep: () => void;
   getWebSocket: () => WebSocketLike | null;
   connectionState: ReadyState;
 };
@@ -23,8 +23,8 @@ const StepContext = createContext<StepContextValue>({
   pedometerEnabled: false,
   setPedometerEnabled: () => {},
   steps: 0,
-  getUserStep: async () => {},
   addStep: () => {},
+  getUserStep: () => {},
   getWebSocket: () => null,
   connectionState: ReadyState.UNINSTANTIATED,
 });
@@ -36,33 +36,50 @@ const StepProvider = ({ children }: { children: React.ReactNode }) => {
   const { user } = useAuth();
   const { version } = useVersion();
   const wsURL = `${process.env.REACT_APP_WEBSOCKET_URL}/ws`;
-  const { readyState, sendJsonMessage, getWebSocket } = useWebSocket(
-    wsURL,
-    {
-      reconnectAttempts: 5,
-      reconnectInterval: 3000,
-      retryOnError: true,
-      onOpen: async () => {
-        const token = await getAccessToken();
-        sendJsonMessage({
-          token,
-          version,
-        });
-        console.log(`Websocket connected connected at ${wsURL}`);
+  const { readyState, sendMessage, sendJsonMessage, getWebSocket } =
+    useWebSocket(
+      wsURL,
+      {
+        reconnectAttempts: 5,
+        reconnectInterval: 3000,
+        retryOnError: true,
+        onOpen: async () => {
+          const token = await getAccessToken();
+          const loginMessage = JSON.stringify({
+            token,
+            version,
+          });
+          console.log("Sending token and version", loginMessage);
+          sendMessage(loginMessage);
+          console.log("Update steps");
+          await getUserStep();
+          console.log(`Websocket connected at ${wsURL}`);
+        },
+        onClose: () => {
+          console.log(`Websocket disconnected at ${wsURL}`);
+        },
+        onError: (err) => {
+          console.log(err);
+        },
       },
-      onClose: () => {
-        console.log(`Websocket disconnected at ${wsURL}`);
-      },
-    },
-    user !== undefined
-  );
+      user !== undefined
+    );
   const getUserStep = async () => {
     try {
       const {
         data: { steps: s },
-      } = await httpGet("/step");
-
-      setSteps(s);
+      } = await httpGet<{
+        steps: number;
+      }>("/step");
+      if (steps !== 0 && steps > s) {
+        const deltaSteps = steps - s;
+        console.log(
+          `Steps not equal in local and server, localStep ${steps} and server steps ${s} updating ${deltaSteps} steps`
+        );
+        sendJsonMessage({ step: deltaSteps });
+      } else {
+        setSteps(s);
+      }
     } catch (err) {
       console.log(err);
     }
@@ -90,8 +107,8 @@ const StepProvider = ({ children }: { children: React.ReactNode }) => {
         pedometerEnabled,
         setPedometerEnabled,
         steps,
-        getUserStep,
         addStep,
+        getUserStep,
         getWebSocket,
         connectionState: readyState,
       }}

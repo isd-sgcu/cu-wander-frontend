@@ -25,7 +25,7 @@ const DeviceProvider = ({ children }: { children: React.ReactNode }) => {
 
   const isMobile = device === "ios" || device === "android";
 
-  if (!isMobile && process.env.REACT_APP_DEBUG !== "true") {
+  if (process.env.REACT_APP_DEBUG !== "true" && !isMobile) {
     history.push("/notsupport");
   }
   return (

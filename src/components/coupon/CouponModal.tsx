@@ -7,6 +7,7 @@ import CountDown from "./CountDown";
 import { useState } from "react";
 import Coupon from "../../pages/Coupon";
 import { useStep } from "../../contexts/StepContext";
+import { useIonViewWillEnter } from "@ionic/react";
 
 interface ShopType {
   address: string;
@@ -22,21 +23,15 @@ const CouponModal: React.FC = () => {
 
   const { showModalHandler, setPromptModal } = useContext(ModalState);
 
-  //do not forget to change step
-  const { steps, getUserStep } = useStep();
-
-  useEffect(() => {
-    // interval
-    // setInterval(() => {
-    //   getUserStep();
-    // }, 4000);
-    getUserStep();
-  }, []);
+  const { steps } = useStep();
 
   const generateUUID = () => {
     const randomNumber = Math.floor(Math.random() * (1e13 - 1e12) + 1e12);
     const numberString = randomNumber.toString();
-    const UUID = `${numberString.slice(0, 4)}-${numberString.slice(4, 8)}-${numberString.slice(8, 13)}`;
+    const UUID = `${numberString.slice(0, 4)}-${numberString.slice(
+      4,
+      8
+    )}-${numberString.slice(8, 13)}`;
     return UUID;
   };
 
@@ -101,7 +96,7 @@ const CouponModal: React.FC = () => {
       body: (
         <div>
           <div className="text-center mb-4">
-          <span className="font-bold">{UUID}</span> 
+            <span className="font-bold">{UUID}</span>
           </div>
           <CountDown
             until={redeemTime}
@@ -258,10 +253,14 @@ const CouponModal: React.FC = () => {
                   body: (
                     <div>
                       <div className="flex-col flex">
-                        <span className="font-semibold pr-3 pl-3 text-center">มีอายุการใช้งานเพียง 5 นาที</span>
-                        <span className="font-semibold pr-3 pl-3 text-center">หลังยืนยันโปรดโชว์หน้าจอให้ร้านค้า</span>
+                        <span className="font-semibold pr-3 pl-3 text-center">
+                          มีอายุการใช้งานเพียง 5 นาที
+                        </span>
+                        <span className="font-semibold pr-3 pl-3 text-center">
+                          หลังยืนยันโปรดโชว์หน้าจอให้ร้านค้า
+                        </span>
                       </div>
-    
+
                       <p className="text-red-600 ">
                         {selectedCoupon.coupon_condition}
                       </p>
