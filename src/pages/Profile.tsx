@@ -191,7 +191,7 @@ const Profile: React.FC = () => {
             })()}
           </AnimatePresence>
           <div className="flex justify-between space-x-5 p-5">
-            <button
+            {/* <button
               onClick={() => {
                 showModalHandler({
                   title: "ยืนยันการลบบัญชี",
@@ -215,8 +215,8 @@ const Profile: React.FC = () => {
               className="rounded-full w-full border-[2px] space-x-1.5 py-1.5 text-center border-red-400 text-red-400"
             >
               ลบบัญชี
-            </div>
-            <div
+            </button> */}
+            <button
               onClick={() => {
                 window.open("https://airtable.com/shrppuCwJyTJVQrgH");
               }}
