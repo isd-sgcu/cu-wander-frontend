@@ -1,7 +1,7 @@
 import axios, { AxiosResponse } from "axios";
 import { createContext, ReactNode, useContext, useState } from "react";
 import { useHistory } from "react-router";
-import { httpGet, httpPost } from "../utils/fetch";
+import { httpDelete, httpGet, httpPost } from "../utils/fetch";
 import { Preferences } from "@capacitor/preferences";
 import { useVersion } from "./VersionContext";
 import { useStep } from "./StepContext";
@@ -36,6 +36,7 @@ interface AuthContextValue {
     authCred: { [key: string]: string | number },
     redirect: string
   ) => Promise<void>;
+  removeUser: () => Promise<boolean>;
   signOut: (redirect: string) => Promise<void>;
   isLoggedIn: () => Promise<boolean>;
 }
@@ -45,6 +46,7 @@ const AuthContext = createContext<AuthContextValue>({
   logIn: async () => {},
   signUp: async () => {},
   signOut: async () => {},
+  removeUser: async () => false,
   isLoggedIn: async () => false,
 });
 
@@ -129,9 +131,41 @@ const AuthProvider = ({ children }: { children: ReactNode | ReactNode[] }) => {
     await Preferences.remove({ key: "token" });
     const ws = getWebSocket();
     if (ws) ws.close();
-    await PedometerService.disable();
+
+    try {
+      await PedometerService.disable();
+    } catch (err) {
+      console.error("can't disable the pedometer service");
+    }
+
     setUser(undefined);
     history.push(redirect);
+  };
+
+  const removeUser = async () => {
+    // attempt to remove user
+
+    const { data } = await httpDelete("/user");
+
+    // if successful, remove token and redirect to onboarding
+    if (data.is_success) {
+      await Preferences.remove({ key: "token" });
+      const ws = getWebSocket();
+      if (ws) ws.close();
+      setUser(undefined);
+
+      try {
+        await PedometerService.disable();
+      } catch (err) {
+        console.error("can't disable the pedometer service");
+      }
+
+      history.push("/Onboarding");
+
+      return true;
+    }
+
+    return false;
   };
 
   const isLoggedIn = async () => {
@@ -157,7 +191,9 @@ const AuthProvider = ({ children }: { children: ReactNode | ReactNode[] }) => {
 
   // Return the authentication provider with the authentication context value
   return (
-    <AuthContext.Provider value={{ user, logIn, signUp, signOut, isLoggedIn }}>
+    <AuthContext.Provider
+      value={{ user, logIn, signUp, signOut, isLoggedIn, removeUser }}
+    >
       {children}
     </AuthContext.Provider>
   );

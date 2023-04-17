@@ -45,7 +45,9 @@ function MainPage({ setCurrentPage }: { setCurrentPage: any }) {
 }
 
 function EditUserPage({ setCurrentPage }: { setCurrentPage: any }) {
-  const { user } = useAuth();
+  const { user, removeUser } = useAuth();
+  const { showModalHandler, setPromptModal } = useContext(ModalState);
+
   return (
     <motion.div
       {...AnimationPropsInside}
@@ -112,6 +114,58 @@ function EditUserPage({ setCurrentPage }: { setCurrentPage: any }) {
           </p>
         </div>
       </div>
+
+      <div className="flex flex-col gap-2">
+        <button
+          onClick={() => {
+            showModalHandler({
+              title: "ยืนยันการลบบัญชีผู้ใช้งาน",
+              subtitle:
+                "หลังจากทำการลบบัญชีแล้วคุณจะไม่สามารถกู้คืนบัญชีผู้ใช้งานได้",
+              type: "multiple",
+              choices: [
+                {
+                  title: "ยกเลิก",
+                  primary: false,
+                  action() {
+                    setPromptModal(false);
+                  },
+                },
+                {
+                  title: "ลบบัญชี",
+                  primary: true,
+                  action() {
+                    // rmeove user
+                    removeUser().then((done) => {
+                      if (done) {
+                        setPromptModal(false);
+                      } else {
+                        showModalHandler({
+                          title: "เกิดปัญหาขึ้นระหว่างพยายามลบบัญชีผู้ใช้งาน",
+                          subtitle: "",
+                          type: "single",
+                          choices: [
+                            {
+                              title: "ยกเลิก",
+                              primary: true,
+                              action() {
+                                setPromptModal(false);
+                              },
+                            },
+                          ],
+                        });
+                      }
+                    });
+                  },
+                },
+              ],
+            });
+          }}
+          className="rounded-lg w-full border-[2px] space-x-1.5 py-1.5 text-center shadow-md text-white bg-red-700"
+        >
+          ลบบัญชีผู้ใช้งาน
+        </button>
+      </div>
     </motion.div>
   );
 }
@@ -138,15 +192,15 @@ const Profile: React.FC = () => {
             })()}
           </AnimatePresence>
           <div className="flex justify-between space-x-5 p-5">
-            <div
+            <button
               onClick={() => {
                 window.open("https://airtable.com/shrppuCwJyTJVQrgH");
               }}
               className="rounded-full w-full border-[2px] space-x-1.5 py-1.5 text-center"
             >
               ร้องเรียนปัญหา
-            </div>
-            <div
+            </button>
+            <button
               onClick={() => {
                 showModalHandler({
                   title: "ยืนยันการออกจากระบบ",
@@ -165,7 +219,7 @@ const Profile: React.FC = () => {
                       primary: true,
                       action() {
                         // log out
-                        signOut("/onboarding");
+                        signOut("/Onboarding");
                         setPromptModal(false);
                       },
                     },
@@ -175,7 +229,7 @@ const Profile: React.FC = () => {
               className="rounded-full w-full border-[2px] space-x-1.5 py-1.5 text-center"
             >
               ออกจากระบบ
-            </div>
+            </button>
           </div>
         </div>
       </IonContent>
