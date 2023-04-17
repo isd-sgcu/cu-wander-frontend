@@ -24,7 +24,7 @@ function MainPage({ setCurrentPage }: { setCurrentPage: any }) {
   return (
     <motion.div
       {...AnimationPropsMain}
-      className="flex relative flex-col gap-4"
+      className="flex relative flex-col gap-4 h-full"
     >
       <div className="flex items-center justify-between p-6 h-16 bg-green-300/50 text-black">
         <p className="font-semibold text-lg">บัญชีผู้ใช้งาน</p>
@@ -39,7 +39,6 @@ function MainPage({ setCurrentPage }: { setCurrentPage: any }) {
 
         <img src="assets/icon/chevron_right.svg" alt="gogo" />
       </button>
-      <div className="flex flex-col gap-4"></div>
     </motion.div>
   );
 }
@@ -193,6 +192,31 @@ const Profile: React.FC = () => {
           </AnimatePresence>
           <div className="flex justify-between space-x-5 p-5">
             <button
+              onClick={() => {
+                showModalHandler({
+                  title: "ยืนยันการลบบัญชี",
+                  subtitle: "คุณต้องการลบบัญชีใช่หรือไม่",
+                  type: "multiple",
+                  choices: [
+                    {
+                      title: "ยืนยัน",
+                      action: () => setPromptModal(false),
+                      primary: true,
+                      primaryColor: "text-red-600",
+                    },
+                    {
+                      title: "ยกเลิก",
+                      action: () => setPromptModal(false),
+                      primary: false,
+                    },
+                  ],
+                });
+              }}
+              className="rounded-full w-full border-[2px] space-x-1.5 py-1.5 text-center border-red-400 text-red-400"
+            >
+              ลบบัญชี
+            </div>
+            <div
               onClick={() => {
                 window.open("https://airtable.com/shrppuCwJyTJVQrgH");
               }}

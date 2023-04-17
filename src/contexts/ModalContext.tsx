@@ -10,6 +10,7 @@ interface ModalProps {
     title: string;
     primary: boolean;
     action: () => void;
+    primaryColor?: string;
   }[];
   onClose?: () => void;
   preventClose?: boolean;

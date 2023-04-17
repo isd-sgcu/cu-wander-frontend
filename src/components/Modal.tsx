@@ -74,12 +74,14 @@ const Modal: React.FC = () => {
                       className={`h-full ${
                         content.type === "multiple"
                           ? "w-full border-t-[2px]"
-                          : "bg-green-500 rounded-lg px-6"
+                          : `bg-green-500 rounded-lg px-6`
                       } border-gray-200 grid place-content-center ${
                         choice.primary
                           ? content.type === "single"
                             ? "text-white font-semibold"
-                            : "text-green-500 font-semibold"
+                            : `${
+                                choice.primaryColor || "text-green-500"
+                              } font-semibold`
                           : content.type === "single"
                           ? "text-white font-semibold"
                           : "text-gray-500 font-medium"
