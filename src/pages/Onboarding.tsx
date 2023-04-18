@@ -9,7 +9,7 @@ import { hideTabBar } from "../utils/tab";
 import { CurrentVersion } from "../lib/version/utils/version";
 import { useDevice } from "../contexts/DeviceContext";
 import { useEffect } from "react";
-import { Preferences } from "@capacitor/preferences";
+import { getAccessToken } from "../contexts/AuthContext";
 
 const Onboarding: React.FC = () => {
   useIonViewWillEnter(() => {
@@ -21,8 +21,8 @@ const Onboarding: React.FC = () => {
 
   useEffect(() => {
     const checkToken = async () => {
-      const { value } = await Preferences.get({ key: "token" });
-      if (value) history.replace("/step");
+      const token = await getAccessToken();
+      if (token) history.replace("/step");
     };
     checkToken();
   }, []);

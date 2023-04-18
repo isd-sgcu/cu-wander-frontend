@@ -228,7 +228,7 @@ const renewAccessToken = async (refreshToken: string) => {
   return res.data.accessToken;
 };
 
-export const getAccessToken = async () => {
+export const getAccessToken = async (): Promise<string | null> => {
   const { value: token } = await Preferences.get({ key: "token" });
   if (!token) {
     return null;

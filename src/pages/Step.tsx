@@ -8,6 +8,7 @@ import { PedometerService } from "background-pedometer";
 import { useStep } from "../contexts/StepContext";
 import { ReadyState } from "react-use-websocket";
 import { ModalState } from "../contexts/ModalContext";
+import { StepConnectionState } from "../types/steps";
 
 const Step: React.FC = () => {
   const { steps, connectionState, pedometerEnabled, setPedometerEnabled } =
@@ -83,15 +84,7 @@ const Step: React.FC = () => {
     }
   };
 
-  const getConnectionColor = (
-    state?:
-      | "uninstantiated"
-      | "connecting"
-      | "connected"
-      | "disconnected"
-      | "error"
-      | "reconnecting"
-  ) => {
+  const getConnectionColor = (state?: StepConnectionState) => {
     switch (state) {
       case "connecting":
       case "reconnecting":
@@ -101,6 +94,8 @@ const Step: React.FC = () => {
       case "disconnected":
       case "uninstantiated":
         return "bg-gray-400";
+      case "stop-retry":
+        return "bg-red-400";
       default:
         return "bg-red-400";
     }

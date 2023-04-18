@@ -4,4 +4,5 @@ export type StepConnectionState =
   | "disconnected"
   | "uninstantiated"
   | "error"
-  | "reconnecting";
+  | "reconnecting"
+  | "stop-retry";

@@ -8,6 +8,7 @@ import { useAuth } from "./AuthContext";
 import { WebSocketLike } from "react-use-websocket/dist/lib/types";
 import { useVersion } from "./VersionContext";
 import { useStepWebSocket } from "../hooks/useStepWebSocket";
+import { StepConnectionState } from "../types/steps";
 
 type StepContextValue = {
   pedometerEnabled: boolean;
@@ -15,13 +16,7 @@ type StepContextValue = {
   steps: number;
   getUserStep: () => void;
   getWebSocket: () => WebSocketLike | null;
-  connectionState?:
-    | "connecting"
-    | "connected"
-    | "disconnected"
-    | "uninstantiated"
-    | "error"
-    | "reconnecting";
+  connectionState?: StepConnectionState;
 };
 
 const StepContext = createContext<StepContextValue>({
@@ -34,8 +29,6 @@ const StepContext = createContext<StepContextValue>({
 });
 
 const StepProvider = ({ children }: { children: React.ReactNode }) => {
-  const MAX_RECONNECT_ATTEMPTS = 5;
-
   const [steps, setSteps] = useState(0);
   const [listening, setListening] = useState(false);
   const [pedometerEnabled, setPedometerEnabled] = useState(false);

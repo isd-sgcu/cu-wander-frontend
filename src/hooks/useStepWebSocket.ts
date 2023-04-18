@@ -12,15 +12,14 @@ export const useStepWebSocket = ({
 }: {
   wsURL: string;
   version: string;
-  getAccessToken: () => Promise<string>;
+  getAccessToken: () => Promise<string | null>;
   getUserStep: () => Promise<void>;
   user?: UserData;
 }) => {
   const MAX_RECONNECT_ATTEMPTS = 5;
   const [connectionState, setConnectionState] =
     useState<StepConnectionState>("uninstantiated");
-  const [reconnectAttempts, setReconnectAttempts] = useState(0);
-  const { sendJsonMessage, getWebSocket } = useWebSocket(
+  const { readyState, sendJsonMessage, getWebSocket } = useWebSocket(
     wsURL,
     {
       reconnectAttempts: MAX_RECONNECT_ATTEMPTS,
@@ -52,22 +51,20 @@ export const useStepWebSocket = ({
       },
       onClose: () => {
         console.log(`Websocket disconnected at ${wsURL}`);
-        if (reconnectAttempts < MAX_RECONNECT_ATTEMPTS) {
-          setConnectionState("reconnecting");
-          return;
-        }
         setConnectionState("disconnected");
       },
       onError: (err) => {
         console.log(err);
         setConnectionState("error");
       },
-      shouldReconnect: (closeEvent) => {
-        console.log("Websocket closed", closeEvent);
-        if (reconnectAttempts >= MAX_RECONNECT_ATTEMPTS) return false;
+      shouldReconnect: () => {
         console.log("Reconnecting...");
-        setReconnectAttempts((oldAttempts) => oldAttempts + 1);
+        setConnectionState("reconnecting");
         return true;
+      },
+      onReconnectStop: () => {
+        console.log("Reconnect attempts exceeded, stop retrying");
+        setConnectionState("stop-retry");
       },
     },
     user !== undefined
