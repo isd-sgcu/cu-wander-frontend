@@ -18,6 +18,7 @@ interface InputProps {
     | "passwordIncorrect"
     | "formSubmitFailed"
     | "invalidAverageStep"
+    | "invalidUsername"
     | "invalidHeartRate"
     | "somethingWrong"
     | "serviceDown"

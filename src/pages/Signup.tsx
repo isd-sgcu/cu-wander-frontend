@@ -23,10 +23,13 @@ const Signup: React.FC = () => {
 
   const formRef = useRef<HTMLFormElement>(null);
   const [password, setPassword] = useState<string>();
+  const [username, setUsername] = useState<string>();
   const [confirmPassword, setConfirmPassword] = useState<string>();
+  const usernameRegex = /^[a-zA-Z0-9\-]+$/g;
 
   const isPasswordValid = password && password?.length >= 8;
   const isPasswordMatch = password && confirmPassword === password;
+  const isUsernameValid = usernameRegex.test(username || "");
 
   const [submitState, setSubmitState] = useState<
     | ""
@@ -36,6 +39,7 @@ const Signup: React.FC = () => {
     | "formNotComplete"
     | "invalidEmail"
     | "invalidStudentId"
+    | "invalidUsername"
     | "formSubmitFailed"
     | "invalidHeartRate"
     | "invalidAverageStep"
@@ -43,6 +47,7 @@ const Signup: React.FC = () => {
   >("");
 
   const { signUp } = useAuth();
+  const disbleSubmit = !isPasswordMatch || !isUsernameValid;
 
   const submitHandler = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -101,6 +106,11 @@ const Signup: React.FC = () => {
       return;
     }
 
+    if (target.username.value && usernameRegex.test(target.username.value)) {
+      setSubmitState("invalidUsername");
+      return;
+    }
+
     try {
       await signUp(
         {
@@ -131,19 +141,18 @@ const Signup: React.FC = () => {
             const reason = reasons[0];
             if (reason.failed_field === "email") {
               setSubmitState("invalidStudentId");
+              return;
             }
           }
-          break;
+          return;
         case 409:
           setSubmitState("usernameEmailTaken");
-          break;
+          return;
         default: {
           setSubmitState("formSubmitFailed");
-          break;
+          return;
         }
       }
-      setSubmitState("invalidStudentId");
-      return;
     }
 
     setSubmitState("submitted");
@@ -200,9 +209,28 @@ const Signup: React.FC = () => {
                   type="text"
                   label="ชื่อผู้ใช้งาน"
                   placeholder="username" // ต้องมีเพศมั้ยนะ
+                  value={username}
+                  onChange={setUsername}
                   required
                   submitState={submitState}
                 />
+                <div className="flex px-3 items-center space-x-2">
+                  {isUsernameValid ? (
+                    <IonIcon
+                      icon={checkmarkOutline}
+                      className="w-6 h-6 text-green-400"
+                    />
+                  ) : (
+                    <IonIcon
+                      icon={closeOutline}
+                      className="w-6 h-6 text-red-400"
+                    />
+                  )}
+                  <p className="text-sm">
+                    ชื่อผู้ใช้งานต้องเป็นภาษาอังกฤษ ตัวเลข 0 ถึง 9 หรือ -
+                    เท่านั้น
+                  </p>
+                </div>
                 <div className="flex space-x-3">
                   <Input
                     name="firstname"
@@ -348,8 +376,8 @@ const Signup: React.FC = () => {
             </div>
           </div>
 
-          <div className="relative flex justify-center w-full px-10 pt-10 pb-14">
-            <div className="absolute top-0 text-red-500">
+          <div className="relative flex justify-center w-full px-10 pt-14 pb-14">
+            <div className="absolute top-0 text-red-500 text-center px-6">
               <p>
                 {submitState === "formNotComplete" && "กรุณากรอกข้อมูลให้ครบ"}
                 {submitState === "passwordNotMatch" && "รหัสผ่านไม่ตรงกัน"}
@@ -358,7 +386,7 @@ const Signup: React.FC = () => {
                 {submitState === "invalidHeartRate" &&
                   "กรอกข้อมูลอัตราการเต้นหัวใจเป็นตัวเลขเท่านั้น"}
                 {submitState === "formSubmitFailed" &&
-                  "ข้อมูลไม่ถูกต้อง กรุณาตรวจสอบข้อมูลอีกครั้ง"}
+                  "ไม่สามารถสมัครสมาชิกได้ หากปัญหานี้ยังคงอยู่โปรดร้องเรียนปัญหาที่หน้าแรก"}
                 {submitState === "usernameEmailTaken" &&
                   "ชื่อผู้ใช้หรืออีเมลนี้ถูกใช้งานแล้ว"}
               </p>
@@ -366,7 +394,7 @@ const Signup: React.FC = () => {
             <button
               onClick={() => setSubmitState("submitting")}
               type="submit"
-              disabled={!isPasswordMatch}
+              disabled={disbleSubmit}
               className="bg-green-500 text-white w-full rounded-xl grid place-content-center font-medium py-2.5 disabled:bg-gray-300"
             >
               ต่อไป
