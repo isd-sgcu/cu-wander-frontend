@@ -1,4 +1,5 @@
 import { useDevice } from "../contexts/DeviceContext";
+import { useVersion } from "../contexts/VersionContext";
 import { hideTabBar } from "../utils/tab";
 
 const UpgradeRequired: React.FC = () => {
@@ -11,8 +12,10 @@ const UpgradeRequired: React.FC = () => {
 
   const downloadURL =
     device === "ios"
-      ? "https://www.apple.com/app-store/"
+      ? "https://apps.apple.com/th/app/cu-wander/id6447551828"
       : "https://play.google.com/store/apps/details?id=cu.wander&pli=1";
+
+  const { version } = useVersion();
 
   return (
     <div
@@ -34,6 +37,7 @@ const UpgradeRequired: React.FC = () => {
       >
         Update Now
       </button>
+      <div className="absolute bottom-10">{version}</div>
     </div>
   );
 };
