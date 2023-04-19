@@ -115,9 +115,7 @@ export const useStepWebSocket = ({
 
       console.error(`Error at code ${event.code}`);
       // not close by unmount component
-      if (!websocket.current) {
-        // need to reset before initWebsocket again
-        initializingRef.current = false;
+      if (websocket.current) {
         reconnect();
       }
 
@@ -130,6 +128,8 @@ export const useStepWebSocket = ({
       console.info("Reconnect attempts exceeded, stop retrying");
       setConnectionState("stop-retry");
     }
+
+    initializingRef.current = false;
     console.info("Reconnecting...");
     setConnectionState("reconnecting");
 
