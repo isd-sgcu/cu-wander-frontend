@@ -135,7 +135,13 @@ const AuthProvider = ({ children }: { children: ReactNode | ReactNode[] }) => {
     try {
       await PedometerService.disable();
     } catch (err) {
-      console.error("can't disable the pedometer service");
+      console.log("can't disable the pedometer service or remove steps");
+    }
+
+    try {
+      await Preferences.remove({ key: "steps" });
+    } catch (err) {
+      console.log(err);
     }
 
     setUser(undefined);

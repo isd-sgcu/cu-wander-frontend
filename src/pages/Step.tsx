@@ -102,7 +102,7 @@ const Step: React.FC = () => {
   };
 
   useEffect(() => {
-    if (connectionState === "disconnected") {
+    if (connectionState === "stop-retry") {
       showModalHandler({
         title: "การเชื่อมต่อเซิร์ฟเวอร์ขัดข้อง",
         subtitle: "โปรดกดเชื่อมต่อเพื่อเชื่อมต่ออีกครั้ง",

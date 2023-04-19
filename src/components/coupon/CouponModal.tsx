@@ -8,6 +8,7 @@ import { useState } from "react";
 import Coupon from "../../pages/Coupon";
 import { useStep } from "../../contexts/StepContext";
 import { useIonViewWillEnter } from "@ionic/react";
+import { Preferences } from "@capacitor/preferences";
 
 interface ShopType {
   address: string;
@@ -46,7 +47,9 @@ const CouponModal: React.FC = () => {
         template_coupon_id: selectedCoupon.id,
         // Add any additional data required by the API
       });
+
       if (response.status >= 200 && response.status < 300) {
+        await Preferences.remove({ key: "steps" });
         setSelectedCoupon({
           ...selectedCoupon,
           // parse: 2023-04-01 18:09:44 +0000 UTC
