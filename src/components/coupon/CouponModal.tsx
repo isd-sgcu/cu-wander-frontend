@@ -5,6 +5,7 @@ import useFetch from "../../utils/useFetch";
 import { httpPost } from "../../utils/fetch";
 import CountDown from "./CountDown";
 import { useStep } from "../../contexts/StepContext";
+import { Preferences } from "@capacitor/preferences";
 
 interface ShopType {
   address: string;
