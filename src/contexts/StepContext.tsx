@@ -1,14 +1,14 @@
 // @ts-ignore
 import { PedometerService } from "background-pedometer";
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useRef, useState } from "react";
 import { httpGet } from "../utils/fetch";
-import useWebSocket from "react-use-websocket";
 import { getAccessToken } from "./AuthContext";
 import { useAuth } from "./AuthContext";
 import { WebSocketLike } from "react-use-websocket/dist/lib/types";
 import { useVersion } from "./VersionContext";
 import { useStepWebSocket } from "../hooks/useStepWebSocket";
 import { StepConnectionState } from "../types/steps";
+import { useForeground } from "./ForegroundContext";
 
 type StepContextValue = {
   pedometerEnabled: boolean;
@@ -33,7 +33,14 @@ const StepProvider = ({ children }: { children: React.ReactNode }) => {
   const [listening, setListening] = useState(false);
   const [pedometerEnabled, setPedometerEnabled] = useState(false);
   const [delta, setDelta] = useState<number>();
+  const { isActive } = useForeground();
+  const getStepRef = useRef(false);
+
   const getUserStep = async () => {
+    if (getStepRef.current) {
+      return;
+    }
+    getStepRef.current = true;
     try {
       const {
         data: { steps: s },
@@ -42,7 +49,7 @@ const StepProvider = ({ children }: { children: React.ReactNode }) => {
       }>("/step");
       if (steps !== 0 && steps > s) {
         const deltaSteps = steps - s;
-        console.log(
+        console.debug(
           `Steps not equal in local and server, localStep ${steps} and server steps ${s} updating ${deltaSteps} steps`
         );
         sendJsonMessage({ step: deltaSteps });
@@ -50,20 +57,23 @@ const StepProvider = ({ children }: { children: React.ReactNode }) => {
         setSteps(s);
       }
     } catch (err) {
-      console.log(err);
+      console.error(err);
+    } finally {
+      getStepRef.current = false;
     }
   };
 
   const { user } = useAuth();
   const { version } = useVersion();
   const wsURL = `${process.env.REACT_APP_WEBSOCKET_URL}/ws`;
-  const { connectionState, sendJsonMessage, getWebSocket } = useStepWebSocket({
-    wsURL,
-    user,
-    version,
-    getAccessToken,
-    getUserStep,
-  });
+  const { connectionState, connectToServer, sendJsonMessage, getWebSocket } =
+    useStepWebSocket({
+      wsURL,
+      user,
+      version,
+      getAccessToken,
+      getUserStep,
+    });
 
   const addStep = (delta: number) => {
     setSteps((oldSteps) => oldSteps + delta);
@@ -71,7 +81,7 @@ const StepProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   if (!listening) {
-    console.log("Adding listener");
+    console.debug("Adding listener");
     PedometerService.addListener("steps", ({ steps }: { steps: number }) => {
       addStep(steps);
     });
@@ -80,10 +90,23 @@ const StepProvider = ({ children }: { children: React.ReactNode }) => {
 
   useEffect(() => {
     if (delta && delta > 0 && connectionState === "connected") {
-      console.log("Sending step to server", delta);
+      console.debug("connection status: ", connectionState);
+      console.debug("Sending step to server", delta);
       sendJsonMessage({ step: delta });
     }
   }, [steps]);
+
+  // try to reconnect when user reopen the application
+  useEffect(() => {
+    if (isActive) {
+      console.debug("connection status: ", connectionState);
+      console.debug("Try to connect to server");
+      connectToServer();
+      return;
+    }
+
+    getWebSocket()?.close();
+  }, [isActive]);
 
   return (
     <StepContext.Provider
