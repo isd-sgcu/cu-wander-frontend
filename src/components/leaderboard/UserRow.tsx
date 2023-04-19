@@ -30,11 +30,11 @@ const UserRow: React.FC<UserRowProps> = ({
           {currentUser ? <span className="font-semibold"> (คุณ)</span> : null}
         </p>
       </div>
-      <div className="flex justify-center items-center w-[10%] text-center font-semibold">
-        <p>{coupon.toLocaleString("en-US")}</p>
-      </div>
       <div className="flex justify-center items-center w-[20%] text-center font-semibold">
         <p>{steps.toLocaleString("en-US")}</p>
+      </div>
+      <div className="flex justify-center items-center w-[10%] text-center font-semibold">
+        <p>{coupon.toLocaleString("en-US")}</p>
       </div>
     </div>
   );
