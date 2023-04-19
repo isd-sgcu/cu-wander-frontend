@@ -106,6 +106,7 @@ const Step: React.FC = () => {
 
   useEffect(() => {
     switch (connectionState) {
+      case "reconnecting":
       case "connecting":
         console.debug("connection status: ", connectionState);
         showModalHandler({

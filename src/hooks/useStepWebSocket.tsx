@@ -93,7 +93,7 @@ export const useStepWebSocket = ({
 
     activeRef.current = true;
     if (isActive) {
-      setConnectionState("connecting");
+      setConnectionState("reconnecting");
       activeRef.current = false;
       return;
     }
