@@ -110,23 +110,18 @@ const Step: React.FC = () => {
   useEffect(() => {
     switch (connectionState) {
       case "connecting":
-        // display modal after 5 seconds
-        setConnectionTimeout(
-          setTimeout(() => {
-            console.debug("connection status: ", connectionState);
-            showModalHandler({
-              title: "กำลังเชื่อมต่อเซิพเวอร์",
-              subtitle: "โปรดรอสักครู ระบบกำลังเชื่อมต่อเซิพเวอร์",
-              body: (
-                <div className="flex justify-center pt-20">
-                  <IonSpinner name="crescent" class="text-green-500" />
-                </div>
-              ),
+        console.debug("connection status: ", connectionState);
+        showModalHandler({
+          title: "กำลังเชื่อมต่อเซิพเวอร์",
+          subtitle: "โปรดรอสักครู ระบบกำลังเชื่อมต่อเซิพเวอร์",
+          body: (
+            <div className="flex justify-center pt-20">
+              <IonSpinner name="crescent" class="text-green-500" />
+            </div>
+          ),
 
-              type: "default",
-            });
-          }, 5000)
-        );
+          type: "default",
+        });
         break;
       case "connected":
         stopConnectionTimeout();
