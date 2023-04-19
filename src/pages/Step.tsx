@@ -1,20 +1,26 @@
 import { Geolocation } from "@capacitor/geolocation";
-import { IonContent, IonPage, useIonViewWillEnter } from "@ionic/react";
-import { useContext, useEffect, useState } from "react";
-// import { Pedometer, SensorEvent } from "pedometer-plugin";
+import {
+  IonContent,
+  IonPage,
+  IonSpinner,
+  useIonViewWillEnter,
+} from "@ionic/react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { showTabBar } from "../utils/tab";
 // @ts-ignore
 import { PedometerService } from "background-pedometer";
 import { useStep } from "../contexts/StepContext";
-import { ReadyState } from "react-use-websocket";
 import { ModalState } from "../contexts/ModalContext";
 import { StepConnectionState } from "../types/steps";
+import useTimeout from "../hooks/useTimeout";
 
 const Step: React.FC = () => {
   const { steps, connectionState, pedometerEnabled, setPedometerEnabled } =
     useStep();
 
   const { showModalHandler, setPromptModal } = useContext(ModalState);
+
+  const [setConnectionTimeout, stopConnectionTimeout] = useTimeout();
 
   // google map
   // let newMap;
@@ -102,34 +108,59 @@ const Step: React.FC = () => {
   };
 
   useEffect(() => {
-    if (connectionState === "disconnected") {
-      showModalHandler({
-        title: "การเชื่อมต่อเซิร์ฟเวอร์ขัดข้อง",
-        subtitle: "โปรดกดเชื่อมต่อเพื่อเชื่อมต่ออีกครั้ง",
-        body: (
-          <p className="text-sm text-gray-600">
-            หากปัญหายังคงอยู่ โปรดกดปุ่มร้องเรียนปัญหา
-          </p>
-        ),
-        type: "multiple",
-        choices: [
-          {
-            title: "ร้องเรียนปัญหา",
-            primary: false,
-            action() {
-              window.open("https://airtable.com/shrppuCwJyTJVQrgH");
+    switch (connectionState) {
+      case "connecting":
+        // display modal after 5 seconds
+        setConnectionTimeout(
+          setTimeout(() => {
+            console.debug("connection status: ", connectionState);
+            showModalHandler({
+              title: "กำลังเชื่อมต่อเซิพเวอร์",
+              subtitle: "โปรดรอสักครู ระบบกำลังเชื่อมต่อเซิพเวอร์",
+              body: (
+                <div className="flex justify-center pt-20">
+                  <IonSpinner name="crescent" class="text-green-500" />
+                </div>
+              ),
+
+              type: "default",
+            });
+          }, 5000)
+        );
+        break;
+      case "connected":
+        stopConnectionTimeout();
+        setPromptModal(false);
+        break;
+      case "stop-retry":
+        showModalHandler({
+          title: "การเชื่อมต่อเซิร์ฟเวอร์ขัดข้อง",
+          subtitle: "โปรดกดเชื่อมต่อเพื่อเชื่อมต่ออีกครั้ง",
+          body: (
+            <p className="text-sm text-gray-600">
+              หากปัญหายังคงอยู่ โปรดกดปุ่มร้องเรียนปัญหา
+            </p>
+          ),
+          type: "multiple",
+          choices: [
+            {
+              title: "ร้องเรียนปัญหา",
+              primary: false,
+              action() {
+                window.open("https://airtable.com/shrppuCwJyTJVQrgH");
+              },
             },
-          },
-          {
-            title: "เชื่อมต่อ",
-            primary: true,
-            action() {
-              setPromptModal(false);
-              window.location.reload();
+            {
+              title: "เชื่อมต่อ",
+              primary: true,
+              action() {
+                setPromptModal(false);
+                window.location.reload();
+              },
             },
-          },
-        ],
-      });
+          ],
+        });
+        break;
     }
   }, [connectionState]);
 
