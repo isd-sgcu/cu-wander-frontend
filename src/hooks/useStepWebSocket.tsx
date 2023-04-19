@@ -1,8 +1,6 @@
-import useWebSocket, { ReadyState } from "react-use-websocket";
 import { StepConnectionState } from "../types/steps";
 import { useEffect, useRef, useState } from "react";
 import { UserData } from "../contexts/AuthContext";
-import { clearTimeout } from "timers";
 import useTimeout from "./useTimeout";
 import { useForeground } from "../contexts/ForegroundContext";
 
@@ -22,67 +20,13 @@ export const useStepWebSocket = ({
   const MAX_RECONNECT_ATTEMPTS = 5;
   const [connectionState, setConnectionState] =
     useState<StepConnectionState>("uninstantiated");
+  const [reconnectAttempt, setReconnectAttempt] = useState(0);
   const connectRef = useRef(false);
   const [setConnectionTimeout, stopConnectionTimeout] = useTimeout();
   const { isActive } = useForeground();
   const activeRef = useRef(false);
-
-  const { sendJsonMessage, getWebSocket, readyState } = useWebSocket(
-    wsURL,
-    {
-      reconnectAttempts: MAX_RECONNECT_ATTEMPTS,
-      reconnectInterval: 3000,
-      retryOnError: true,
-      onOpen: async () => {
-        await connectToServer();
-      },
-      onMessage: async (msg) => {
-        try {
-          const data = JSON.parse(msg.data) as {
-            connect_success: boolean;
-            error?: string;
-          };
-          if (data.connect_success) {
-            console.info("Successfully connected to server");
-            stopConnectionTimeout();
-            setConnectionState("connected");
-            await getUserStep();
-            return;
-          }
-          setConnectionState("error");
-          console.error("Error connecting to websocket", data.error);
-        } catch (error) {
-          console.error("Error parsing JSON message", error);
-          setConnectionState("error");
-        }
-      },
-      onClose: (event: WebSocketEventMap["close"]) => {
-        console.info(`Websocket disconnected at ${wsURL}`);
-        if (event.code > 1000) {
-          console.error(`Error at code ${event.code}`);
-        }
-        setConnectionState("disconnected");
-      },
-      onError: (err) => {
-        console.error(err);
-        setConnectionState("error");
-      },
-      shouldReconnect: (event: WebSocketEventMap["close"]) => {
-        // run application in background
-        if (event.code === 1005) {
-          return false;
-        }
-        console.info("Reconnecting...");
-        setConnectionState("reconnecting");
-        return true;
-      },
-      onReconnectStop: () => {
-        console.info("Reconnect attempts exceeded, stop retrying");
-        setConnectionState("stop-retry");
-      },
-    },
-    user !== undefined
-  );
+  const websocket = useRef<WebSocket | null>(null);
+  const initializingRef = useRef<boolean>(false);
 
   // try to reconnect when user reopen the application
   useEffect(() => {
@@ -94,25 +38,31 @@ export const useStepWebSocket = ({
     activeRef.current = true;
     if (isActive) {
       setConnectionState("reconnecting");
+      initWebsocket();
       activeRef.current = false;
       return;
     }
 
     setConnectionState("disconnected");
     activeRef.current = false;
+    websocket.current = null;
   }, [isActive]);
 
-  const connectToServer = async (): Promise<void> => {
-    if (connectRef.current) {
+  const initWebsocket = () => {
+    if (!user || initializingRef.current) {
       return;
     }
 
-    try {
+    initializingRef.current = true;
+    const ws = new WebSocket(wsURL);
+    websocket.current = ws;
+
+    ws.onopen = async (event: WebSocketEventMap["open"]) => {
       connectRef.current = true;
       setConnectionTimeout(
         setTimeout(() => {
           console.info("Connection timeout");
-          getWebSocket()?.close();
+          reconnect();
         }, 30000)
       );
 
@@ -124,17 +74,80 @@ export const useStepWebSocket = ({
       };
       console.info("Connecting to server");
       console.debug("Sending token and version", loginMessage);
-      sendJsonMessage(loginMessage);
-    } finally {
-      connectRef.current = false;
+      ws.send(JSON.stringify(loginMessage));
+    };
+
+    ws.onmessage = async (event: WebSocketEventMap["message"]) => {
+      try {
+        const data = JSON.parse(event.data) as {
+          connect_success: boolean;
+          error?: string;
+        };
+        if (data.connect_success) {
+          console.info("Successfully connected to server");
+          setReconnectAttempt(0);
+          stopConnectionTimeout();
+          setConnectionState("connected");
+          await getUserStep();
+          return;
+        }
+        setConnectionState("error");
+        console.error("Error connecting to websocket", data.error);
+      } catch (error) {
+        console.error("Error parsing JSON message", error);
+        setConnectionState("error");
+      }
+    };
+
+    ws.onerror = (event: WebSocketEventMap["error"]) => {
+      setConnectionState("error");
+    };
+
+    ws.onclose = (event: WebSocketEventMap["close"]) => {
+      console.info(`Websocket disconnected at ${wsURL}`);
+
+      if (event.wasClean) {
+        setConnectionState("disconnected");
+        initializingRef.current = false;
+        return;
+      }
+
+      console.error(`Error at code ${event.code}`);
+      // not close by unmount component
+      if (!websocket.current) {
+        // need to reset before initWebsocket again
+        initializingRef.current = false;
+        reconnect();
+      }
+
+      initializingRef.current = false;
+    };
+  };
+
+  const reconnect = () => {
+    if (reconnectAttempt > MAX_RECONNECT_ATTEMPTS) {
+      console.info("Reconnect attempts exceeded, stop retrying");
+      setConnectionState("stop-retry");
     }
+    console.info("Reconnecting...");
+    setConnectionState("reconnecting");
+
+    setReconnectAttempt(reconnectAttempt + 1);
+    initWebsocket();
+  };
+
+  const sendJsonMessage = (msg: any) => {
+    websocket.current?.send(JSON.stringify(msg));
+  };
+
+  const getWebSocket = () => {
+    return websocket.current;
   };
 
   return {
     connectionState,
-    readyState,
-    connectToServer,
     sendJsonMessage,
     getWebSocket,
+    initWebsocket,
   };
 };

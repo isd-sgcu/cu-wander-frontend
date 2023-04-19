@@ -4,18 +4,16 @@ import { createContext, useContext, useEffect, useRef, useState } from "react";
 import { httpGet } from "../utils/fetch";
 import { getAccessToken } from "./AuthContext";
 import { useAuth } from "./AuthContext";
-import { WebSocketLike } from "react-use-websocket/dist/lib/types";
 import { useVersion } from "./VersionContext";
 import { useStepWebSocket } from "../hooks/useStepWebSocket";
 import { StepConnectionState } from "../types/steps";
-import { useForeground } from "./ForegroundContext";
 
 type StepContextValue = {
   pedometerEnabled: boolean;
   setPedometerEnabled: (enabled: boolean) => void;
   steps: number;
   getUserStep: () => void;
-  getWebSocket: () => WebSocketLike | null;
+  getWebSocket: () => WebSocket | null;
   connectionState?: StepConnectionState;
 };
 
@@ -33,8 +31,8 @@ const StepProvider = ({ children }: { children: React.ReactNode }) => {
   const [listening, setListening] = useState(false);
   const [pedometerEnabled, setPedometerEnabled] = useState(false);
   const [delta, setDelta] = useState<number>();
-  const { isActive } = useForeground();
   const getStepRef = useRef(false);
+  const [forceReload, setForceReload] = useState(0);
 
   const getUserStep = async () => {
     if (getStepRef.current) {
@@ -66,7 +64,7 @@ const StepProvider = ({ children }: { children: React.ReactNode }) => {
   const { user } = useAuth();
   const { version } = useVersion();
   const wsURL = `${process.env.REACT_APP_WEBSOCKET_URL}/ws`;
-  const { connectionState, connectToServer, sendJsonMessage, getWebSocket } =
+  const { connectionState, sendJsonMessage, getWebSocket, initWebsocket } =
     useStepWebSocket({
       wsURL,
       user,
@@ -89,10 +87,24 @@ const StepProvider = ({ children }: { children: React.ReactNode }) => {
   }
 
   useEffect(() => {
+    initWebsocket();
+
+    return () => {
+      if (getWebSocket()) {
+        getWebSocket()?.close();
+      }
+    };
+  }, [user]);
+
+  useEffect(() => {
     if (delta && delta > 0 && connectionState === "connected") {
       console.debug("connection status: ", connectionState);
       console.debug("Sending step to server", delta);
       sendJsonMessage({ step: delta });
+    }
+
+    if (connectionState === "disconnected") {
+      setForceReload(forceReload + 1);
     }
   }, [steps]);
 
