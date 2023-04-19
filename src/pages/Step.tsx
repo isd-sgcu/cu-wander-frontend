@@ -108,7 +108,6 @@ const Step: React.FC = () => {
     switch (connectionState) {
       case "reconnecting":
       case "connecting":
-        console.debug("connection status: ", connectionState);
         showModalHandler({
           title: "กำลังเชื่อมต่อเซิพเวอร์",
           subtitle: "โปรดรอสักครู ระบบกำลังเชื่อมต่อเซิพเวอร์",
