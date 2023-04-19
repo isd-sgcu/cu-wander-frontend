@@ -12,15 +12,12 @@ import { PedometerService } from "background-pedometer";
 import { useStep } from "../contexts/StepContext";
 import { ModalState } from "../contexts/ModalContext";
 import { StepConnectionState } from "../types/steps";
-import useTimeout from "../hooks/useTimeout";
 
 const Step: React.FC = () => {
   const { steps, connectionState, pedometerEnabled, setPedometerEnabled } =
     useStep();
 
   const { showModalHandler, setPromptModal } = useContext(ModalState);
-
-  const [setConnectionTimeout, stopConnectionTimeout] = useTimeout();
 
   // google map
   // let newMap;
@@ -124,7 +121,6 @@ const Step: React.FC = () => {
         });
         break;
       case "connected":
-        stopConnectionTimeout();
         setPromptModal(false);
         break;
       case "stop-retry":
