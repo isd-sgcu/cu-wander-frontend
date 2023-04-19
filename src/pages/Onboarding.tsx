@@ -9,7 +9,7 @@ import { hideTabBar } from "../utils/tab";
 import { CurrentVersion } from "../lib/version/utils/version";
 import { useDevice } from "../contexts/DeviceContext";
 import { useEffect } from "react";
-import { getAccessToken } from "../contexts/AuthContext";
+import { useAuth } from "../contexts/AuthContext";
 
 const Onboarding: React.FC = () => {
   useIonViewWillEnter(() => {
@@ -18,11 +18,11 @@ const Onboarding: React.FC = () => {
 
   const { device } = useDevice();
   const history = useHistory();
-
+  const { isLoggedIn } = useAuth();
   useEffect(() => {
     const checkToken = async () => {
-      const token = await getAccessToken();
-      if (token) history.replace("/step");
+      const shouldNavigateToStep = await isLoggedIn();
+      if (shouldNavigateToStep) history.replace("/step");
     };
     checkToken();
   }, []);

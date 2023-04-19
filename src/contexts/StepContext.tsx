@@ -2,11 +2,11 @@
 import { PedometerService } from "background-pedometer";
 import { createContext, useContext, useEffect, useRef, useState } from "react";
 import { httpGet } from "../utils/fetch";
-import { getAccessToken } from "./AuthContext";
-import { useAuth } from "./AuthContext";
+import { getAccessToken, useAuth } from "./AuthContext";
 import { useVersion } from "./VersionContext";
 import { useStepWebSocket } from "../hooks/useStepWebSocket";
 import { StepConnectionState } from "../types/steps";
+import { Preferences } from "@capacitor/preferences";
 
 type StepContextValue = {
   pedometerEnabled: boolean;
@@ -90,23 +90,55 @@ const StepProvider = ({ children }: { children: React.ReactNode }) => {
     initWebsocket();
 
     return () => {
-      if (getWebSocket()) {
         getWebSocket()?.close();
+      if (getWebSocket()) {
       }
     };
   }, [user]);
 
   useEffect(() => {
+    const cacheLocalSteps = async () => {
+      try {
+        if (steps > 0)
+          await Preferences.set({ key: "steps", value: steps.toString() });
+      } catch (e) {
+        console.log(e);
+      }
+    };
     if (delta && delta > 0 && connectionState === "connected") {
       console.debug("connection status: ", connectionState);
       console.debug("Sending step to server", delta);
       sendJsonMessage({ step: delta });
     }
+    cacheLocalSteps();
 
     if (connectionState === "disconnected") {
       setForceReload(forceReload + 1);
     }
   }, [steps]);
+
+  useEffect(() => {
+    const loadLocalSteps = async () => {
+      try {
+        const { value } = await Preferences.get({ key: "steps" });
+        console.log(
+          "localStorage CapacitorStorage.steps",
+          localStorage.getItem("CapacitorStorage.steps")
+        );
+        console.log("localStorage steps", localStorage.getItem("steps"));
+        console.log("Value", value);
+        const cachedSteps = parseInt(value || "0");
+        console.log("Cached steps", cachedSteps);
+        console.log("Current steps", steps);
+        if (cachedSteps > steps) {
+          setSteps(cachedSteps);
+        }
+      } catch (e) {
+        console.log(e);
+      }
+    };
+    loadLocalSteps();
+  }, []);
 
   return (
     <StepContext.Provider
