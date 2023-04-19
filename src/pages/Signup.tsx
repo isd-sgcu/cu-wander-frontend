@@ -134,11 +134,16 @@ const Signup: React.FC = () => {
         case 400:
           {
             const reasons = response?.data as {
-              failed_field: string;
-              reason: string;
+              data: Array<{
+                failed_field: string;
+                reason: string;
+                message: string;
+              }>;
               message: string;
-            }[];
-            const reason = reasons[0];
+              status_code: number;
+            };
+            const reason = reasons.data[0];
+            console.log(reason);
             if (reason.failed_field === "email") {
               setSubmitState("invalidStudentId");
               return;
@@ -389,6 +394,7 @@ const Signup: React.FC = () => {
                   "ไม่สามารถสมัครสมาชิกได้ หากปัญหานี้ยังคงอยู่โปรดร้องเรียนปัญหาที่หน้าแรก"}
                 {submitState === "usernameEmailTaken" &&
                   "ชื่อผู้ใช้หรืออีเมลนี้ถูกใช้งานแล้ว"}
+                {submitState === "invalidStudentId" && "อีเมลนิสิตไม่ถูกต้อง"}
               </p>
             </div>
             <button

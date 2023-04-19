@@ -1,13 +1,10 @@
-import { useContext, useEffect } from "react";
+import { useContext } from "react";
 import { CouponState } from "../../contexts/CouponContext";
 import { ModalState } from "../../contexts/ModalContext";
 import useFetch from "../../utils/useFetch";
-import { httpGet, httpPost } from "../../utils/fetch";
+import { httpPost } from "../../utils/fetch";
 import CountDown from "./CountDown";
-import { useState } from "react";
-import Coupon from "../../pages/Coupon";
 import { useStep } from "../../contexts/StepContext";
-import { useIonViewWillEnter } from "@ionic/react";
 import { Preferences } from "@capacitor/preferences";
 
 interface ShopType {
