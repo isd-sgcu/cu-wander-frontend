@@ -1,9 +1,10 @@
 import useWebSocket, { ReadyState } from "react-use-websocket";
 import { StepConnectionState } from "../types/steps";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { UserData } from "../contexts/AuthContext";
 import { clearTimeout } from "timers";
 import useTimeout from "./useTimeout";
+import { useForeground } from "../contexts/ForegroundContext";
 
 export const useStepWebSocket = ({
   wsURL,
@@ -23,6 +24,8 @@ export const useStepWebSocket = ({
     useState<StepConnectionState>("uninstantiated");
   const connectRef = useRef(false);
   const [setConnectionTimeout, stopConnectionTimeout] = useTimeout();
+  const { isActive } = useForeground();
+  const activeRef = useRef(false);
 
   const { sendJsonMessage, getWebSocket, readyState } = useWebSocket(
     wsURL,
@@ -31,13 +34,6 @@ export const useStepWebSocket = ({
       reconnectInterval: 3000,
       retryOnError: true,
       onOpen: async () => {
-        // TODO: Timeout not working
-        setConnectionTimeout(
-          setTimeout(() => {
-            console.info("Connection timeout");
-            getWebSocket()?.close();
-          }, 30000)
-        );
         await connectToServer();
       },
       onMessage: async (msg) => {
@@ -54,7 +50,7 @@ export const useStepWebSocket = ({
             return;
           }
           setConnectionState("error");
-          console.debug("Error connecting to websocket", data.error);
+          console.error("Error connecting to websocket", data.error);
         } catch (error) {
           console.error("Error parsing JSON message", error);
           setConnectionState("error");
@@ -88,19 +84,45 @@ export const useStepWebSocket = ({
     user !== undefined
   );
 
+  // try to reconnect when user reopen the application
+  useEffect(() => {
+    console.debug("run foreground: ", isActive);
+    if (activeRef.current) {
+      return;
+    }
+
+    activeRef.current = true;
+    if (isActive) {
+      setConnectionState("connecting");
+      activeRef.current = false;
+      return;
+    }
+
+    setConnectionState("disconnected");
+    activeRef.current = false;
+  }, [isActive]);
+
   const connectToServer = async (): Promise<void> => {
     if (connectRef.current) {
       return;
     }
 
     try {
-      setConnectionState("connecting");
       connectRef.current = true;
+      setConnectionTimeout(
+        setTimeout(() => {
+          console.info("Connection timeout");
+          getWebSocket()?.close();
+        }, 30000)
+      );
+
+      setConnectionState("connecting");
       const token = await getAccessToken();
       const loginMessage = {
         token,
         version,
       };
+      console.info("Connecting to server");
       console.debug("Sending token and version", loginMessage);
       sendJsonMessage(loginMessage);
     } finally {

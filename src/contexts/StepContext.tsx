@@ -96,18 +96,6 @@ const StepProvider = ({ children }: { children: React.ReactNode }) => {
     }
   }, [steps]);
 
-  // try to reconnect when user reopen the application
-  useEffect(() => {
-    if (isActive) {
-      console.debug("connection status: ", connectionState);
-      console.debug("Try to connect to server");
-      connectToServer();
-      return;
-    }
-
-    getWebSocket()?.close();
-  }, [isActive]);
-
   return (
     <StepContext.Provider
       value={{
