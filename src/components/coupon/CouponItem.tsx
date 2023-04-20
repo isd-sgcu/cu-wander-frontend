@@ -59,7 +59,7 @@ const CouponItem: React.FC<CouponItemInterface> = ({
           </div>
           <div className="flex items-center space-x-1 text-sm text-green-500">
             <img
-              src="assets/icon/shoe.svg"
+              src="assets/icon/shoe_green.svg"
               width={18}
               alt="step tracking icon"
             />

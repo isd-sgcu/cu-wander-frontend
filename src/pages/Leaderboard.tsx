@@ -24,10 +24,18 @@ const Leaderboard: React.FC = () => {
               <p>ชื่อผู้ใช้งาน</p>
             </div>
             <div className="flex justify-center items-center w-[10%]">
-              <img src="assets/icon/ticket.svg" className="h-6" alt="คูปอง" />
+              <img
+                src="assets/icon/ticket_green.svg"
+                className="h-6"
+                alt="คูปอง"
+              />
             </div>
             <div className="flex justify-center items-center w-[20%]">
-              <img src="assets/icon/shoe.svg" className="h-6" alt="นับเก้า" />
+              <img
+                src="assets/icon/shoe_green.svg"
+                className="h-6"
+                alt="นับเก้า"
+              />
             </div>
           </div>
         </div>
