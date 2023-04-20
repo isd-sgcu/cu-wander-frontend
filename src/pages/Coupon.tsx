@@ -15,6 +15,8 @@ import useCouponPagination from "../utils/usePagination";
 import clsx from "clsx";
 import { closeCircleOutline } from "ionicons/icons";
 import { useDevice } from "../contexts/DeviceContext";
+import Loading from "../components/Loading";
+import SkeletonLoading from "../components/coupon/SkeletonLoading";
 
 interface RedeemCouponType {
   template_coupon_id: string;
@@ -38,6 +40,10 @@ export default function Coupon() {
     keyword: searchPhrase,
   });
   const { device } = useDevice();
+  const skeletonLoadingList = [];
+  for (let i = 0; i < 10; i++) {
+    skeletonLoadingList.push(<SkeletonLoading />);
+  }
 
   return (
     <IonPage>
@@ -73,9 +79,7 @@ export default function Coupon() {
         {/* page content */}
 
         {coupons && loading ? (
-          <div className="flex justify-center pt-20">
-            <IonSpinner name="crescent" class="text-green-500" />
-          </div>
+          <>{skeletonLoadingList.map((e) => e)}</>
         ) : (
           <>
             {!coupons ? (
