@@ -5,47 +5,20 @@ import {
   IonSpinner,
   useIonViewWillEnter,
 } from "@ionic/react";
-import { useContext, useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef } from "react";
 import { showTabBar } from "../utils/tab";
 // @ts-ignore
 import { PedometerService } from "background-pedometer";
 import { useStep } from "../contexts/StepContext";
 import { ModalState } from "../contexts/ModalContext";
 import { StepConnectionState } from "../types/steps";
+import GoogleMap from "../components/step/GoogleMap";
 
 const Step: React.FC = () => {
   const { steps, connectionState, pedometerEnabled, setPedometerEnabled } =
     useStep();
 
   const { showModalHandler, setPromptModal } = useContext(ModalState);
-
-  // google map
-  // let newMap;
-  // const mapRef = useRef(null);
-
-  // const createMap = async () => {
-  //   if (!mapRef.current) return;
-
-  //   console.log("creating map");
-
-  //   newMap = await GoogleMap.create({
-  //     id: "google-map",
-  //     element: mapRef.current,
-  //     apiKey: process.env.REACT_APP_GOOGLE_MAP_API_KEY!,
-  //     config: {
-  //       center: {
-  //         lat: 13.738376987355455,
-  //         lng: 100.532426882705,
-  //       },
-  //       zoom: 17,
-  //       zoomControl: false,
-  //       streetViewControl: false,
-  //       fullscreenControl: false,
-  //       mapTypeControl: false,
-  //       devicePixelRatio: window.devicePixelRatio,
-  //     },
-  //   });
-  // };
 
   useIonViewWillEnter(async () => {
     showTabBar();
@@ -141,23 +114,8 @@ const Step: React.FC = () => {
       <IonContent fullscreen>
         <div className="h-full w-full relative font-noto">
           {/* google map */}
-          <div className="w-full h-full pb-28">
-            <iframe
-              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3875.672234162866!2d100.52798513084771!3d13.738283159510559!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x30e29f2aae33623f%3A0x421e0643a63c2093!2sChulalongkorn%20University!5e0!3m2!1sen!2sth!4v1680211153732!5m2!1sen!2sth"
-              width="100%"
-              height="100%"
-              loading="lazy"
-            ></iframe>
-
-            {/* <capacitor-google-map
-              ref={mapRef}
-              id="map"
-              style={{
-                display: "inline-block",
-                width: "100%",
-                height: "100%",
-              }}
-            ></capacitor-google-map> */}
+          <div className="w-full h-full flex justify-center pb-28">
+            <GoogleMap />
           </div>
 
           {/* widget */}
