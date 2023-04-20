@@ -4,6 +4,9 @@ import { httpGet } from "../utils/fetch";
 import { compareVersions } from "../lib/version/utils/compare-version";
 import { CurrentVersion } from "../lib/version/utils/version";
 import { useDevice } from "./DeviceContext";
+import { useForeground } from "./ForegroundContext";
+import { IonItem, IonLabel, IonSpinner } from "@ionic/react";
+import Loading from "../components/Loading";
 
 type Version = "android_version" | "ios_version";
 
@@ -19,6 +22,7 @@ const VersionProvider = ({ children }: { children: React.ReactNode }) => {
   const history = useHistory();
   const { device } = useDevice();
   const [isLoading, setLoading] = useState(true);
+  const { isActive } = useForeground();
 
   const getVersionKey = (device: "ios" | "android" | "web"): Version => {
     switch (device) {
@@ -33,7 +37,7 @@ const VersionProvider = ({ children }: { children: React.ReactNode }) => {
 
   const currentVersion = CurrentVersion[getVersionKey(device)];
 
-  const checkUpdate = async (tries?: number) => {
+  const checkUpdate = async () => {
     setLoading(true);
     try {
       const res = await httpGet<Record<Version, string>>("/version");
@@ -43,21 +47,16 @@ const VersionProvider = ({ children }: { children: React.ReactNode }) => {
         if (shouldUpdate) history.replace("/upgraderequired");
       }
     } catch (error) {
-      if (tries && tries > 3) return;
-      checkUpdate(tries ? tries + 1 : 1);
+      console.error(error);
     }
     setLoading(false);
   };
   useEffect(() => {
     checkUpdate();
-  }, []);
+  }, [isActive]);
 
   if (isLoading) {
-    return (
-      <>
-        <div>Loading...</div>
-      </>
-    );
+    return <Loading name="dots" />;
   }
 
   return (

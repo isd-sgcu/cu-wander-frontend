@@ -1,6 +1,8 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { useHistory } from "react-router";
 import { httpGet } from "../utils/fetch";
+import { IonSpinner } from "@ionic/react";
+import Loading from "../components/Loading";
 
 type Maintenance = {
   status: "operational" | "under-maintenance";
@@ -38,11 +40,7 @@ const MaintenanceProvider = ({ children }: { children: React.ReactNode }) => {
   }, []);
 
   if (isLoading) {
-    return (
-      <>
-        <div>Loading...</div>
-      </>
-    );
+    return <Loading name="dots" />;
   }
 
   return (
