@@ -33,7 +33,7 @@ const VersionProvider = ({ children }: { children: React.ReactNode }) => {
 
   const currentVersion = CurrentVersion[getVersionKey(device)];
 
-  const checkUpdate = async () => {
+  const checkUpdate = async (tries?: number) => {
     setLoading(true);
     try {
       const res = await httpGet<Record<Version, string>>("/version");
@@ -43,7 +43,8 @@ const VersionProvider = ({ children }: { children: React.ReactNode }) => {
         if (shouldUpdate) history.replace("/upgraderequired");
       }
     } catch (error) {
-      console.error(error);
+      if (tries && tries > 3) return;
+      checkUpdate(tries ? tries + 1 : 1);
     }
     setLoading(false);
   };
