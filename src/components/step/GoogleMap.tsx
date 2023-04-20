@@ -5,7 +5,7 @@ const defaultOptions: google.maps.MapOptions = {
     lat: 13.735342,
     lng: 100.5318827,
   },
-  zoom: 18,
+  zoom: 17,
   fullscreenControl: false,
   mapTypeControl: false,
   streetViewControl: false,
