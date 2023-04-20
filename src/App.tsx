@@ -55,14 +55,14 @@ import VersionProvider from "./contexts/VersionContext";
 import ForegroundProvider from "./contexts/ForegroundContext";
 import MaintenanceProvider from "./contexts/MaintenanceContext";
 import Maintenanace from "./pages/Maintenance";
-import { MapWrapper } from "./contexts/MapContext";
+import MapContext from "./contexts/MapContext";
 
 setupIonicReact();
 
 const App: React.FC = () => (
   <IonApp>
     {/* provide Context to the app */}
-    <MapWrapper>
+    <MapContext>
       <CouponContext>
         <ModalContext>
           {/* router */}
@@ -171,7 +171,7 @@ const App: React.FC = () => (
           </IonReactRouter>
         </ModalContext>
       </CouponContext>
-    </MapWrapper>
+    </MapContext>
   </IonApp>
 );
 

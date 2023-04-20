@@ -16,7 +16,7 @@ const render = (status: Status): ReactElement => {
   );
 };
 
-export function MapWrapper(props: MapProviderProps) {
+export default (props: MapProviderProps) => {
   return (
     <Wrapper
       apiKey={process.env.REACT_APP_GOOGLE_MAP_API_KEY || ""}
@@ -25,4 +25,4 @@ export function MapWrapper(props: MapProviderProps) {
       {props.children}
     </Wrapper>
   );
-}
+};
