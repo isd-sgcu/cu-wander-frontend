@@ -20,7 +20,7 @@ const MaintenanceProvider = ({ children }: { children: React.ReactNode }) => {
   });
   const [isLoading, setLoading] = useState(true);
 
-  const checkMaintenance = async () => {
+  const checkMaintenance = async (tries?: number) => {
     setLoading(true);
     try {
       const { data } = await httpGet<Maintenance>("/status");
@@ -28,7 +28,8 @@ const MaintenanceProvider = ({ children }: { children: React.ReactNode }) => {
       if (data.status === "under-maintenance")
         history.replace("/under-maintenance");
     } catch (error) {
-      console.error(error);
+      if (tries && tries > 3) return;
+      checkMaintenance(tries ? tries + 1 : 1);
     }
     setLoading(false);
   };
