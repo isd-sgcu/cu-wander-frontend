@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Route, Redirect } from "react-router-dom";
 import { useAuth } from "../../../contexts/AuthContext";
+import Loading from "../../../components/Loading";
 
 const PublicRoute = ({ component: Component, restricted, ...rest }: any) => {
   const { isLoggedIn } = useAuth();
@@ -18,7 +19,7 @@ const PublicRoute = ({ component: Component, restricted, ...rest }: any) => {
   }, [isLoggedIn]);
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <Loading name="dots" />;
   } else
     return (
       // restricted = false meaning public route

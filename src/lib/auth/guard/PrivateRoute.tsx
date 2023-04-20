@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Route, Redirect, useHistory } from "react-router-dom";
 import { useAuth } from "../../../contexts/AuthContext";
+import Loading from "../../../components/Loading";
 
 const PrivateRoute = ({ component: Component, ...rest }: any) => {
   const { isLoggedIn } = useAuth();
@@ -24,7 +25,7 @@ const PrivateRoute = ({ component: Component, ...rest }: any) => {
   }, [isLoggedIn]);
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <Loading name="dots" />;
   } else
     return (
       // Show the component only when the user is logged in
