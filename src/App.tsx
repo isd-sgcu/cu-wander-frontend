@@ -55,90 +55,130 @@ import VersionProvider from "./contexts/VersionContext";
 import ForegroundProvider from "./contexts/ForegroundContext";
 import MaintenanceProvider from "./contexts/MaintenanceContext";
 import Maintenanace from "./pages/Maintenance";
+import { useState } from "react";
 
 setupIonicReact();
 
-const App: React.FC = () => (
-  <IonApp>
-    {/* provide Context to the app */}
-    <CouponContext>
-      <ModalContext>
-        {/* router */}
-        <IonReactRouter>
-          <ForegroundProvider>
-            <AuthProvider>
-              <DeviceProvider>
-                <MaintenanceProvider>
-                  <VersionProvider>
-                    <StepProvider>
-                      <IonTabs>
-                        {/* page's router */}
-                        <IonRouterOutlet>
-                          {/* onboarding */}
-                          <PublicRoute exact path="/onboarding">
-                            <Onboarding />
-                          </PublicRoute>
-                          <PublicRoute exact path="/signup">
-                            <Signup />
-                          </PublicRoute>
-                          <PublicRoute exact path="/signin">
-                            <Signin />
-                          </PublicRoute>
+type Focus = {
+  step?: boolean;
+  coupon?: boolean;
+  leaderboard?: boolean;
+  profile?: boolean;
+};
 
-                          {/* device checking */}
-                          <PublicRoute exact path="/upgraderequired">
-                            <UpgradeRequired />
-                          </PublicRoute>
-                          <PublicRoute exact path="/notsupport">
-                            <NotSupportDevice />
-                          </PublicRoute>
-                          <PublicRoute exact path="/under-maintenance">
-                            <Maintenanace />
-                          </PublicRoute>
+const App: React.FC = () => {
+  const [focus, setFocus] = useState<Focus>({
+    step: true,
+    coupon: false,
+    leaderboard: false,
+    profile: false,
+  });
+  return (
+    <IonApp>
+      {/* provide Context to the app */}
+      <CouponContext>
+        <ModalContext>
+          {/* router */}
+          <IonReactRouter>
+            <ForegroundProvider>
+              <AuthProvider>
+                <DeviceProvider>
+                  <MaintenanceProvider>
+                    <VersionProvider>
+                      <StepProvider>
+                        <IonTabs>
+                          {/* page's router */}
+                          <IonRouterOutlet>
+                            {/* onboarding */}
+                            <PublicRoute exact path="/onboarding">
+                              <Onboarding />
+                            </PublicRoute>
+                            <PublicRoute exact path="/signup">
+                              <Signup />
+                            </PublicRoute>
+                            <PublicRoute exact path="/signin">
+                              <Signin />
+                            </PublicRoute>
 
-                          {/* app */}
-                          <PrivateRoute exact path="/step">
-                            <Step />
-                          </PrivateRoute>
-                          <PrivateRoute path="/coupon">
-                            <Coupon />
-                          </PrivateRoute>
-                          <PrivateRoute exact path="/leaderboard">
-                            <Leaderboard />
-                          </PrivateRoute>
-                          <PrivateRoute path="/profile">
-                            <Profile />
-                          </PrivateRoute>
+                            {/* device checking */}
+                            <PublicRoute exact path="/upgraderequired">
+                              <UpgradeRequired />
+                            </PublicRoute>
+                            <PublicRoute exact path="/notsupport">
+                              <NotSupportDevice />
+                            </PublicRoute>
+                            <PublicRoute exact path="/under-maintenance">
+                              <Maintenanace />
+                            </PublicRoute>
 
-                          {/* redirect */}
-                          <Route exact path="/">
-                            <Redirect to="/onboarding" />
-                          </Route>
-                        </IonRouterOutlet>
+                            {/* app */}
+                            <PrivateRoute exact path="/step">
+                              <Step />
+                            </PrivateRoute>
+                            <PrivateRoute path="/coupon">
+                              <Coupon />
+                            </PrivateRoute>
+                            <PrivateRoute exact path="/leaderboard">
+                              <Leaderboard />
+                            </PrivateRoute>
+                            <PrivateRoute path="/profile">
+                              <Profile />
+                            </PrivateRoute>
 
-                        {/* tab bar */}
-                        <IonTabBar
-                          slot="bottom"
-                          id="app-tab-bar"
-                          className="bg-green-50 h-[72px] font-noto"
-                        >
-                          <IonTabButton
-                            className="bg-green-50"
-                            tab="step"
-                            href="/step"
+                            {/* redirect */}
+                            <Route exact path="/">
+                              <Redirect to="/onboarding" />
+                            </Route>
+                          </IonRouterOutlet>
+
+                          {/* tab bar */}
+                          <IonTabBar
+                            slot="bottom"
+                            id="app-tab-bar"
+                            className="bg-green-50 h-[72px] font-noto"
                           >
-                            <img src="assets/icon/shoe.svg" alt="นับเก้า" />
-                            <IonLabel className="text-black">นับก้าว</IonLabel>
-                          </IonTabButton>
-                          <IonTabButton
-                            className="bg-green-50"
-                            tab="coupon"
-                            href="/coupon"
-                          >
-                            <img src="assets/icon/ticket.svg" alt="คูปอง" />
-                            <IonLabel className="text-black">คูปอง</IonLabel>
-                          </IonTabButton>
-                          {/* <IonTabButton
+                            <IonTabButton
+                              className="bg-green-50"
+                              tab="step"
+                              href="/step"
+                              onClick={() => setFocus({ step: true })}
+                            >
+                              <img
+                                src={`assets/icon/shoe_${
+                                  focus.step ? "green" : "gray"
+                                }.svg`}
+                                alt="นับเก้า"
+                              />
+
+                              <IonLabel
+                                className={`${
+                                  focus.step ? "text-black" : "text-gray-500"
+                                }`}
+                              >
+                                นับก้าว
+                              </IonLabel>
+                            </IonTabButton>
+                            <IonTabButton
+                              className="bg-green-50"
+                              tab="coupon"
+                              href="/coupon"
+                              onClick={() => setFocus({ coupon: true })}
+                            >
+                              <img
+                                src={`assets/icon/ticket_${
+                                  focus.coupon ? "green" : "gray"
+                                }.svg`}
+                                alt="คูปอง"
+                              />
+                              <IonLabel
+                                className={`${
+                                  focus.coupon ? "text-black" : "text-gray-500"
+                                }`}
+                              >
+                                คูปอง
+                              </IonLabel>
+                            </IonTabButton>
+                            {/* <IonTabButton
                   className="bg-green-50"
                   tab="leaderboard"
                   href="/leaderboard"
@@ -146,28 +186,39 @@ const App: React.FC = () => (
                   <img src="assets/icon/star.svg" alt="ลีดเดอร์บอร์ด" />
                   <IonLabel className="text-black">ลีดเดอร์บอร์ด</IonLabel>
                 </IonTabButton> */}
-                          <IonTabButton
-                            className="bg-green-50"
-                            tab="profile"
-                            href="/Profile"
-                          >
-                            <img src="assets/icon/user.svg" alt="ผู้ใช้งาน" />
-                            <IonLabel className="text-black">
-                              ผู้ใช้งาน
-                            </IonLabel>
-                          </IonTabButton>
-                        </IonTabBar>
-                      </IonTabs>
-                    </StepProvider>
-                  </VersionProvider>
-                </MaintenanceProvider>
-              </DeviceProvider>
-            </AuthProvider>
-          </ForegroundProvider>
-        </IonReactRouter>
-      </ModalContext>
-    </CouponContext>
-  </IonApp>
-);
+                            <IonTabButton
+                              className="bg-green-50"
+                              tab="profile"
+                              href="/Profile"
+                              onClick={() => setFocus({ profile: true })}
+                            >
+                              <img
+                                src={`assets/icon/user_${
+                                  focus.profile ? "green" : "gray"
+                                }.svg`}
+                                alt="ผู้ใช้งาน"
+                              />
+                              <IonLabel
+                                className={`${
+                                  focus.profile ? "text-black" : "text-gray-500"
+                                }`}
+                              >
+                                ผู้ใช้งาน
+                              </IonLabel>
+                            </IonTabButton>
+                          </IonTabBar>
+                        </IonTabs>
+                      </StepProvider>
+                    </VersionProvider>
+                  </MaintenanceProvider>
+                </DeviceProvider>
+              </AuthProvider>
+            </ForegroundProvider>
+          </IonReactRouter>
+        </ModalContext>
+      </CouponContext>
+    </IonApp>
+  );
+};
 
 export default App;
