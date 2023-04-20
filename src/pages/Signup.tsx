@@ -314,7 +314,7 @@ const Signup: React.FC = () => {
                   <Input
                     name="heartRate"
                     type="text"
-                    label="อัตราการเต้นหัวใจเฉลี่ย (กรอกข้อมุลเป็นตัวเลข)"
+                    label="อัตราการเต้นหัวใจเฉลี่ย (กรอกข้อมูลเป็นตัวเลข)"
                     placeholder="86 BPM"
                     submitState={submitState}
                   />
@@ -322,7 +322,7 @@ const Signup: React.FC = () => {
                     name="averageStep"
                     type="text"
                     required
-                    label="ก้าวเฉลี่ยต่อเดือน (กรอกข้อมุลเป็นตัวเลข)"
+                    label="ก้าวเฉลี่ยต่อเดือน (กรอกข้อมูลเป็นตัวเลข)"
                     placeholder="1,000,000 ก้าว"
                     submitState={submitState}
                   />
