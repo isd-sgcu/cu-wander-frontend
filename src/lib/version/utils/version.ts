@@ -1,4 +1,4 @@
 export const CurrentVersion = {
-  android_version: "v1.0.4",
-  ios_version: "v1.0.4",
+  android_version: "v1.1.0",
+  ios_version: "v1.1.0",
 };
