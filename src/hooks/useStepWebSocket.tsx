@@ -67,12 +67,19 @@ export const useStepWebSocket = ({
         }, 30000)
       );
 
-      setConnectionState("connecting");
       const token = await getAccessToken();
+      if (!token) {
+        setConnectionState("stop-retry");
+        ws.close();
+        return;
+      }
+
       const loginMessage = {
         token,
         version,
       };
+
+      setConnectionState("connecting");
       console.info("Connecting to server");
       console.debug("Sending token and version", loginMessage);
       ws.send(JSON.stringify(loginMessage));
@@ -127,6 +134,7 @@ export const useStepWebSocket = ({
     if (reconnectAttempt > MAX_RECONNECT_ATTEMPTS) {
       console.info("Reconnect attempts exceeded, stop retrying");
       setConnectionState("stop-retry");
+      return;
     }
 
     initializingRef.current = false;
