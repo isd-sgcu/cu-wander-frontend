@@ -228,7 +228,7 @@ const renewAccessToken = async (refreshToken: string) => {
     value: JSON.stringify({
       access_token: res.data.access_token,
       refresh_token: res.data.refresh_token,
-      expries_in: +new Date() + res.data.expries_in * 1000,
+      expires_in: +new Date() + res.data.expires_in * 1000,
     }),
   });
   return res.data.access_token;
