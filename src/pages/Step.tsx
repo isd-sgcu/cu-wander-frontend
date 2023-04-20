@@ -47,29 +47,61 @@ const Step: React.FC = () => {
   //   });
   // };
 
-  // geoloaction
-  const printCurrentPosition = async () => {
-    const coordinates = await Geolocation.getCurrentPosition();
-
-    console.log("Current position:", coordinates);
-  };
-
   useIonViewWillEnter(async () => {
     showTabBar();
     await enablePedometer();
+
+    useEffect(() => {
+      switch (connectionState) {
+        case "reconnecting":
+        case "connecting":
+          showModalHandler({
+            title: "กำลังเชื่อมต่อเซิพเวอร์",
+            subtitle: "โปรดรอสักครู ระบบกำลังเชื่อมต่อเซิพเวอร์",
+            body: (
+              <div className="flex justify-center pt-20">
+                <IonSpinner name="crescent" class="text-green-500" />
+              </div>
+            ),
+
+            type: "default",
+          });
+          break;
+        case "connected":
+          setPromptModal(false);
+          break;
+        case "stop-retry":
+          showModalHandler({
+            title: "การเชื่อมต่อเซิร์ฟเวอร์ขัดข้อง",
+            subtitle: "โปรดกดเชื่อมต่อเพื่อเชื่อมต่ออีกครั้ง",
+            body: (
+              <p className="text-sm text-gray-600">
+                หากปัญหายังคงอยู่ โปรดกดปุ่มร้องเรียนปัญหา
+              </p>
+            ),
+            type: "multiple",
+            choices: [
+              {
+                title: "ร้องเรียนปัญหา",
+                primary: false,
+                action() {
+                  window.open("https://airtable.com/shrppuCwJyTJVQrgH");
+                },
+              },
+              {
+                title: "เชื่อมต่อ",
+                primary: true,
+                action() {
+                  setPromptModal(false);
+                  window.location.reload();
+                },
+              },
+            ],
+          });
+          break;
+      }
+    }, [connectionState]);
   });
-
-  function ceilToTen(num: number) {
-    let exponent = Math.floor(Math.log10(num));
-    let base = Math.ceil(num / Math.pow(10, exponent));
-    return base * Math.pow(10, exponent);
-  }
-
-  function nearestPowerOfTen(num: number) {
-    const exponent = Math.floor(Math.log10(num));
-    const nearestPowerOf10 = 10 ** exponent;
-    return nearestPowerOf10;
-  }
 
   const enablePedometer = async () => {
     if (pedometerEnabled) return;
@@ -103,57 +135,6 @@ const Step: React.FC = () => {
         return "bg-red-400";
     }
   };
-
-  useEffect(() => {
-    switch (connectionState) {
-      case "reconnecting":
-      case "connecting":
-        showModalHandler({
-          title: "กำลังเชื่อมต่อเซิพเวอร์",
-          subtitle: "โปรดรอสักครู ระบบกำลังเชื่อมต่อเซิพเวอร์",
-          body: (
-            <div className="flex justify-center pt-20">
-              <IonSpinner name="crescent" class="text-green-500" />
-            </div>
-          ),
-
-          type: "default",
-        });
-        break;
-      case "connected":
-        setPromptModal(false);
-        break;
-      case "stop-retry":
-        showModalHandler({
-          title: "การเชื่อมต่อเซิร์ฟเวอร์ขัดข้อง",
-          subtitle: "โปรดกดเชื่อมต่อเพื่อเชื่อมต่ออีกครั้ง",
-          body: (
-            <p className="text-sm text-gray-600">
-              หากปัญหายังคงอยู่ โปรดกดปุ่มร้องเรียนปัญหา
-            </p>
-          ),
-          type: "multiple",
-          choices: [
-            {
-              title: "ร้องเรียนปัญหา",
-              primary: false,
-              action() {
-                window.open("https://airtable.com/shrppuCwJyTJVQrgH");
-              },
-            },
-            {
-              title: "เชื่อมต่อ",
-              primary: true,
-              action() {
-                setPromptModal(false);
-                window.location.reload();
-              },
-            },
-          ],
-        });
-        break;
-    }
-  }, [connectionState]);
 
   return (
     <IonPage>
