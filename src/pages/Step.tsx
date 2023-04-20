@@ -5,7 +5,7 @@ import {
   IonSpinner,
   useIonViewWillEnter,
 } from "@ionic/react";
-import { useContext, useEffect, useRef, useState } from "react";
+import { useContext, useEffect } from "react";
 import { showTabBar } from "../utils/tab";
 // @ts-ignore
 import { PedometerService } from "background-pedometer";

@@ -2,7 +2,6 @@ import {
   IonContent,
   IonIcon,
   IonPage,
-  IonSpinner,
   useIonViewWillEnter,
 } from "@ionic/react";
 import { useContext } from "react";
