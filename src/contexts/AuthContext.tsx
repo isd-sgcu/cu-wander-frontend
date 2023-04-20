@@ -231,7 +231,7 @@ const renewAccessToken = async (refreshToken: string) => {
       expries_in: +new Date() + res.data.expries_in * 1000,
     }),
   });
-  return res.data.accessToken;
+  return res.data.access_token;
 };
 
 export const getAccessToken = async (): Promise<string | null> => {
