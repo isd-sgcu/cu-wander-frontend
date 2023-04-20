@@ -53,6 +53,8 @@ import NotSupportDevice from "./pages/NotSupportDevice";
 import UpgradeRequired from "./pages/UpgradeRequired";
 import VersionProvider from "./contexts/VersionContext";
 import ForegroundProvider from "./contexts/ForegroundContext";
+import MaintenanceProvider from "./contexts/MaintenanceContext";
+import Maintenanace from "./pages/Maintenance";
 
 setupIonicReact();
 
@@ -66,73 +68,77 @@ const App: React.FC = () => (
           <ForegroundProvider>
             <AuthProvider>
               <DeviceProvider>
-                <VersionProvider>
-                  <StepProvider>
-                    <IonTabs>
-                      {/* page's router */}
-                      <IonRouterOutlet>
-                        {/* onboarding */}
-                        <PublicRoute exact path="/onboarding">
-                          <Onboarding />
-                        </PublicRoute>
-                        <PublicRoute exact path="/signup">
-                          <Signup />
-                        </PublicRoute>
-                        <PublicRoute exact path="/signin">
-                          <Signin />
-                        </PublicRoute>
+                <MaintenanceProvider>
+                  <VersionProvider>
+                    <StepProvider>
+                      <IonTabs>
+                        {/* page's router */}
+                        <IonRouterOutlet>
+                          {/* onboarding */}
+                          <PublicRoute exact path="/onboarding">
+                            <Onboarding />
+                          </PublicRoute>
+                          <PublicRoute exact path="/signup">
+                            <Signup />
+                          </PublicRoute>
+                          <PublicRoute exact path="/signin">
+                            <Signin />
+                          </PublicRoute>
 
-                        {/* device checking */}
-                        <PublicRoute exact path="/upgraderequired">
-                          <UpgradeRequired />
-                        </PublicRoute>
-                        <PublicRoute exact path="/notsupport">
-                          <NotSupportDevice />
-                        </PublicRoute>
+                          {/* device checking */}
+                          <PublicRoute exact path="/upgraderequired">
+                            <UpgradeRequired />
+                          </PublicRoute>
+                          <PublicRoute exact path="/notsupport">
+                            <NotSupportDevice />
+                          </PublicRoute>
+                          <PublicRoute exact path="/under-maintenance">
+                            <Maintenanace />
+                          </PublicRoute>
 
-                        {/* app */}
-                        <PrivateRoute exact path="/step">
-                          <Step />
-                        </PrivateRoute>
-                        <PrivateRoute path="/coupon">
-                          <Coupon />
-                        </PrivateRoute>
-                        <PrivateRoute exact path="/leaderboard">
-                          <Leaderboard />
-                        </PrivateRoute>
-                        <PrivateRoute path="/profile">
-                          <Profile />
-                        </PrivateRoute>
+                          {/* app */}
+                          <PrivateRoute exact path="/step">
+                            <Step />
+                          </PrivateRoute>
+                          <PrivateRoute path="/coupon">
+                            <Coupon />
+                          </PrivateRoute>
+                          <PrivateRoute exact path="/leaderboard">
+                            <Leaderboard />
+                          </PrivateRoute>
+                          <PrivateRoute path="/profile">
+                            <Profile />
+                          </PrivateRoute>
 
-                        {/* redirect */}
-                        <Route exact path="/">
-                          <Redirect to="/onboarding" />
-                        </Route>
-                      </IonRouterOutlet>
+                          {/* redirect */}
+                          <Route exact path="/">
+                            <Redirect to="/onboarding" />
+                          </Route>
+                        </IonRouterOutlet>
 
-                      {/* tab bar */}
-                      <IonTabBar
-                        slot="bottom"
-                        id="app-tab-bar"
-                        className="bg-green-50 h-[72px] font-noto"
-                      >
-                        <IonTabButton
-                          className="bg-green-50"
-                          tab="step"
-                          href="/step"
+                        {/* tab bar */}
+                        <IonTabBar
+                          slot="bottom"
+                          id="app-tab-bar"
+                          className="bg-green-50 h-[72px] font-noto"
                         >
-                          <img src="assets/icon/shoe.svg" alt="นับเก้า" />
-                          <IonLabel className="text-black">นับก้าว</IonLabel>
-                        </IonTabButton>
-                        <IonTabButton
-                          className="bg-green-50"
-                          tab="coupon"
-                          href="/coupon"
-                        >
-                          <img src="assets/icon/ticket.svg" alt="คูปอง" />
-                          <IonLabel className="text-black">คูปอง</IonLabel>
-                        </IonTabButton>
-                        {/* <IonTabButton
+                          <IonTabButton
+                            className="bg-green-50"
+                            tab="step"
+                            href="/step"
+                          >
+                            <img src="assets/icon/shoe.svg" alt="นับเก้า" />
+                            <IonLabel className="text-black">นับก้าว</IonLabel>
+                          </IonTabButton>
+                          <IonTabButton
+                            className="bg-green-50"
+                            tab="coupon"
+                            href="/coupon"
+                          >
+                            <img src="assets/icon/ticket.svg" alt="คูปอง" />
+                            <IonLabel className="text-black">คูปอง</IonLabel>
+                          </IonTabButton>
+                          {/* <IonTabButton
                   className="bg-green-50"
                   tab="leaderboard"
                   href="/leaderboard"
@@ -140,18 +146,21 @@ const App: React.FC = () => (
                   <img src="assets/icon/star.svg" alt="ลีดเดอร์บอร์ด" />
                   <IonLabel className="text-black">ลีดเดอร์บอร์ด</IonLabel>
                 </IonTabButton> */}
-                        <IonTabButton
-                          className="bg-green-50"
-                          tab="profile"
-                          href="/Profile"
-                        >
-                          <img src="assets/icon/user.svg" alt="ผู้ใช้งาน" />
-                          <IonLabel className="text-black">ผู้ใช้งาน</IonLabel>
-                        </IonTabButton>
-                      </IonTabBar>
-                    </IonTabs>
-                  </StepProvider>
-                </VersionProvider>
+                          <IonTabButton
+                            className="bg-green-50"
+                            tab="profile"
+                            href="/Profile"
+                          >
+                            <img src="assets/icon/user.svg" alt="ผู้ใช้งาน" />
+                            <IonLabel className="text-black">
+                              ผู้ใช้งาน
+                            </IonLabel>
+                          </IonTabButton>
+                        </IonTabBar>
+                      </IonTabs>
+                    </StepProvider>
+                  </VersionProvider>
+                </MaintenanceProvider>
               </DeviceProvider>
             </AuthProvider>
           </ForegroundProvider>
