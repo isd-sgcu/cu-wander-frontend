@@ -1,4 +1,4 @@
-import axios, { AxiosResponse } from "axios";
+import axios, { AxiosError, AxiosResponse } from "axios";
 import { createContext, ReactNode, useContext, useState } from "react";
 import { useHistory } from "react-router";
 import { httpDelete, httpGet, httpPost } from "../utils/fetch";
@@ -11,6 +11,17 @@ import { PedometerService } from "background-pedometer";
 interface AuthCredentials {
   username: string;
   password: string;
+}
+
+interface TokenCredentials {
+  access_token: string;
+  expires_in: number;
+  refresh_token: string;
+  refresh_token_expires_in: number;
+}
+
+interface RefreshTokenRequest {
+  refresh_token: string;
 }
 
 // Define the interface for the user data
@@ -81,7 +92,10 @@ const AuthProvider = ({ children }: { children: ReactNode | ReactNode[] }) => {
     authCred: AuthCredentials,
     redirect: string
   ): Promise<void> => {
-    const { data: credData, status } = await httpPost("/auth/login", {
+    const { data: credData, status } = await httpPost<
+      AuthCredentials,
+      TokenCredentials
+    >("/auth/login", {
       username: authCred.username,
       password: authCred.password,
     });
@@ -109,9 +123,12 @@ const AuthProvider = ({ children }: { children: ReactNode | ReactNode[] }) => {
     await httpPost("/auth/register", userData);
 
     // can this snippet be replaced with login function?
-    const { data: credData } = await httpPost("/auth/login", {
-      username: userData.username,
-      password: userData.password,
+    const { data: credData } = await httpPost<
+      AuthCredentials,
+      TokenCredentials
+    >("/auth/login", {
+      username: userData.username as string,
+      password: userData.password as string,
     });
 
     await Preferences.set({
@@ -214,12 +231,16 @@ const authClient = axios.create({
 });
 
 const renewAccessToken = async (refreshToken: string) => {
-  let res: AxiosResponse;
+  let res: AxiosResponse<TokenCredentials>;
   try {
-    res = await authClient.post("/auth/refreshToken", {
+    res = await authClient.post<
+      RefreshTokenRequest,
+      AxiosResponse<TokenCredentials>
+    >("/auth/refreshToken", {
       refresh_token: refreshToken,
     });
   } catch (err) {
+    console.error(err);
     return null;
   }
 
@@ -228,7 +249,7 @@ const renewAccessToken = async (refreshToken: string) => {
     value: JSON.stringify({
       access_token: res.data.access_token,
       refresh_token: res.data.refresh_token,
-      expires_in: +new Date() + res.data.expires_in * 1000,
+      expries_in: +new Date() + res.data.expires_in * 1000,
     }),
   });
   return res.data.access_token;
