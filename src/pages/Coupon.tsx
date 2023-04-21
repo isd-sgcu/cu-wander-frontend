@@ -4,7 +4,7 @@ import {
   IonPage,
   useIonViewWillEnter,
 } from "@ionic/react";
-import { useContext } from "react";
+import React, { useContext, useEffect, useRef } from "react";
 import CouponItem from "../components/coupon/CouponItem";
 import CouponModal from "../components/coupon/CouponModal";
 import Header from "../components/Header";
@@ -14,7 +14,6 @@ import useCouponPagination from "../utils/usePagination";
 import clsx from "clsx";
 import { closeCircleOutline } from "ionicons/icons";
 import { useDevice } from "../contexts/DeviceContext";
-import Loading from "../components/Loading";
 import SkeletonLoading from "../components/coupon/SkeletonLoading";
 
 interface RedeemCouponType {
@@ -29,6 +28,8 @@ export default function Coupon() {
   const { setShowModal, searchPhrase, setSearchPhrase } =
     useContext(CouponState);
 
+  const skeletonLoadingList = useRef<React.ReactElement[]>([]);
+
   const {
     data: coupons,
     totalPages,
@@ -39,10 +40,12 @@ export default function Coupon() {
     keyword: searchPhrase,
   });
   const { device } = useDevice();
-  const skeletonLoadingList = [];
-  for (let i = 0; i < 10; i++) {
-    skeletonLoadingList.push(<SkeletonLoading />);
-  }
+
+  useEffect(() => {
+    for (let i = 0; i < 10; i++) {
+      skeletonLoadingList.current.push(<SkeletonLoading />);
+    }
+  }, []);
 
   return (
     <IonPage>
@@ -78,7 +81,7 @@ export default function Coupon() {
         {/* page content */}
 
         {coupons && loading ? (
-          <>{skeletonLoadingList.map((e) => e)}</>
+          <>{skeletonLoadingList.current.map((e) => e)}</>
         ) : (
           <>
             {!coupons ? (

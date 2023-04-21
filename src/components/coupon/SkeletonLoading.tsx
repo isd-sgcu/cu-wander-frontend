@@ -6,8 +6,9 @@ import {
   IonSkeletonText,
   IonThumbnail,
 } from "@ionic/react";
+import React from "react";
 
-export default () => {
+export default (): React.ReactElement => {
   return (
     <IonList>
       <IonListHeader>
