@@ -5,17 +5,15 @@ import {
   IonSpinner,
   useIonViewWillEnter,
 } from "@ionic/react";
-import { useContext, useEffect, useRef, useState } from "react";
+import { useContext, useEffect } from "react";
 import { showTabBar } from "../utils/tab";
 // @ts-ignore
-import { PedometerService } from "background-pedometer";
 import { useStep } from "../contexts/StepContext";
 import { ModalState } from "../contexts/ModalContext";
 import { StepConnectionState } from "../types/steps";
 
 const Step: React.FC = () => {
-  const { steps, connectionState, pedometerEnabled, setPedometerEnabled } =
-    useStep();
+  const { steps, connectionState } = useStep();
 
   const { showModalHandler, setPromptModal } = useContext(ModalState);
 
@@ -49,7 +47,6 @@ const Step: React.FC = () => {
 
   useIonViewWillEnter(async () => {
     showTabBar();
-    await enablePedometer();
 
     useEffect(() => {
       switch (connectionState) {
@@ -102,22 +99,6 @@ const Step: React.FC = () => {
       }
     }, [connectionState]);
   });
-
-  const enablePedometer = async () => {
-    if (pedometerEnabled) return;
-    const { value } = await PedometerService.requestPermission();
-    if (value) {
-      try {
-        await PedometerService.enable({
-          token: "",
-          wsAddress: `${process.env.REACT_APP_WEBSOCKET_URL}/ws`,
-        });
-        setPedometerEnabled(true);
-      } catch (e: any) {
-        console.log("Pedometer service already enabled");
-      }
-    }
-  };
 
   const getConnectionColor = (state?: StepConnectionState) => {
     switch (state) {
