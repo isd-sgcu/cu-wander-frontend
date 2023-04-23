@@ -22,6 +22,8 @@
 		<string>$(CURRENT_PROJECT_VERSION)</string>
 		<key>LSRequiresIPhoneOS</key>
 		<true />
+		<key>NSHealthShareUsageDescription</key>
+		<string>To get step count record of the user</string>
 		<key>NSLocationWhenInUseUsageDescription</key>
 		<string>To track step count of the user</string>
 		<key>NSMotionUsageDescription</key>
