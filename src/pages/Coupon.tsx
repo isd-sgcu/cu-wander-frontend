@@ -2,10 +2,9 @@ import {
   IonContent,
   IonIcon,
   IonPage,
-  IonSpinner,
   useIonViewWillEnter,
 } from "@ionic/react";
-import { useContext } from "react";
+import React, { useContext, useEffect, useRef } from "react";
 import CouponItem from "../components/coupon/CouponItem";
 import CouponModal from "../components/coupon/CouponModal";
 import Header from "../components/Header";
@@ -15,6 +14,7 @@ import useCouponPagination from "../utils/usePagination";
 import clsx from "clsx";
 import { closeCircleOutline } from "ionicons/icons";
 import { useDevice } from "../contexts/DeviceContext";
+import SkeletonLoading from "../components/coupon/SkeletonLoading";
 
 interface RedeemCouponType {
   template_coupon_id: string;
@@ -28,6 +28,8 @@ export default function Coupon() {
   const { setShowModal, searchPhrase, setSearchPhrase } =
     useContext(CouponState);
 
+  const skeletonLoadingList = useRef<React.ReactElement[]>([]);
+
   const {
     data: coupons,
     totalPages,
@@ -38,6 +40,12 @@ export default function Coupon() {
     keyword: searchPhrase,
   });
   const { device } = useDevice();
+
+  useEffect(() => {
+    for (let i = 0; i < 10; i++) {
+      skeletonLoadingList.current.push(<SkeletonLoading />);
+    }
+  }, []);
 
   return (
     <IonPage>
@@ -73,9 +81,7 @@ export default function Coupon() {
         {/* page content */}
 
         {coupons && loading ? (
-          <div className="flex justify-center pt-20">
-            <IonSpinner name="crescent" class="text-green-500" />
-          </div>
+          <>{skeletonLoadingList.current.map((e) => e)}</>
         ) : (
           <>
             {!coupons ? (

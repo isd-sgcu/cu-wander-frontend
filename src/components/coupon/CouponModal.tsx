@@ -205,7 +205,7 @@ const CouponModal: React.FC = () => {
               </p>
               <div className="flex items-center text-green-500 space-x-1">
                 <img
-                  src="assets/icon/shoe.svg"
+                  src="assets/icon/shoe_green.svg"
                   width={24}
                   alt="step tracking icon"
                 />
