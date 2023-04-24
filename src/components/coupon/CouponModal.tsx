@@ -5,7 +5,6 @@ import useFetch from "../../utils/useFetch";
 import { httpPost } from "../../utils/fetch";
 import CountDown from "./CountDown";
 import { useStep } from "../../contexts/StepContext";
-import { Preferences } from "@capacitor/preferences";
 
 interface ShopType {
   address: string;
@@ -46,7 +45,6 @@ const CouponModal: React.FC = () => {
       });
 
       if (response.status >= 200 && response.status < 300) {
-        await Preferences.remove({ key: "steps" });
         setSelectedCoupon({
           ...selectedCoupon,
           // parse: 2023-04-01 18:09:44 +0000 UTC

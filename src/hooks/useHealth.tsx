@@ -18,6 +18,7 @@ export default (): useHealthContent => {
         startDate,
         endDate: endDate,
         dataType: "steps",
+        filtered: true,
       });
       console.debug(
         `successfully load step from health: ${(currentStep as any).value}`
@@ -32,10 +33,13 @@ export default (): useHealthContent => {
 
   const saveCurrentStep = async (): Promise<void> => {
     try {
-      const currentStep = await loadStep();
+      const refStep = await loadStep();
       await Preferences.set({
-        key: "steps",
-        value: JSON.stringify(currentStep),
+        key: "ref_steps",
+        value: JSON.stringify({
+          value: refStep,
+          startDate: new Date(new Date().setHours(0, 0, 0, 0)),
+        }),
       });
 
       console.debug(`successfully save ref step to local`);

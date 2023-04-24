@@ -27,6 +27,7 @@ export const useStepWebSocket = ({
   const activeRef = useRef(false);
   const websocket = useRef<WebSocket | null>(null);
   const initializingRef = useRef<boolean>(false);
+  const reconnectingRef = useRef<boolean>(false);
 
   // try to reconnect when user reopen the application
   useEffect(() => {
@@ -49,7 +50,14 @@ export const useStepWebSocket = ({
     websocket.current = null;
   }, [isActive]);
 
-  const initWebsocket = () => {
+  useEffect(() => {
+    return () => {
+      stopConnectionTimeout();
+      websocket.current?.close();
+    };
+  }, []);
+
+  const initWebsocket = (connectionTimeout: number = 30000) => {
     if (!user || initializingRef.current) {
       return;
     }
@@ -60,11 +68,12 @@ export const useStepWebSocket = ({
 
     ws.onopen = async (event: WebSocketEventMap["open"]) => {
       connectRef.current = true;
+      reconnectingRef.current = false;
       setConnectionTimeout(
         setTimeout(() => {
           console.info("Connection timeout");
           reconnect();
-        }, 30000)
+        }, connectionTimeout)
       );
 
       const token = await getAccessToken();
@@ -80,7 +89,7 @@ export const useStepWebSocket = ({
       };
 
       setConnectionState("connecting");
-      console.info("Connecting to server");
+      console.info(`${new Date()}: Connecting to server`);
       console.debug("Sending token and version", loginMessage);
       ws.send(JSON.stringify(loginMessage));
     };
@@ -92,7 +101,7 @@ export const useStepWebSocket = ({
           error?: string;
         };
         if (data.connect_success) {
-          console.info("Successfully connected to server");
+          console.info(`${new Date()}: Successfully connected to server`);
           setReconnectAttempt(0);
           stopConnectionTimeout();
           setConnectionState("connected");
@@ -100,45 +109,51 @@ export const useStepWebSocket = ({
           return;
         }
         setConnectionState("error");
-        console.error("Error connecting to websocket", data.error);
+        console.error(
+          `${new Date()}: Error connecting to websocket${new Date()}: `,
+          data.error
+        );
       } catch (error) {
-        console.error("Error parsing JSON message", error);
+        console.error(`${new Date()}: Error parsing JSON message`, error);
         setConnectionState("error");
       }
     };
 
     ws.onerror = (event: WebSocketEventMap["error"]) => {
       setConnectionState("error");
+      console.error("WebSocket error:", event);
     };
 
     ws.onclose = (event: WebSocketEventMap["close"]) => {
-      console.info(`Websocket disconnected at ${wsURL}`);
+      console.info(`${new Date()}: Websocket disconnected at ${wsURL}`);
+      initializingRef.current = false;
 
       if (event.wasClean) {
         setConnectionState("disconnected");
-        initializingRef.current = false;
         return;
       }
 
       console.error(`Error at code ${event.code}`);
-      // not close by unmount component
-      if (websocket.current) {
+      // close by unmount component
+      if (!websocket.current) {
         reconnect();
       }
-
-      initializingRef.current = false;
     };
   };
 
   const reconnect = () => {
+    if (reconnectingRef.current) {
+      return;
+    }
+
+    reconnectingRef.current = true;
     if (reconnectAttempt > MAX_RECONNECT_ATTEMPTS) {
       console.info("Reconnect attempts exceeded, stop retrying");
       setConnectionState("stop-retry");
       return;
     }
 
-    initializingRef.current = false;
-    console.info("Reconnecting...");
+    console.info(`${new Date()}: Reconnecting...`);
     setConnectionState("reconnecting");
 
     setReconnectAttempt(reconnectAttempt + 1);
