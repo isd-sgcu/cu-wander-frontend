@@ -31,24 +31,25 @@ const StepProvider = ({ children }: { children: React.ReactNode }) => {
   const [steps, setSteps] = useState(0);
   const [listening, setListening] = useState(false);
   const [delta, setDelta] = useState<number>();
-  const getStepRef = useRef(false);
-  const pedometerEnabled = useRef(false);
-  const healthEnabled = useRef(false);
   const [forceReload, setForceReload] = useState(0);
   const { user } = useAuth();
   const { version } = useVersion();
-  const { loadStep, saveCurrentStep, getDelta } = useHealth();
+  const { saveCurrentStep, getDelta } = useHealth();
   const { isActive } = useForeground();
   const { device } = useDevice();
+  const getStepRef = useRef(false);
+  const pedometerEnabled = useRef(false);
+  const healthEnabled = useRef(false);
 
   const getUserStep = async () => {
     if (getStepRef.current) {
       return;
     }
+
     getStepRef.current = true;
     try {
       const deltaSteps = await getDelta();
-      console.debug(`delta: ${deltaSteps}`);
+      console.debug(`${new Date()}: delta: ${deltaSteps}`);
 
       const {
         data: { steps: s },
@@ -57,7 +58,7 @@ const StepProvider = ({ children }: { children: React.ReactNode }) => {
       }>("/step");
       if (deltaSteps > 0) {
         console.debug(
-          `Steps not equal in local and server, localStep ${steps} and server steps ${s} updating ${deltaSteps} steps`
+          `${new Date()}: receive delta steps in local health app, updating ${deltaSteps} steps`
         );
         sendJsonMessage({ step: deltaSteps });
         setSteps(s + deltaSteps);
@@ -106,8 +107,6 @@ const StepProvider = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
     if (!isActive) {
       saveCurrentStep();
-    } else {
-      setForceReload(forceReload + 1);
     }
   }, [isActive]);
 
@@ -162,16 +161,6 @@ const StepProvider = ({ children }: { children: React.ReactNode }) => {
           await Health.requestAuthorization([{ read: ["steps"] }]);
           healthEnabled.current = true;
           console.debug("successfully enabled health plugin");
-
-          // save ref step for calculate when use reopen the application
-          const refStep = await loadStep();
-          await Preferences.set({
-            key: "ref_steps",
-            value: JSON.stringify({
-              value: refStep,
-              startDate: new Date(new Date().setHours(0, 0, 0, 0)),
-            }),
-          });
         } catch (e) {
           console.error(e);
         }
