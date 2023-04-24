@@ -7,10 +7,11 @@ import { useVersion } from "./VersionContext";
 import { useStepWebSocket } from "../hooks/useStepWebSocket";
 import { StepConnectionState } from "../types/steps";
 import { Preferences } from "@capacitor/preferences";
+import { Health } from "@awesome-cordova-plugins/health";
+import { useForeground } from "./ForegroundContext";
+import useHealth from "../hooks/useHealth";
 
 type StepContextValue = {
-  pedometerEnabled: boolean;
-  setPedometerEnabled: (enabled: boolean) => void;
   steps: number;
   getUserStep: () => void;
   getWebSocket: () => WebSocket | null;
@@ -18,8 +19,6 @@ type StepContextValue = {
 };
 
 const StepContext = createContext<StepContextValue>({
-  pedometerEnabled: false,
-  setPedometerEnabled: () => {},
   steps: 0,
   getUserStep: () => {},
   getWebSocket: () => null,
@@ -27,12 +26,18 @@ const StepContext = createContext<StepContextValue>({
 });
 
 const StepProvider = ({ children }: { children: React.ReactNode }) => {
+  const wsURL = `${process.env.REACT_APP_WEBSOCKET_URL}/ws`;
   const [steps, setSteps] = useState(0);
   const [listening, setListening] = useState(false);
-  const [pedometerEnabled, setPedometerEnabled] = useState(false);
   const [delta, setDelta] = useState<number>();
   const getStepRef = useRef(false);
+  const pedometerEnabled = useRef(false);
+  const healthEnabled = useRef(false);
   const [forceReload, setForceReload] = useState(0);
+  const { user } = useAuth();
+  const { version } = useVersion();
+  const { loadStep, saveCurrentStep, getDelta } = useHealth();
+  const { isActive } = useForeground();
 
   const getUserStep = async () => {
     if (getStepRef.current) {
@@ -40,13 +45,15 @@ const StepProvider = ({ children }: { children: React.ReactNode }) => {
     }
     getStepRef.current = true;
     try {
+      const deltaSteps = await getDelta();
+      console.debug(`delta: ${deltaSteps}`);
+
       const {
         data: { steps: s },
       } = await httpGet<{
         steps: number;
       }>("/step");
-      if (steps !== 0 && steps > s) {
-        const deltaSteps = steps - s;
+      if (steps > 0 && steps > s) {
         console.debug(
           `Steps not equal in local and server, localStep ${steps} and server steps ${s} updating ${deltaSteps} steps`
         );
@@ -61,9 +68,6 @@ const StepProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
-  const { user } = useAuth();
-  const { version } = useVersion();
-  const wsURL = `${process.env.REACT_APP_WEBSOCKET_URL}/ws`;
   const { connectionState, sendJsonMessage, getWebSocket, initWebsocket } =
     useStepWebSocket({
       wsURL,
@@ -90,11 +94,19 @@ const StepProvider = ({ children }: { children: React.ReactNode }) => {
     initWebsocket();
 
     return () => {
-        getWebSocket()?.close();
       if (getWebSocket()) {
+        getWebSocket()?.close();
       }
     };
   }, [user]);
+
+  useEffect(() => {
+    if (!isActive) {
+      saveCurrentStep();
+    } else {
+      setForceReload(forceReload + 1);
+    }
+  }, [isActive]);
 
   useEffect(() => {
     const cacheLocalSteps = async () => {
@@ -102,7 +114,7 @@ const StepProvider = ({ children }: { children: React.ReactNode }) => {
         if (steps > 0)
           await Preferences.set({ key: "steps", value: steps.toString() });
       } catch (e) {
-        console.log(e);
+        console.error(e);
       }
     };
     if (delta && delta > 0 && connectionState === "connected") {
@@ -118,33 +130,52 @@ const StepProvider = ({ children }: { children: React.ReactNode }) => {
   }, [steps]);
 
   useEffect(() => {
-    const loadLocalSteps = async () => {
-      try {
-        const { value } = await Preferences.get({ key: "steps" });
-        console.log(
-          "localStorage CapacitorStorage.steps",
-          localStorage.getItem("CapacitorStorage.steps")
-        );
-        console.log("localStorage steps", localStorage.getItem("steps"));
-        console.log("Value", value);
-        const cachedSteps = parseInt(value || "0");
-        console.log("Cached steps", cachedSteps);
-        console.log("Current steps", steps);
-        if (cachedSteps > steps) {
-          setSteps(cachedSteps);
+    const enablePedometerPlugin = async () => {
+      if (pedometerEnabled.current) return;
+      const { value } = await PedometerService.requestPermission();
+      if (value) {
+        try {
+          await PedometerService.enable({
+            token: "",
+            wsAddress: `${process.env.REACT_APP_WEBSOCKET_URL}/ws`,
+          });
+          pedometerEnabled.current = true;
+          console.debug("successfully enabled pedometer plugin");
+        } catch (e: any) {
+          console.error("Pedometer service already enabled");
         }
-      } catch (e) {
-        console.log(e);
       }
     };
-    loadLocalSteps();
+
+    const enableHeathPlugin = async () => {
+      if (healthEnabled.current) return;
+      if (await Health.isAvailable())
+        try {
+          await Health.requestAuthorization([{ read: ["steps"] }]);
+          healthEnabled.current = true;
+          console.debug("successfully enabled health plugin");
+
+          // save ref step for calculate when use reopen the application
+          const refStep = await loadStep();
+          await Preferences.set({
+            key: "ref_steps",
+            value: JSON.stringify({
+              value: refStep,
+              startDate: new Date(new Date().setHours(0, 0, 0, 0)),
+            }),
+          });
+        } catch (e) {
+          console.error(e);
+        }
+    };
+
+    enablePedometerPlugin();
+    enableHeathPlugin();
   }, []);
 
   return (
     <StepContext.Provider
       value={{
-        pedometerEnabled,
-        setPedometerEnabled,
         steps,
         getUserStep,
         getWebSocket,
