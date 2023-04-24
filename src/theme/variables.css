@@ -75,3 +75,39 @@ http://ionicframework.com/docs/theming/ */
   --ion-color-light-shade: #d7d8da;
   --ion-color-light-tint: #f5f6f9;
 }
+
+/* Scoped components require higher specificity to customize */
+ion-searchbar.header {
+  --background: #fff;
+  --box-shadow: 0px;
+  --border-radius: 12px;
+  --cancel-button-color: #fff;
+  --color: #301a12;
+  --clear-button-color: #301a12;
+  --icon-color: #301a12;
+  --placeholder-color: #301a12;
+}
+
+ion-toolbar {
+  --background: transparent;
+  --ion-color-base: transparent !important;
+  --border-color: transparent;
+
+  --padding-top: 12px;
+  --padding-bottom: 0px;
+  --min-height: 50px !important;
+}
+
+ion-toolbar.search {
+  --background: transparent;
+  --ion-color-base: transparent !important;
+  --border-color: transparent;
+
+  --padding-top: 0px;
+  --padding-bottom: 12px;
+}
+
+ion-toolbar.warning {
+  --padding-top: 0px;
+  --padding-bottom: 0px;
+}
