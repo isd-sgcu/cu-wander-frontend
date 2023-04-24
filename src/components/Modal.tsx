@@ -41,7 +41,10 @@ const Modal: React.FC = () => {
         <div className="bg-white w-full rounded-2xl text-black overflow-hidden pointer-events-auto text-center font-noto relative flex flex-col justify-between">
           {content.type === "default" && (
             <div
-              onClick={() => setPromptModal(false)}
+              onClick={() => {
+                if (content.onClose) content.onClose();
+                setPromptModal(false);
+              }}
               className="absolute top-0 right-0 p-5"
             >
               <img src="assets/icon/close.svg" alt="close" />

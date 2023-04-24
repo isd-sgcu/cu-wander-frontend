@@ -45,7 +45,6 @@ const Header: React.FC<HeaderInterface> = ({
     setSearchPhrase((e.target as HTMLIonSearchbarElement).value!.toLowerCase());
   };
 
-  title = "นับก้าว";
   return (
     <IonHeader class="ion-no-border" className="bg-header bg-cover bg-center">
       <IonToolbar className="font-noto w-full">

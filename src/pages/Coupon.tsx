@@ -13,6 +13,7 @@ import useCouponPagination from "../utils/usePagination";
 import clsx from "clsx";
 import { closeCircleOutline } from "ionicons/icons";
 import SkeletonLoading from "../components/coupon/SkeletonLoading";
+import Header from "../components/Header";
 
 interface RedeemCouponType {
   template_coupon_id: string;
@@ -45,6 +46,7 @@ export default function Coupon() {
   return (
     <IonPage>
       <IonContent fullscreen className="bg-white">
+        <Header title="คูปอง" />
         {/* modal */}
         <CouponModal />
 
