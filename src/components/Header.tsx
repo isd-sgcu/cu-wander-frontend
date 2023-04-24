@@ -2,62 +2,43 @@ import {
   IonButton,
   IonButtons,
   IonHeader,
-  IonIcon,
-  IonSearchbar,
-  IonText,
   IonTitle,
   IonToolbar,
 } from "@ionic/react";
 import { useHistory } from "react-router";
 import { useStep } from "../contexts/StepContext";
-import { useContext } from "react";
-import { CouponState } from "../contexts/CouponContext";
-import useCouponPagination from "../utils/usePagination";
-import { warning } from "ionicons/icons";
 
 interface HeaderInterface {
   title: string;
   showSettings?: boolean;
   showBack?: boolean;
-  showStep?: boolean;
-  showWarning?: boolean;
 }
 
 const Header: React.FC<HeaderInterface> = ({
   title,
   showSettings = false,
   showBack = false,
-  showStep = true,
-  showWarning = true,
 }) => {
   const history = useHistory();
   const { steps } = useStep();
-  const { searchPhrase, setShowModal, setSearchPhrase } =
-    useContext(CouponState);
-  const { setPage } = useCouponPagination({
-    keyword: searchPhrase,
-  });
-
-  const handleSearchbarChange = (
-    e: React.FormEvent<HTMLIonSearchbarElement>
-  ) => {
-    setPage(1);
-    setSearchPhrase((e.target as HTMLIonSearchbarElement).value!.toLowerCase());
-  };
-
-  title = "นับก้าว";
   return (
-    <IonHeader class="ion-no-border" className="bg-header bg-cover bg-center">
-      <IonToolbar className="font-noto w-full">
-        <IonTitle className="text-white font-bold text-center">
-          {title}
-        </IonTitle>
-        {showStep ?? (
-          <div className="font-semibold text-white flex flex-row justify-end px-5">
+    <IonHeader class="ion-no-border" className="relative">
+      <IonToolbar mode="ios" className="font-noto relative">
+        <IonTitle className="bg-white font-bold text-xl text-white">
+          <div className="h-full absolute left-0 right-0 bottom-0 top-0 z-40 backdrop-blur-[75px]"></div>
+          <div className="absolute z-[34] w-[137px] h-[98px] rounded-[100%] bg-[#E8B73A80] top-[50px] left-[93px]"></div>
+          <div className="absolute z-[33] w-[155px] h-[129px] rounded-[100%] bg-[#0077E580] top-[-36px] left-[162.88px] rotate-[3.5deg]"></div>
+          <div className="absolute z-[32] w-[247px] h-[186px] rounded-[100%] bg-[#BF387F99] top-[-16px] left-[230px]"></div>
+          <div className="absolute z-[31] w-[125px] h-[89px] rounded-[100%] bg-[#FF8A00B2] top-[50px] left-[190px] rotate-[8deg]"></div>
+          <div className="absolute z-[30] w-[291px] h-[222px] rounded-[100%] bg-[#028A69B2] top-[-26.82px] left-[-50px] rotate-[-6.5deg]"></div>
+          <div className="absolute flex gap-1.5 z-[50] bg-white backdrop-blur-sm bg-opacity-40 py-0.5 px-3 w-[98px] h-[32px] top-[10px] right-[20px] rounded-2xl text-[16px] overflow-clip">
             <img src="/assets/icon/shoe_white.svg" alt="shoe" width="18px" />
             {steps || "-"}
           </div>
-        )}
+          <div className="absolute z-50 left-0 right-0 bottom-0 top-8">
+            {title}
+          </div>
+        </IonTitle>
         {showBack && (
           <IonButtons slot="start" onClick={() => history.goBack()}>
             <IonButton fill="solid">
@@ -73,33 +54,6 @@ const Header: React.FC<HeaderInterface> = ({
           </IonButtons>
         )}
       </IonToolbar>
-      <IonToolbar class="search">
-        <IonSearchbar
-          className="mx-auto w-4/5"
-          showClearButton="focus"
-          showCancelButton="focus"
-          placeholder="ค้นหาชื่อร้านค้า"
-          animated={true}
-          debounce={1000}
-          onClick={() => {
-            setShowModal(false);
-          }}
-          onChange={handleSearchbarChange}
-          class="header"
-        />
-      </IonToolbar>
-      {showWarning ?? (
-        <IonToolbar
-          color="warning"
-          class="warning"
-          className="flex flex-row text-white"
-        >
-          <IonIcon className="text-2xl" icon={warning} />
-          <IonText className="text-white">
-            อาจจะมีดีเลย์ในการอัพเดตจำนวนก้าวตาม App Health
-          </IonText>
-        </IonToolbar>
-      )}
     </IonHeader>
   );
 };
