@@ -11,6 +11,7 @@ import { showTabBar } from "../utils/tab";
 import { useStep } from "../contexts/StepContext";
 import { ModalState } from "../contexts/ModalContext";
 import { StepConnectionState } from "../types/steps";
+import Header from "../components/Header";
 
 const Step: React.FC = () => {
   const { steps, connectionState } = useStep();
@@ -119,6 +120,7 @@ const Step: React.FC = () => {
 
   return (
     <IonPage>
+      <Header title="นับก้าว" />
       <IonContent fullscreen>
         <div className="h-full w-full relative font-noto">
           {/* google map */}
