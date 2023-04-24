@@ -1,6 +1,7 @@
 import { Geolocation } from "@capacitor/geolocation";
 import {
   IonContent,
+  IonIcon,
   IonPage,
   IonSpinner,
   useIonViewWillEnter,
@@ -11,6 +12,9 @@ import { showTabBar } from "../utils/tab";
 import { useStep } from "../contexts/StepContext";
 import { ModalState } from "../contexts/ModalContext";
 import { StepConnectionState } from "../types/steps";
+import Header from "../components/Header";
+import { warning } from "ionicons/icons";
+import { Preferences } from "@capacitor/preferences";
 
 const Step: React.FC = () => {
   const { steps, connectionState } = useStep();
@@ -44,11 +48,8 @@ const Step: React.FC = () => {
   //     },
   //   });
   // };
-
-  useIonViewWillEnter(async () => {
-    showTabBar();
-
-    useEffect(() => {
+  useEffect(() => {
+    const getModal = async () => {
       switch (connectionState) {
         case "reconnecting":
         case "connecting":
@@ -65,7 +66,22 @@ const Step: React.FC = () => {
           });
           break;
         case "connected":
-          setPromptModal(false);
+          const { value } = await Preferences.get({
+            key: "added20kSteps",
+          });
+          if (!value) {
+            showModalHandler({
+              title: "ขอบคุณที่ใช้ CU Wander!",
+              subtitle:
+                "ขอบคุณที่ใช้ CU Wander และช่วยเราในการพัฒนา CU Wander ให้ดียิ่งขึ้น เนื่องจากว่าอาทิตย์ที่ผ่านมา user ได้ประสบปัญหาก้าวหายจำนวนหนึ่ง เราจึงอยากจะตอบแทนผู้ใข้งานทุกคนด้วย 20,000 ก้าวเผื่อเอาไปแลกคูปองกับร้านค้า",
+              type: "default",
+              onClose: async () => {
+                await Preferences.set({ key: "added20kSteps", value: "true" });
+              },
+            });
+          } else {
+            setPromptModal(false);
+          }
           break;
         case "stop-retry":
           showModalHandler({
@@ -97,7 +113,12 @@ const Step: React.FC = () => {
           });
           break;
       }
-    }, [connectionState]);
+    };
+    getModal();
+  }, [connectionState]);
+
+  useIonViewWillEnter(async () => {
+    showTabBar();
   });
 
   const getConnectionColor = (state?: StepConnectionState) => {
@@ -119,9 +140,16 @@ const Step: React.FC = () => {
 
   return (
     <IonPage>
+      <Header title="นับก้าว" />
       <IonContent fullscreen>
         <div className="h-full w-full relative font-noto">
           {/* google map */}
+          <div className="w-full absolute t-0 bg-[#FFC409] text-white px-4 py-2">
+            <div className="flex items-center justify-between">
+              <IonIcon icon={warning} className="w-6 h-6" />
+              <p>อาจจะมีดีเลย์ในการอัพเดตจำนวนก้าวตาม App Health</p>
+            </div>
+          </div>
           <div className="w-full h-full pb-28">
             <iframe
               src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3875.672234162866!2d100.52798513084771!3d13.738283159510559!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x30e29f2aae33623f%3A0x421e0643a63c2093!2sChulalongkorn%20University!5e0!3m2!1sen!2sth!4v1680211153732!5m2!1sen!2sth"

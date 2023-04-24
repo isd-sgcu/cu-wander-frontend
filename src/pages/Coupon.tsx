@@ -7,14 +7,13 @@ import {
 import React, { useContext, useEffect, useRef } from "react";
 import CouponItem from "../components/coupon/CouponItem";
 import CouponModal from "../components/coupon/CouponModal";
-import Header from "../components/Header";
 import { showTabBar } from "../utils/tab";
 import { CouponState } from "../contexts/CouponContext";
 import useCouponPagination from "../utils/usePagination";
 import clsx from "clsx";
 import { closeCircleOutline } from "ionicons/icons";
-import { useDevice } from "../contexts/DeviceContext";
 import SkeletonLoading from "../components/coupon/SkeletonLoading";
+import Header from "../components/Header";
 
 interface RedeemCouponType {
   template_coupon_id: string;
@@ -25,9 +24,7 @@ export default function Coupon() {
     showTabBar();
   });
 
-  const { setShowModal, searchPhrase, setSearchPhrase } =
-    useContext(CouponState);
-
+  const { searchPhrase } = useContext(CouponState);
   const skeletonLoadingList = useRef<React.ReactElement[]>([]);
 
   const {
@@ -39,7 +36,6 @@ export default function Coupon() {
   } = useCouponPagination({
     keyword: searchPhrase,
   });
-  const { device } = useDevice();
 
   useEffect(() => {
     for (let i = 0; i < 10; i++) {
@@ -49,32 +45,8 @@ export default function Coupon() {
 
   return (
     <IonPage>
-      <div
-        className={`absolute left-10 right-10 ${
-          device === "ios" ? "top-[110px]" : "top-[64px]"
-        } h-12 flex items-center bg-white rounded-full font-noto text-black px-2 shadow-lg z-50`}
-        onClick={() => {
-          setShowModal(false);
-        }}
-      >
-        <img
-          src="assets/icon/search.svg"
-          className="px-2.5"
-          alt="search icon"
-        />
-        <input
-          type="text"
-          value={searchPhrase}
-          onChange={(e) => {
-            setPage(1);
-            setSearchPhrase(e.target.value.toLowerCase());
-          }}
-          placeholder="ค้นหาชื่อร้านค้า"
-          className="bg-transparent outline-none w-full h-full"
-        />
-      </div>
-      <Header title="คูปอง" />
       <IonContent fullscreen className="bg-white">
+        <Header title="คูปอง" />
         {/* modal */}
         <CouponModal />
 
@@ -90,7 +62,7 @@ export default function Coupon() {
                 <p>ไม่มีคูปองให้แสดง</p>
               </div>
             ) : (
-              <div className="flex flex-col items-center bg-white font-noto pt-12 pb-6 space-y-2">
+              <div className="flex flex-col items-center bg-white font-noto pt-5 pb-6 space-y-2">
                 {coupons?.map((coupon, idx) => {
                   if (searchPhrase !== "") {
                     if (

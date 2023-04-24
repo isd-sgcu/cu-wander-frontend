@@ -9,19 +9,19 @@ use_frameworks!
 install! 'cocoapods', :disable_input_output_paths => true
 
 def capacitor_pods
-  pod 'Capacitor', :path => '../../node_modules/.pnpm/@capacitor+ios@4.6.3_@capacitor+core@4.7.3/node_modules/@capacitor/ios'
-  pod 'CapacitorCordova', :path => '../../node_modules/.pnpm/@capacitor+ios@4.6.3_@capacitor+core@4.7.3/node_modules/@capacitor/ios'
-  pod 'CapacitorApp', :path => '../../node_modules/.pnpm/@capacitor+app@4.1.1_@capacitor+core@4.7.3/node_modules/@capacitor/app'
-  pod 'CapacitorDevice', :path => '../../node_modules/.pnpm/@capacitor+device@4.1.0_@capacitor+core@4.7.3/node_modules/@capacitor/device'
-  pod 'CapacitorGeolocation', :path => '../../node_modules/.pnpm/@capacitor+geolocation@4.1.0_@capacitor+core@4.7.3/node_modules/@capacitor/geolocation'
-  pod 'CapacitorGoogleMaps', :path => '../../node_modules/.pnpm/@capacitor+google-maps@4.5.0_@capacitor+core@4.7.3/node_modules/@capacitor/google-maps'
-  pod 'CapacitorHaptics', :path => '../../node_modules/.pnpm/@capacitor+haptics@4.1.0_@capacitor+core@4.7.3/node_modules/@capacitor/haptics'
-  pod 'CapacitorKeyboard', :path => '../../node_modules/.pnpm/@capacitor+keyboard@4.1.1_@capacitor+core@4.7.3/node_modules/@capacitor/keyboard'
-  pod 'CapacitorPreferences', :path => '../../node_modules/.pnpm/@capacitor+preferences@4.0.2_@capacitor+core@4.7.3/node_modules/@capacitor/preferences'
-  pod 'CapacitorSplashScreen', :path => '../../node_modules/.pnpm/@capacitor+splash-screen@4.2.0_@capacitor+core@4.7.3/node_modules/@capacitor/splash-screen'
-  pod 'CapacitorStatusBar', :path => '../../node_modules/.pnpm/@capacitor+status-bar@4.1.1_@capacitor+core@4.7.3/node_modules/@capacitor/status-bar'
-  pod 'SentryCapacitor', :path => '../../node_modules/.pnpm/@sentry+capacitor@0.11.2_@capacitor+core@4.7.3_@sentry+react@7.37.1/node_modules/@sentry/capacitor'
-  pod 'BackgroundPedometer', :path => '../../node_modules/.pnpm/file+background-pedometer_@capacitor+core@4.7.3/node_modules/background-pedometer'
+  pod 'Capacitor', :path => '../../node_modules/.pnpm/@capacitor+ios@4.6.3(@capacitor+core@4.7.3)/node_modules/@capacitor/ios'
+  pod 'CapacitorCordova', :path => '../../node_modules/.pnpm/@capacitor+ios@4.6.3(@capacitor+core@4.7.3)/node_modules/@capacitor/ios'
+  pod 'CapacitorApp', :path => '../../node_modules/.pnpm/@capacitor+app@4.1.1(@capacitor+core@4.7.3)/node_modules/@capacitor/app'
+  pod 'CapacitorDevice', :path => '../../node_modules/.pnpm/@capacitor+device@4.1.0(@capacitor+core@4.7.3)/node_modules/@capacitor/device'
+  pod 'CapacitorGeolocation', :path => '../../node_modules/.pnpm/@capacitor+geolocation@4.1.0(@capacitor+core@4.7.3)/node_modules/@capacitor/geolocation'
+  pod 'CapacitorGoogleMaps', :path => '../../node_modules/.pnpm/@capacitor+google-maps@4.5.0(@capacitor+core@4.7.3)/node_modules/@capacitor/google-maps'
+  pod 'CapacitorHaptics', :path => '../../node_modules/.pnpm/@capacitor+haptics@4.1.0(@capacitor+core@4.7.3)/node_modules/@capacitor/haptics'
+  pod 'CapacitorKeyboard', :path => '../../node_modules/.pnpm/@capacitor+keyboard@4.1.1(@capacitor+core@4.7.3)/node_modules/@capacitor/keyboard'
+  pod 'CapacitorPreferences', :path => '../../node_modules/.pnpm/@capacitor+preferences@4.0.2(@capacitor+core@4.7.3)/node_modules/@capacitor/preferences'
+  pod 'CapacitorSplashScreen', :path => '../../node_modules/.pnpm/@capacitor+splash-screen@4.2.0(@capacitor+core@4.7.3)/node_modules/@capacitor/splash-screen'
+  pod 'CapacitorStatusBar', :path => '../../node_modules/.pnpm/@capacitor+status-bar@4.1.1(@capacitor+core@4.7.3)/node_modules/@capacitor/status-bar'
+  pod 'SentryCapacitor', :path => '../../node_modules/.pnpm/@sentry+capacitor@0.11.2(@capacitor+core@4.7.3)(@sentry+react@7.37.1)/node_modules/@sentry/capacitor'
+  pod 'BackgroundPedometer', :path => '../../node_modules/.pnpm/file+background-pedometer(@capacitor+core@4.7.3)/node_modules/background-pedometer'
   pod 'CordovaPlugins', :path => '../capacitor-cordova-ios-plugins'
 end
 
