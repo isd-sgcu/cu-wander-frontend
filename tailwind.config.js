@@ -14,6 +14,9 @@ module.exports = {
       fontFamily: {
         noto: ["Noto Sans Thai", "sans-serif"],
       },
+      backgroundImage: {
+        header: "url('../../public/assets/header-bg.png')",
+      },
     },
   },
   plugins: [],
