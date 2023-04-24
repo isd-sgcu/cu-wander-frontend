@@ -10,6 +10,7 @@ import { Preferences } from "@capacitor/preferences";
 import { Health } from "@awesome-cordova-plugins/health";
 import { useForeground } from "./ForegroundContext";
 import useHealth from "../hooks/useHealth";
+import { useDevice } from "./DeviceContext";
 
 type StepContextValue = {
   steps: number;
@@ -38,6 +39,7 @@ const StepProvider = ({ children }: { children: React.ReactNode }) => {
   const { version } = useVersion();
   const { loadStep, saveCurrentStep, getDelta } = useHealth();
   const { isActive } = useForeground();
+  const { device } = useDevice();
 
   const getUserStep = async () => {
     if (getStepRef.current) {
@@ -150,6 +152,11 @@ const StepProvider = ({ children }: { children: React.ReactNode }) => {
 
     const enableHeathPlugin = async () => {
       if (healthEnabled.current) return;
+
+      if (device === "android") {
+        Health.promptInstallFit();
+      }
+
       if (await Health.isAvailable())
         try {
           await Health.requestAuthorization([{ read: ["steps"] }]);
