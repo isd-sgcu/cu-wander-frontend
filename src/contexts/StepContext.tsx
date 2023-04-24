@@ -6,7 +6,6 @@ import { getAccessToken, useAuth } from "./AuthContext";
 import { useVersion } from "./VersionContext";
 import { useStepWebSocket } from "../hooks/useStepWebSocket";
 import { StepConnectionState } from "../types/steps";
-import { Preferences } from "@capacitor/preferences";
 import { Health } from "@awesome-cordova-plugins/health";
 import { useForeground } from "./ForegroundContext";
 import useHealth from "../hooks/useHealth";
@@ -111,20 +110,11 @@ const StepProvider = ({ children }: { children: React.ReactNode }) => {
   }, [isActive]);
 
   useEffect(() => {
-    const cacheLocalSteps = async () => {
-      try {
-        if (steps > 0)
-          await Preferences.set({ key: "steps", value: steps.toString() });
-      } catch (e) {
-        console.error(e);
-      }
-    };
     if (delta && delta > 0 && connectionState === "connected") {
       console.debug("connection status: ", connectionState);
       console.debug("Sending step to server", delta);
       sendJsonMessage({ step: delta });
     }
-    cacheLocalSteps();
 
     if (connectionState === "disconnected") {
       setForceReload(forceReload + 1);
