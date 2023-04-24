@@ -53,11 +53,12 @@ const StepProvider = ({ children }: { children: React.ReactNode }) => {
       } = await httpGet<{
         steps: number;
       }>("/step");
-      if (steps > 0 && steps > s) {
+      if (deltaSteps > 0) {
         console.debug(
           `Steps not equal in local and server, localStep ${steps} and server steps ${s} updating ${deltaSteps} steps`
         );
         sendJsonMessage({ step: deltaSteps });
+        setSteps(s + deltaSteps);
       } else {
         setSteps(s);
       }
