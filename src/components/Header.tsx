@@ -95,7 +95,7 @@ const Header: React.FC<HeaderInterface> = ({
         >
           <IonIcon className="text-2xl" icon={warning} />
           <IonText className="text-white">
-            อาจจะมีดีเลย์ในการอัพเดตจำนวนก้าวตาม App Health
+            ต้องเปิดแอปเพื่อให้ระบบนับก้าวทำงาน
           </IonText>
         </IonToolbar>
       )}

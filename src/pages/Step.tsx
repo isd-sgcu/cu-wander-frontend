@@ -73,7 +73,7 @@ const Step: React.FC = () => {
             showModalHandler({
               title: "ขอบคุณที่ใช้ CU Wander!",
               subtitle:
-                "ขอบคุณที่ใช้ CU Wander และช่วยเราในการพัฒนา CU Wander ให้ดียิ่งขึ้น เนื่องจากว่าอาทิตย์ที่ผ่านมา user ได้ประสบปัญหาก้าวหายจำนวนหนึ่ง เราจึงอยากจะตอบแทนผู้ใข้งานทุกคนด้วย 20,000 ก้าวเผื่อเอาไปแลกคูปองกับร้านค้า",
+                "ขอบคุณที่ใช้ CU Wander และช่วยเราในการพัฒนา CU Wander ให้ดียิ่งขึ้น เนื่องจากว่าอาทิตย์ที่ผ่านมา user ได้ประสบปัญหาก้าวหายจำนวนหนึ่ง เราจึงอยากจะตอบแทนผู้ใข้งานทุกคนด้วย 30,000 ก้าวเผื่อเอาไปแลกคูปองกับร้านค้า",
               type: "default",
               onClose: async () => {
                 await Preferences.set({ key: "added20kSteps", value: "true" });
@@ -145,9 +145,9 @@ const Step: React.FC = () => {
         <div className="h-full w-full relative font-noto">
           {/* google map */}
           <div className="w-full absolute t-0 bg-[#FFC409] text-white px-4 py-2">
-            <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3 justify-center">
               <IonIcon icon={warning} className="w-6 h-6" />
-              <p>อาจจะมีดีเลย์ในการอัพเดตจำนวนก้าวตาม App Health</p>
+              <p>ต้องเปิดแอปเพื่อให้ระบบนับก้าวทำงาน</p>
             </div>
           </div>
           <div className="w-full h-full pb-28">
