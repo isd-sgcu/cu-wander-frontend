@@ -18,11 +18,11 @@ export default (): useHealthContent => {
         startDate,
         endDate: endDate,
         dataType: "steps",
-        filtered: true,
       });
       console.debug(
         `successfully load step from health: ${(currentStep as any).value}`
       );
+
       return (currentStep as any).value;
     } catch (err) {
       console.error(err);
