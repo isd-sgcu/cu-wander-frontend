@@ -15,6 +15,7 @@ import { StepConnectionState } from "../types/steps";
 import Header from "../components/Header";
 import { warning } from "ionicons/icons";
 import { Preferences } from "@capacitor/preferences";
+import Loading from "../components/Loading";
 
 const Step: React.FC = () => {
   const { steps, connectionState } = useStep();
@@ -53,18 +54,7 @@ const Step: React.FC = () => {
       switch (connectionState) {
         case "reconnecting":
         case "connecting":
-          showModalHandler({
-            title: "กำลังเชื่อมต่อเซิพเวอร์",
-            subtitle: "โปรดรอสักครู ระบบกำลังเชื่อมต่อเซิพเวอร์",
-            body: (
-              <div className="flex justify-center pt-20">
-                <IonSpinner name="crescent" class="text-green-500" />
-              </div>
-            ),
-
-            type: "default",
-          });
-          break;
+          return <Loading name="dots" />;
         case "connected":
           const { value } = await Preferences.get({
             key: "added20kSteps",
