@@ -1,4 +1,4 @@
-import { IonImg, IonSpinner, IonText, SpinnerTypes } from "@ionic/react";
+import { IonImg, IonSpinner, SpinnerTypes } from "@ionic/react";
 
 type LoadingProps = {
   name: SpinnerTypes;
@@ -10,7 +10,7 @@ export default ({ name }: LoadingProps) => {
       <div className="w-full m-10 flex flex-col justify-center items-center gap-5">
         <IonImg
           src="assets/icon/shoe_green.svg"
-          className="w-1/3"
+          className="w-1/3 max-w-[150px]"
           alt="loading"
         />
 
