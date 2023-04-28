@@ -92,22 +92,18 @@ const StepProvider = ({ children }: { children: React.ReactNode }) => {
   }
 
   useEffect(() => {
-    initWebsocket();
-
-    return () => {
-      if (getWebSocket()) {
-        getWebSocket()?.close();
-      }
-    };
-  }, [user]);
-
-  useEffect(() => {
     if (!isActive) {
       saveCurrentStep();
     } else {
       setForceReload(forceReload + 1);
     }
   }, [isActive]);
+
+  useEffect(() => {
+    if (isActive && !getWebSocket()) {
+      initWebsocket("step context");
+    }
+  }, [user]);
 
   useEffect(() => {
     const cacheLocalSteps = async () => {

@@ -36,23 +36,36 @@ export const useStepWebSocket = ({
     }
 
     activeRef.current = true;
+
     if (isActive) {
       initializingRef.current = false;
       setConnectionState("reconnecting");
-      initWebsocket();
-      activeRef.current = false;
-      return;
+    } else {
+      setConnectionState("disconnected");
+      websocket.current = null;
     }
 
-    setConnectionState("disconnected");
     activeRef.current = false;
-    websocket.current = null;
   }, [isActive]);
 
-  const initWebsocket = () => {
+  useEffect(() => {
+    if (isActive && !websocket.current) {
+      initWebsocket("mount socket hook");
+    }
+
+    return () => {
+      if (getWebSocket()) {
+        getWebSocket()?.close();
+      }
+    };
+  }, []);
+
+  const initWebsocket = (initFrom?: string) => {
     if (!user || initializingRef.current) {
       return;
     }
+
+    console.debug(`${new Date()} init from: ${initFrom}`);
 
     initializingRef.current = true;
     const ws = new WebSocket(wsURL);
@@ -122,7 +135,7 @@ export const useStepWebSocket = ({
 
       console.error(`Error at code ${event.code}`);
       // not close by unmount component
-      if (websocket.current) {
+      if (websocket.current && event.code !== 1006) {
         reconnect();
       }
 
@@ -142,7 +155,7 @@ export const useStepWebSocket = ({
     setConnectionState("reconnecting");
 
     setReconnectAttempt(reconnectAttempt + 1);
-    initWebsocket();
+    initWebsocket("reconnect");
   };
 
   const sendJsonMessage = (msg: any) => {
