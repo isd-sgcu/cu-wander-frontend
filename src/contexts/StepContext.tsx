@@ -100,9 +100,16 @@ const StepProvider = ({ children }: { children: React.ReactNode }) => {
   }, [isActive]);
 
   useEffect(() => {
-    if (isActive && !getWebSocket()) {
-      initWebsocket("step context");
+    console.debug(`connection state: ${connectionState}`);
+    if (!getWebSocket() && connectionState === "uninstantiated") {
+      initWebsocket();
     }
+
+    return () => {
+      if (getWebSocket()) {
+        getWebSocket()?.close();
+      }
+    };
   }, [user]);
 
   useEffect(() => {
